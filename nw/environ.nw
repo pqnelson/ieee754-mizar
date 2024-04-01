@@ -1,0 +1,81 @@
+% -*- mode: poly-noweb; noweb-code-mode: mizar-mode; -*-
+\appendix
+\section{Environment directives}
+The environment directives are perhaps the most confusing aspect of
+Mizar, so I decided to stick this into an appendix.
+
+<<Environment for [[float_1.miz]]>>=
+environ
+ <<[[float_1.miz]] vocabularies>>
+ <<[[float_1.miz]] notations>>
+ <<[[float_1.miz]] constructors>>
+ <<[[float_1.miz]] registrations>>
+ <<[[float_1.miz]] requirements>>
+ <<[[float_1.miz]] theorems>>
+@
+
+\subsection{Vocabularies}
+Mizar doesn't actually know what to tokenize: we need to tell it what
+the terms are, to distinguish them from identifiers of variables. The
+[[vocabularies]] directive adds new reserved words for the lexer to discover.
+We begin by importing the vocabularies for the
+extended real number system.
+
+<<[[float_1.miz]] vocabularies>>=
+vocabularies NUMBERS, ORDINAL1, CARD_1, SUBSET_1, XBOOLE_0, ARYTM_2, ARYTM_3,
+  ZFMISC_1, XCMPLX_0, XXREAL_0, TARSKI, FUNCT_7,
+  REAL_1,
+  FLOAT_1;
+@
+
+\subsection{Notations}
+The notations directive helps the parser form ``sentence diagrams''
+[parse trees] for terms and expressions. This uses the patterns as they
+appear in definitions. It's not uncommon for Mathematicians to use the
+same word to mean different things (e.g., a \emph{parabolic} subgroup, a
+\emph{parabolic} cylinder, a \emph{parabolic} differential equation, etc.).
+The notations directive lists articles where the definitions may be
+found, and uses the type system to discern which definition fits the usage.
+
+<<[[float_1.miz]] notations>>=
+notations TARSKI, XBOOLE_0, ZFMISC_1, SUBSET_1, ORDINAL1, ARYTM_2, NUMBERS,
+  XXREAL_0, XREAL_0;
+@ 
+
+\subsection{Constructors}
+The constructors directive helps Mizar determine \emph{which} definition
+to use for each term. 
+
+<<[[float_1.miz]] constructors>>=
+constructors ARYTM_2, NUMBERS, XXREAL_0, XREAL_0;
+@ 
+
+\subsection{Registrations}
+Attributes need to be registered as an adjective for a type. Further,
+some attributes imply others (e.g., [[natural]] numbers are [[complex]]
+automatically) which are handled by registrations.
+
+<<[[float_1.miz]] registrations>>=
+registrations ORDINAL1, XBOOLE_0, XCMPLX_0, XREAL_0, INT_1, RAT_1;
+@ 
+
+\subsection{Requirements}
+Mizar allows us to simplify various things automatically which are part
+of a mathematician's subconscious, like identifying $\emptyset$ with $0$.
+
+<<[[float_1.miz]] requirements>>=
+requirements REAL, SUBSET, BOOLE, NUMERALS;
+@ 
+% Equalities
+% Expansions
+% \subsection{Definitions}
+
+\subsection{Theorems}
+When using theorems from other Mizar articles, we need to tell Mizar
+which articles we will be relying on.
+
+<<[[float_1.miz]] theorems>>=
+theorems XXREAL_0;
+@ 
+
+\subsection{Schemes}

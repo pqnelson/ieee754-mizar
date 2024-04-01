@@ -1,0 +1,180 @@
+\NeedsTeXFormat{LaTeX2e}[1994/06/01]
+\ProvidesPackage{macros}[2021/12/11 Macros for formalizing IEEE-754 in Mizar]
+
+\newif\ifamsart\amsartfalse
+\newif\ifamscls
+\amsclsfalse
+\@ifclassloaded{amsproc}{
+  \amsclstrue
+}{}
+\@ifclassloaded{amsbook}{
+  \amsclstrue
+}{}
+\@ifclassloaded{amsart}{
+  \amsclstrue
+  \amsarttrue
+}{}
+
+\usepackage{fancyvrb}
+\RequirePackage{epigraph}
+\RequirePackage{manfnt}
+\RequirePackage{upquote}
+%% \RequirePackage{enumitem}
+%% \setlist{nosep}
+%% \RequirePackage{datetime} % for \pdftime
+\RequirePackage{datetime2}
+\RequirePackage{amssymb,amsmath,amsthm}
+\RequirePackage{bm}
+\RequirePackage[dvipsnames]{xcolor}
+%\RequirePackage[inner=6pc,outer=6pc,bottom=6pc,top=6pc,headheight=13.6pt]{geometry}
+
+\ifamscls
+  \ifamsart\newcommand\indexchap{\relax}\fi
+  \RequirePackage{amsmidx}
+  %\fi
+\else
+  \RequirePackage{makeidx}
+  \RequirePackage{titlesec}
+  \RequirePackage[nottoc,notlot,notlof]{tocbibind}
+\fi
+\RequirePackage{ifpdf}
+\RequirePackage[\ifpdf\else dvipdfmx\fi]{hyperref}
+
+% eTeX uses this color for links, it's better than BrickRed imho
+\definecolor{linkRed}{cmyk}{0.28, 1, 1, 0.35}
+\hypersetup{colorlinks=true,
+    linkcolor=linkRed,
+    citecolor=linkRed,
+    filecolor=linkRed,
+    urlcolor=linkRed,
+}
+
+%%% Format author stuff nicely
+%%%
+\noweboptions{longxref,english,breakcode,externalindex,smallcode}
+
+% This should be evaluated \emph{once}.
+\xdef\compiledTimestamp{Compiled:~\DTMnow}
+
+\setcounter{secnumdepth}{10}
+\setcounter{tocdepth}{3}
+\newskip\interchunkskip \interchunkskip=\medskipamount%
+% cwebmac.tex has \interchunkskip=12pt minus 3pt
+% latex.ltx and plain.tex has \medskipamount=6pt plus 2pt minus 2pt
+% \newskip\thmskip \thmskip=\interchunkskip%\topsep
+
+% theorems
+
+\numberwithin{equation}{section}
+
+% Use AMSBOOK's theorem styles
+\def\th@remarkstyle{%
+  \thm@headfont{\scshape}%
+  \textrm % body font
+}
+% \theoremstyle{theoremstyle}
+\newif\ifusemizarnumbers
+\usemizarnumberstrue
+
+% \newcounter{chapter}\refstepcounter{chapter}
+\newtheorem{todo}{To-Do Item}
+\ifusemizarnumbers
+  % Mizar's numbering system
+  \newtheorem{theorem}{Theorem}                        % counter 1
+  \newtheorem{corollary}[theorem]{Corollary}           % counter 1
+  \newtheorem{lemma}{Lemma}                            % counter 2
+  \newtheorem{proposition}{Proposition}                % counter 3
+  \newtheorem{exercise}[proposition]{Exercise}         % counter 3
+  \newtheorem{scheme}{Scheme}                          % counter 5
+  \newtheorem{idiom}[proposition]{Idiom}               % counter 3
+  \newtheorem{heuristic}{Heuristic}
+
+  \theoremstyle{definition}
+  \newtheorem{example}[proposition]{Example}           % counter 3
+  \newtheorem{registration}[proposition]{Registration} % counter 3
+  \newtheorem{reserve}[proposition]{Reserve}           % counter 3
+  \newtheorem{voc}[proposition]{Vocabulary}            % counter 3
+  \newtheorem{definition}{Definition}                  % counter 4
+  \newtheorem{definition*}[proposition]{Abbreviation}  % counter 3
+  \newtheorem{redefinition}[definition]{Redefinition}  % counter 4
+  \newtheorem{redefinition*}[proposition]{Redefinition*} % counter 3
+  \newtheorem{road-map}[proposition]{Road Map}
+
+  \theoremstyle{remark}
+  \newtheorem{note}[proposition]{Note}                 % counter 3
+  \newtheorem{notation}[proposition]{Notation}         % counter 3
+  \newtheorem{aside}[proposition]{Aside}               % counter 3
+  \newtheorem{remark}{Remark}[proposition]
+  \newtheorem{def-remark}{Remark}[definition]
+  \newtheorem{thm-remark}{Remark}[theorem]
+  \newtheorem{lem-remark}{Remark}[lemma]
+  \newtheorem{sch-remark}{Remark}[scheme]
+  \newtheorem{reminder}{Reminder}
+\else
+  % my personal numbering system
+  \newtheorem{theorem}{Theorem}         
+  \newtheorem{corollary}[theorem]{Corollary}
+  \newtheorem{proposition}[theorem]{Proposition}
+  \newtheorem{lemma}[theorem]{Lemma}
+  \newtheorem{exercise}[theorem]{Exercise}
+  \newtheorem{idiom}[theorem]{Idiom}
+  \newtheorem{heuristic}{Heuristic}
+
+  \theoremstyle{remark}
+  \newtheorem{remark}{Remark}[theorem]
+  \newtheorem{def-remark}{Remark}[theorem]
+  \newtheorem{thm-remark}{Remark}[theorem]
+  \newtheorem{lem-remark}{Remark}[theorem]
+  \newtheorem{note}[theorem]{Note}
+  \newtheorem{aside}[theorem]{Aside}
+  \newtheorem{reminder}{Reminder}
+
+  \theoremstyle{definition}
+  \newtheorem{definition}[theorem]{Definition}
+  \newtheorem{definition*}[theorem]{Abbreviation}
+  \newtheorem{redefinition*}[theorem]{Redefinition*}
+  \newtheorem{redefinition}[theorem]{Redefinition}
+  \newtheorem{example}[theorem]{Example}
+  \newtheorem{registration}[theorem]{Registration}
+  \newtheorem{reserve}[theorem]{Reserve}
+  \newtheorem{voc}[remark]{Vocabulary}
+\fi
+
+
+%%% Dangerous bend environments
+\font\manual=manfnt
+\def\dbend{{\manual\char127}} % dangerous bend sign
+
+% Danger, Will Robinson!
+\newenvironment{danger}{\medbreak\noindent\hangindent=2pc\hangafter=-2%
+  \clubpenalty=10000%
+  \hbox to0pt{\hskip-\hangindent\dbend\hfill}\small\ignorespaces}%
+  {\medbreak\par}
+
+% Danger! Danger!
+\newenvironment{ddanger}{\medbreak\noindent\hangindent=3pc\hangafter=-2%
+  \clubpenalty=10000%
+  \hbox to0pt{\hskip-\hangindent\dbend\kern2pt\dbend\hfill}\small\ignorespaces}%
+  {\medbreak\par}
+
+% adjust whitespace between code chunks
+% https://www.cs.tufts.edu/~nr/noweb/FAQ.html
+\def\nwendcode{\endtrivlist \endgroup}
+\let\nwdocspar=\smallbreak
+%\nwcodecommentsep=-10pt
+
+
+\newcommand\define[1]{\textbf{``#1''}}
+\newcommand{\Caret}{\char`\^}
+
+\input{notation}
+
+
+\newcommand\chapter[2][]{}
+
+\renewcommand{\textflush}{flushright}
+\setlength{\epigraphwidth}{0.7\textwidth}
+
+\setcounter{section}{-1}
+
+\endinput

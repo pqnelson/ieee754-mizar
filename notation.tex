@@ -1,0 +1,137 @@
+% logic and Mizar type theory
+\newcommand\contradiction{\bot}
+
+\newcommand\struct[2][\relax]{\ifx\relax#1\else\mathsf{#1}\fi\langle\!\langle #2 \rangle\!\rangle}
+\newcommand\esti{\mathop{:}\nolimits}
+
+% Set theory
+\let\oldsubset\subset
+\let\oldsubseteq\subseteq
+\let\oldsupset\supset
+\let\oldsupseteq\supseteq
+\renewcommand\subset{\oldsubseteq}
+\newcommand\properSubset{\oldsubset}
+\renewcommand\supset{\oldsupseteq}
+\newcommand\properSupset{\oldsupset}
+
+\newcommand\powerset{\mathcal{P}}
+
+\newcommand\FF{\mathbb{F}} % generic field
+\newcommand\CC{\mathbb{C}}
+\newcommand\NN{\mathbb{N}}
+\newcommand\QQ{\mathbb{Q}}
+\newcommand\RR{\mathbb{R}}
+\newcommand\ZZ{\mathbb{Z}}
+\DeclareMathOperator\dom{dom}
+\DeclareMathOperator\rng{rng}
+\DeclareMathOperator\supp{supp}
+
+\let\onto\twoheadrightarrow
+\newcommand\into{\hookrightarrow}
+\newcommand\concatenate{^{\frown}}
+
+\let\oldIm\Im
+\renewcommand\Im{\mathop{\mathrm{Im}}\nolimits}
+
+% https://tex.stackexchange.com/a/117035
+\def\localbig#1#2{%
+  \sbox\z@{$\m@th#1
+    \sbox\tw@{$#1()$}%
+    \dimen@=\ht\tw@\advance\dimen@\dp\tw@
+    \nulldelimiterspace\z@\left#2\vcenter to1.2\dimen@{}\right.
+  $}\box\z@}
+
+\newcommand{\divides}{\mathrel{\mathpalette\dividesaux\relax}}
+\newcommand{\ndivides}{\mathrel{\mathpalette\ndividesaux\relax}}
+
+\newcommand{\dividesaux}[2]{\mbox{$\m@th#1\localbig{#1}|$}}
+\newcommand{\ndividesaux}[2]{%
+  \mkern.5mu
+  \ooalign{%
+    \hidewidth$\m@th#1\localbig{#1}|$\hidewidth\cr
+    $\m@th#1\nmid$\cr%
+  }%
+}
+\def\gt{>}
+
+%%%
+%%% Group theory
+%%%
+
+\DeclareMathOperator\Aut{Aut}
+\let\aut\Aut
+\DeclareMathOperator\End{End}
+\DeclareMathOperator\Inn{Inn}
+\DeclareMathOperator\Id{Id}
+\DeclareMathOperator\id{id}
+%\DeclareMathOperator\ker{ker}
+\newcommand\charSubgroup{\mathrel{char}}
+\newcommand\iso{\cong}
+\newcommand\Index[2]{[#1 : #2]}
+\DeclareMathOperator\Commutators{Commutators}
+
+\newcommand\idElt[1]{1_{#1}}
+
+% https://tex.stackexchange.com/a/5049/14751
+\usepackage{relsize}
+\newcommand{\frobProd}{\mathop{\Huge \mathlarger{\mathlarger{*}}}}
+\let\frobeniusProd\frobProd
+
+\DeclareMathOperator\Sym{Sym}
+\newcommand\SymmetricGroup[1]{S_{#1}}
+\newcommand\AltGroup[1]{A_{#1}}
+% Gorenstein, Lyons, Solomon's \emph{Classification of Finite Simple Groups}
+% use $Z_{n}$, not $\ZZ_{n}$, for the finite cyclic group of order $n$.
+\newcommand\cyclicGroup[1]{\ZZ_{#1}}
+
+% Families of linear groups
+\DeclareMathOperator\Mat{Mat}
+\DeclareMathOperator\GL{GL}
+\DeclareMathOperator\SL{SL}
+\DeclareMathOperator\Sp{Sp}
+\newcommand\PSL{\mathrm{PSL}}
+\newcommand\PSU{\mathrm{PSU}}
+\newcommand\PSp{\mathrm{PSp}}
+
+%% Sporadic Groups
+\newcommand\Monster{\mathbb{M}}
+\newcommand\namedSporadic[1]{\mathsf{#1}}
+% Sporadic groups
+\newcommand\Conway[1]{\namedSporadic{Co}_{#1}}
+\newcommand\Mathieu[1]{\namedSporadic{M}_{#1}}
+\newcommand\HigmanSims{\namedSporadic{HS}}
+\newcommand\Held{\namedSporadic{He}}
+\newcommand\McLaughlin{\namedSporadic{McL}}
+\newcommand\Suzuki{\namedSporadic{Suz}}
+% Pariahs
+\newcommand\Janko[1]{\namedSporadic{J}_{#1}}
+\newcommand\ONan{\namedSporadic{O\textrm'N}}
+\newcommand\Rudvalis{\namedSporadic{Ru}}
+\newcommand\Lyons{\namedSporadic{Ly}}
+
+\newcommand\SylowSubgroups[2]{\mathop{\rm Syl}\nolimits_{#1}(#2)}
+\newcommand\HallSubgroups[2]{\mathop{\rm Hall}\nolimits_{#1}(#2)}
+\newcommand\pCore[2]{\mathbf{O}_{#1}(#2)}
+\newcommand\trivialGroup{\mathbf{1}}
+\newcommand\trivialSubgroup{\mathbf{1}}
+
+\newcommand\subgroup{\leq}
+\newcommand\properSubgroup{<}
+\newcommand\supgroup{\geq}
+\newcommand\properSupgroup{>}
+\newcommand\normalSupgroup{\trianglerighteq}
+\newcommand\normalSubgroup{\trianglelefteq}%{\mathrel{\lhd}}
+\newcommand\properNormalSubgroup{\mathrel{\lhd}}
+\newcommand\properNormalSupgroup{\mathrel{\rhd}}
+\newcommand\subnormalSubgroup{\trianglelefteq\trianglelefteq}
+\DeclareMathOperator\FrattiniSubgroup{\Phi}
+
+% Cyrillic letters are used for various groups and families of subgroups
+\DeclareFontFamily{U}{wncy}{}
+\DeclareFontShape{U}{wncy}{m}{n}{<->wncyr10}{}
+\DeclareSymbolFont{mcy}{U}{wncy}{m}{n}
+\DeclareMathSymbol{\Sha}{\mathord}{mcy}{"58}
+\DeclareMathSymbol{\signalizer}{\mathord}{mcy}{"49}
+
+% lattice notation
+\newcommand\join{\mathbin{\sqcup}}

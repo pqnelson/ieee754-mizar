@@ -1,0 +1,44 @@
+:: Floating-point Arithmetic
+:: by Alexander M. Nelson
+::
+:: This code can be distributed under the GNU General Public Licence
+:: version 3.0 or later, or the Creative Commons Attribution-ShareAlike
+:: License version 3.0 or later, subject to the binding interpretation
+:: detailed in file COPYING.interpretation.
+:: See COPYING.GPL and COPYING.CC-BY-SA for the full text of these
+:: licenses, or see http://www.gnu.org/licenses/gpl.html and
+:: http://creativecommons.org/licenses/by-sa/3.0/.
+
+environ
+ vocabularies NUMBERS, ORDINAL1, CARD_1, SUBSET_1, XBOOLE_0, ARYTM_2, ARYTM_3,
+   ZFMISC_1, XCMPLX_0, XXREAL_0, TARSKI, FUNCT_7,
+   REAL_1,
+   FLOAT_1;
+ notations TARSKI, XBOOLE_0, ZFMISC_1, SUBSET_1, ORDINAL1, ARYTM_2, NUMBERS,
+   XXREAL_0, XREAL_0;
+ constructors ARYTM_2, NUMBERS, XXREAL_0, XREAL_0;
+ registrations ORDINAL1, XBOOLE_0, XCMPLX_0, XREAL_0, INT_1, RAT_1;
+ requirements REAL, SUBSET, BOOLE, NUMERALS;
+ theorems XXREAL_0;
+
+begin :: Preliminaries
+
+definition
+  let IT be Real;
+  attr IT is valid_radix means :Def1:
+  IT > 1;
+end;
+
+registration
+  cluster valid_radix for Real;
+  existence
+  proof
+    take x=2;
+    thus thesis by Def1;
+  end;
+end;
+
+registration
+  cluster valid_radix -> positive for Real;
+  coherence by Def1, XXREAL_0:def 6;
+end;

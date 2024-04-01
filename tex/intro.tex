@@ -1,0 +1,48 @@
+\section{Introduction}
+
+This is an attempt to formalize the \textsc{ieee}-754 standard
+(specifically, the 2019 revision) in Mizar. The goal is to faithfully
+implement the standard, while allowing suitable generalities so we could
+work with any base $\beta\in\RR$ provided $\beta>1$.
+
+For ease of reference, the sections in this literate proof correspond to
+those in the Standard, with the following exceptions:
+\begin{itemize}
+\item We started with Section 0 for this informal preamble, whereas the
+  Standard starts with Section 1;
+\item Section 1 of the Standard consists of an overview, whereas Section
+  1 of this formalization consists of preliminary definitions; and
+\item Section 2 of the Standard is a glossary of terms and acronyms.
+\end{itemize}
+That's it.
+
+\subsection{Apology: Theorem numbering}
+We will be following a ``five counter theorem numbering'' system, which
+will follow Mizar's numbering conventions. This is to make reference
+between the informal presentation and the Mizar formalization easier. It
+is quite bewildering, and I can only apologize for it. The four counters
+are independent of each other, and are grouped roughly as follows:
+\begin{enumerate}
+\item Theorem and Corollary share the same counter;
+\item Lemmas have their own counter;
+\item Schemes have their own counter;
+\item Definitions and redefinitions have their own counter;
+\item All other environments are either informal [propositions, idioms,
+  examples, etc.] or unnumbered in Mizar [registrations, reservations,
+  vocabulary declarations, abbreviations, etc.], so I lump them all
+  together with the same counter.
+\end{enumerate}
+
+\subsection*{Dedication}
+I'd like to dedicate this to Roland Freund, Angela Cheer, and Elbridge
+Gerry Puckett, all of whom taught me the blackest of the black arts:
+numerical analysis. ``The old fox never forgets the hillock where he was
+born. If even animals will do such things, then how much more so should
+this be true of human beings?''
+%% ``The old fox never forgets the hillock where he was
+%% born; the white turtle repaid the kindness he had received from Mao
+%% Pao. If even lowly creatures know enough to do this, then how much more
+%% should human beings! What can we say, then, of persons who are devoting
+%% themselves to study? Surely they should not forget the debts of
+%% gratitude they owe to their parents, their teachers, and their
+%% country.''

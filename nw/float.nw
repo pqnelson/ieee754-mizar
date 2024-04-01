@@ -1,0 +1,39 @@
+% -*- mode: poly-noweb; noweb-code-mode: mizar-mode; -*-
+\section*{Overview of Formalization}
+
+The formalization of the IEEE-754 standard broadly consists of the
+environment directives (analogous to C's ``include'' directives to pull
+in Mizar's formalization of real numbers), then some preliminary notions
+like non-integer radix, and so on.
+
+<<TEXT/float-1.miz>>=
+<<License for [[float_1.miz]]>>
+
+<<Environment for [[float_1.miz]]>>
+
+<<Preliminaries>>
+@ 
+
+\subsection*{Vocabulary File}
+We need to tell Mizar the new mathematical terms we will define in this
+article.
+
+<<DICT/float-1.voc>>=
+@ 
+
+\subsection*{License}
+The license for the Mizar Mathematical Library seems to be the same for
+each article, I will just copy it over.
+
+<<License for [[float_1.miz]]>>=
+:: Floating-point Arithmetic
+:: by Alexander M. Nelson
+::
+:: This code can be distributed under the GNU General Public Licence
+:: version 3.0 or later, or the Creative Commons Attribution-ShareAlike
+:: License version 3.0 or later, subject to the binding interpretation
+:: detailed in file COPYING.interpretation.
+:: See COPYING.GPL and COPYING.CC-BY-SA for the full text of these
+:: licenses, or see http://www.gnu.org/licenses/gpl.html and
+:: http://creativecommons.org/licenses/by-sa/3.0/.
+@
