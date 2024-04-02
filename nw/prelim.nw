@@ -13,6 +13,8 @@ begin :: Preliminaries
 <<Reserve: $b$ refers to a valid radix real number>>
 
 <<Theorem: exponent for $b$-expansion of $x$ is $\lfloor\log_{b}(x)\rfloor$>>
+
+<<Theorem: $1\leq x b^{-\lfloor\log_{b}(x)\rfloor}<b$>>
 @
 
 \subsection{Valid radix for a non-integer base of numeration}
@@ -138,36 +140,47 @@ reserve b for valid_radix Real;
 @
 
 \begin{theorem}
-Let $x\in\RR$ be positive, let $N\in\ZZ$ be such that $b^{N}\leq x<b^{N+1}$.
-Then $N=\lfloor\log_{b}(x)\rfloor$.
+Let $x\in\RR$ be positive, let $N\in\ZZ$.
+Then $b^{N}\leq x<b^{N+1}$ if and only if $N=\lfloor\log_{b}(x)\rfloor$.
 \end{theorem}
 
 \begin{proof}[Proof sketch]
+As this is an ``iff'' proof, we will need to provide two proofs (one for
+each direction).
+
+The forward direction is straightforward.
 We will prove that $N\leq\log_{b}(x)$ and $\log_{b}(x)<N+1$, which
 implies the result by definition of $\lfloor-\rfloor$.
+
+The backwards direction
 \end{proof}
 
 <<Theorem: exponent for $b$-expansion of $x$ is $\lfloor\log_{b}(x)\rfloor$>>=
-theorem
+theorem Th1:
   for x being positive Real
   for N being Integer
-  st b to_power N <= x & x < b to_power (N + 1)
-  holds N = [\ log(b, x) /]
+  holds (b to_power N <= x & x < b to_power (N + 1))
+  iff N = [\ log(b, x) /]
 proof
   let x be positive Real;
   let N be Integer;
-  assume A1: b to_power N <= x;
-  assume A2: x < b to_power (N + 1);
-  A3: b <> 1 & b > 1 by Def1;
-
-  A4: N <= log(b, x)
-  <<Subproof: $N\leq\log_{b}(x)$>>
-  log(b,x) < N + 1
-  <<Subproof: $\log_{b}(x)<N+1$>>
-  then log(b,x) - 1 < (N + 1) - 1 by XREAL_1:14;
-  hence thesis by A4, INT_1:def 6;
+  thus (b to_power N <= x & x < b to_power (N + 1)) implies N = [\ log(b, x) /]
+  proof
+    assume A1: b to_power N <= x;
+    assume A2: x < b to_power (N + 1);
+    A3: b <> 1 & b > 1 by Def1;
+    
+    A4: N <= log(b, x)
+    <<Subproof: $N\leq\log_{b}(x)$>>
+    log(b,x) < N + 1
+    <<Subproof: $\log_{b}(x)<N+1$>>
+    then log(b,x) - 1 < (N + 1) - 1 by XREAL_1:14;
+    hence thesis by A4, INT_1:def 6;
+  end;
+  thus N = [\ log(b, x) /] implies (b to_power N <= x & x < b to_power (N + 1))
+  <<Subproof: $N\lfloor\log_{b}(x)\rfloor$ implies $b^{N}\leq x<b^{N+1}$>>
 end;
-@
+@ %def Th1
 
 \begin{proof}[Subproof ($N\leq\log_{b}(x)$)]
 We can consider two cases from the assumption $b^{N}\leq x$: either
@@ -207,3 +220,80 @@ proof
 end;
 @ 
 
+\begin{proof}[Subproof ($N\lfloor\log_{b}(x)\rfloor$ implies $b^{N}\leq x<b^{N+1}$)]
+Assuming $N=\lfloor\log_{b}(x)\rfloor$, we can see that
+$N\leq\lfloor\log_{b}(x)\rfloor<N+1$. Then it's straightforward using
+the properties of exponentiation to see the result.
+\end{proof}
+
+<<Subproof: $N\lfloor\log_{b}(x)\rfloor$ implies $b^{N}\leq x<b^{N+1}$>>=
+proof
+  assume N = [\ log(b, x) /];
+  then N <= log(b, x) & log(b,x) - 1 < N by INT_1:def 6;
+  then N <= log(b, x) & log(b,x) - 1 + 1 < N + 1 by XREAL_1:8;
+  then A1: N <= log(b, x) & log(b, x) < N + 1;
+  A2: b to_power N <= b to_power (log(b,x))
+    & b to_power (log(b,x)) < b to_power (N + 1)
+  proof
+    B1: b > 1 by Def1;
+    thus b to_power N <= b to_power (log(b,x))
+    proof
+      per cases by A1, XXREAL_0:1;
+      suppose N = log(b, x);
+        hence thesis;
+      end;
+      suppose N < log(b, x);
+        hence thesis by B1, POWER:39;
+      end;
+    end;
+    thus b to_power (log(b,x)) < b to_power (N + 1) by A1, B1, POWER:39;
+  end;
+  b > 0 & b <> 1 by Def1;
+  hence (b to_power N <= x & x < b to_power (N + 1)) by A2, POWER:def 3;
+end;
+@ 
+
+\begin{theorem}
+Let $x\in\RR$ be positive. Let $N=\lfloor\log_{b}(x)\rfloor$.
+Then $1\leq x b^{-N}<b$.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+Using the previous theorem, we see that $b^{N}\leq x<b^{N+1}$,
+so multiplying through by $b^{-N}$ yields the results (using a few
+identities involving powers).
+\end{proof}
+
+<<Theorem: $1\leq x b^{-\lfloor\log_{b}(x)\rfloor}<b$>>=
+theorem Th2:
+  for x being positive Real
+  holds 1 <= x * (b to_power (-[\ log(b, x) /]))
+           & x * (b to_power (-[\ log(b, x) /])) < b
+proof
+  let x be positive Real;
+  set N = [\ log(b, x) /];
+  A1: b > 0 & b <> 1 by Def1;
+  A2: b to_power N > 0 by POWER:34;
+  A3: (b to_power N) * (b to_power (- N))
+     = b to_power (N + (- N)) by POWER:27
+    .= 1 by POWER:24;
+
+  thus 1 <= x * (b to_power (- N))
+  proof
+    set z = b to_power N;
+    1 / z = b to_power (- N) by POWER:28;
+    hence 1 <= x * (b to_power (- N)) by A2, A3, Th1, XREAL_1:64;
+  end;
+
+  thus x * (b to_power (- N)) < b
+  proof
+    b to_power (N + 1) = (b to_power 1) * (b to_power N) by POWER:27
+                      .= b * (b to_power N) by POWER:25;
+    then B1: (b to_power (N + 1)) * (b to_power (- N))
+     = b * ((b to_power N) * (b to_power (- N)))
+    .= b by A3;
+    0 < (b to_power (- N)) by POWER:34;
+    hence x * (b to_power (- N)) < b by Th1, B1, XREAL_1:68;
+  end;
+end;
+@ %def Th2

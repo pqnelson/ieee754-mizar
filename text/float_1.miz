@@ -11,7 +11,7 @@
 
 environ
  vocabularies NUMBERS, ORDINAL1, CARD_1, SUBSET_1, XBOOLE_0, ARYTM_2, ARYTM_3,
-   ZFMISC_1, XCMPLX_0, XXREAL_0, TARSKI, FUNCT_7,
+   ZFMISC_1, XCMPLX_0, XXREAL_0, TARSKI, FUNCT_7, RELAT_1,
    REAL_1, INT_1, PREPOWER, POWER, ARYTM_1,
    FLOAT_1;
  notations TARSKI, XBOOLE_0, ZFMISC_1, SUBSET_1, ORDINAL1, ARYTM_2, NUMBERS,
@@ -47,38 +47,99 @@ end;
 
 reserve b for valid_radix Real;
 
-theorem
+theorem Th1:
   for x being positive Real
   for N being Integer
-  st b to_power N <= x & x < b to_power (N + 1)
-  holds N = [\ log(b, x) /]
+  holds (b to_power N <= x & x < b to_power (N + 1))
+  iff N = [\ log(b, x) /]
 proof
   let x be positive Real;
   let N be Integer;
-  assume A1: b to_power N <= x;
-  assume A2: x < b to_power (N + 1);
-  A3: b <> 1 & b > 1 by Def1;
-
-  A4: N <= log(b, x)
+  thus (b to_power N <= x & x < b to_power (N + 1)) implies N = [\ log(b, x) /]
   proof
-    b to_power N = x or b to_power N < x by A1, XXREAL_0:1;
-    then per cases;
-    suppose b to_power N = x;
-      hence thesis by A3, POWER:def 3;
+    assume A1: b to_power N <= x;
+    assume A2: x < b to_power (N + 1);
+    A3: b <> 1 & b > 1 by Def1;
+    
+    A4: N <= log(b, x)
+    proof
+      b to_power N = x or b to_power N < x by A1, XXREAL_0:1;
+      then per cases;
+      suppose b to_power N = x;
+        hence thesis by A3, POWER:def 3;
+      end;
+      suppose A5: b to_power N < x;
+        A6: b to_power N > 0 by POWER:34;
+        then N = log(b, b to_power N) by A3, POWER:def 3;
+        hence thesis by A3, A5, A6, POWER:57;
+      end;
     end;
-    suppose A5: b to_power N < x;
-      A6: b to_power N > 0 by POWER:34;
-      then N = log(b, b to_power N) by A3, POWER:def 3;
-      hence thesis by A3, A5, A6, POWER:57;
+    log(b,x) < N + 1
+    proof
+      b to_power (N + 1) > 0 by POWER:34;
+      then N + 1 = log(b, b to_power (N + 1)) by A3, POWER:def 3;
+      hence log(b,x) < (N+1) by A2, A3, POWER:57;
     end;
+    then log(b,x) - 1 < (N + 1) - 1 by XREAL_1:14;
+    hence thesis by A4, INT_1:def 6;
   end;
-  log(b,x) < N + 1
+  thus N = [\ log(b, x) /] implies (b to_power N <= x & x < b to_power (N + 1))
   proof
-    b to_power (N + 1) > 0 by POWER:34;
-    then N + 1 = log(b, b to_power (N + 1)) by A3, POWER:def 3;
-    hence log(b,x) < (N+1) by A2, A3, POWER:57;
+    assume N = [\ log(b, x) /];
+    then N <= log(b, x) & log(b,x) - 1 < N by INT_1:def 6;
+    then N <= log(b, x) & log(b,x) - 1 + 1 < N + 1 by XREAL_1:8;
+    then A1: N <= log(b, x) & log(b, x) < N + 1;
+    A2: b to_power N <= b to_power (log(b,x))
+      & b to_power (log(b,x)) < b to_power (N + 1)
+    proof
+      B1: b > 1 by Def1;
+      thus b to_power N <= b to_power (log(b,x))
+      proof
+        per cases by A1, XXREAL_0:1;
+        suppose N = log(b, x);
+          hence thesis;
+        end;
+        suppose N < log(b, x);
+          hence thesis by B1, POWER:39;
+        end;
+      end;
+      thus b to_power (log(b,x)) < b to_power (N + 1) by A1, B1, POWER:39;
+    end;
+    b > 0 & b <> 1 by Def1;
+    hence (b to_power N <= x & x < b to_power (N + 1)) by A2, POWER:def 3;
   end;
-  then log(b,x) - 1 < (N + 1) - 1 by XREAL_1:14;
-  hence thesis by A4, INT_1:def 6;
 end;
+
+theorem Th2:
+  for x being positive Real
+  holds 1 <= x * (b to_power (-[\ log(b, x) /]))
+           & x * (b to_power (-[\ log(b, x) /])) < b
+proof
+  let x be positive Real;
+  set N = [\ log(b, x) /];
+  A1: b > 0 & b <> 1 by Def1;
+  A2: b to_power N > 0 by POWER:34;
+  A3: (b to_power N) * (b to_power (- N))
+     = b to_power (N + (- N)) by POWER:27
+    .= 1 by POWER:24;
+
+  thus 1 <= x * (b to_power (- N))
+  proof
+    set z = b to_power N;
+    1 / z = b to_power (- N) by POWER:28;
+    hence 1 <= x * (b to_power (- N)) by A2, A3, Th1, XREAL_1:64;
+  end;
+
+  thus x * (b to_power (- N)) < b
+  proof
+    b to_power (N + 1) = (b to_power 1) * (b to_power N) by POWER:27
+                      .= b * (b to_power N) by POWER:25;
+    then B1: (b to_power (N + 1)) * (b to_power (- N))
+     = b * ((b to_power N) * (b to_power (- N)))
+    .= b by A3;
+    0 < (b to_power (- N)) by POWER:34;
+    hence x * (b to_power (- N)) < b by Th1, B1, XREAL_1:68;
+  end;
+end;
+
 

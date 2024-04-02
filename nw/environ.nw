@@ -21,12 +21,14 @@ the terms are, to distinguish them from identifiers of variables. The
 We begin by importing the vocabularies for the
 extended real number system.
 
+The token ``$-$'' used for subtraction is defined in [[RELAT_1]].
+
 The [[Real]] type and [[Integer]] type are provided by the [[REAL_1]]
 and [[INT_1]] vocabularies.
 
 <<[[float_1.miz]] vocabularies>>=
 vocabularies NUMBERS, ORDINAL1, CARD_1, SUBSET_1, XBOOLE_0, ARYTM_2, ARYTM_3,
-  ZFMISC_1, XCMPLX_0, XXREAL_0, TARSKI, FUNCT_7,
+  ZFMISC_1, XCMPLX_0, XXREAL_0, TARSKI, FUNCT_7, RELAT_1,
   REAL_1, INT_1, PREPOWER, POWER, ARYTM_1,
   FLOAT_1;
 @
