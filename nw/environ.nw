@@ -27,7 +27,7 @@ and [[INT_1]] vocabularies.
 <<[[float_1.miz]] vocabularies>>=
 vocabularies NUMBERS, ORDINAL1, CARD_1, SUBSET_1, XBOOLE_0, ARYTM_2, ARYTM_3,
   ZFMISC_1, XCMPLX_0, XXREAL_0, TARSKI, FUNCT_7,
-  REAL_1, INT_1, PREPOWER, POWER,
+  REAL_1, INT_1, PREPOWER, POWER, ARYTM_1,
   FLOAT_1;
 @
 
@@ -72,7 +72,7 @@ Mizar allows us to simplify various things automatically which are part
 of a mathematician's subconscious, like identifying $\emptyset$ with $0$.
 
 <<[[float_1.miz]] requirements>>=
-requirements REAL, SUBSET, BOOLE, NUMERALS;
+requirements REAL, SUBSET, BOOLE, NUMERALS, ARITHM;
 @ 
 % Equalities
 % Expansions
@@ -83,7 +83,7 @@ When using theorems from other Mizar articles, we need to tell Mizar
 which articles we will be relying on.
 
 <<[[float_1.miz]] theorems>>=
-theorems INT_1, POWER, XXREAL_0;
+theorems INT_1, POWER, XREAL_1, XXREAL_0;
 @ 
 
 \subsection{Schemes}

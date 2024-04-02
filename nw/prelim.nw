@@ -12,7 +12,7 @@ begin :: Preliminaries
 
 <<Reserve: $b$ refers to a valid radix real number>>
 
-<<Theorem: each $x$ has an $N$ such that $b^{N}\leq x<b^{N+1}$>>
+<<Theorem: exponent for $b$-expansion of $x$ is $\lfloor\log_{b}(x)\rfloor$>>
 @
 
 \subsection{Valid radix for a non-integer base of numeration}
@@ -135,59 +135,75 @@ We will use $b$ to refer to any valid radix real number.
 
 <<Reserve: $b$ refers to a valid radix real number>>=
 reserve b for valid_radix Real;
-@ 
+@
 
-\begin{theorem}[Existence]
-For any positive real $x\in\RR$, there exists an integer $N\in\ZZ$
-such that $b^{N}\leq x<b^{N+1}$.
+\begin{theorem}
+Let $x\in\RR$ be positive, let $N\in\ZZ$ be such that $b^{N}\leq x<b^{N+1}$.
+Then $N=\lfloor\log_{b}(x)\rfloor$.
 \end{theorem}
 
-\begin{proof}
-Take $N=\lfloor\log_{b}(x)\rfloor$.
-We see that $x=b^{\log_{b}(x)}$, of course.
-We can relegate the subproof of the claim $b^{N}\leq x$ to its own niche.
-Then we use the fact that $\log_{b}(x)<N+1$ to prove $x<b^{N+1}$.
+\begin{proof}[Proof sketch]
+We will prove that $N\leq\log_{b}(x)$ and $\log_{b}(x)<N+1$, which
+implies the result by definition of $\lfloor-\rfloor$.
 \end{proof}
 
-<<Theorem: each $x$ has an $N$ such that $b^{N}\leq x<b^{N+1}$>>=
+<<Theorem: exponent for $b$-expansion of $x$ is $\lfloor\log_{b}(x)\rfloor$>>=
 theorem
   for x being positive Real
-  ex N being Integer
+  for N being Integer
   st b to_power N <= x & x < b to_power (N + 1)
+  holds N = [\ log(b, x) /]
 proof
   let x be positive Real;
-  take N = [\ log(b, x) /];
-  b > 0 & b <> 1 by Def1; then
-  A1: x = b to_power log(b, x) by POWER:def 3;
-  thus b to_power N <= x
-  <<Subproof: $b^{N}\leq x$>>
-  log(b,x) < N + 1 & b > 1 by Def1, INT_1:29;
-  hence x < b to_power (N + 1) by A1, POWER:39;
+  let N be Integer;
+  assume A1: b to_power N <= x;
+  assume A2: x < b to_power (N + 1);
+  A3: b <> 1 & b > 1 by Def1;
+
+  A4: N <= log(b, x)
+  <<Subproof: $N\leq\log_{b}(x)$>>
+  log(b,x) < N + 1
+  <<Subproof: $\log_{b}(x)<N+1$>>
+  then log(b,x) - 1 < (N + 1) - 1 by XREAL_1:14;
+  hence thesis by A4, INT_1:def 6;
 end;
 @
 
-\begin{proof}[Subproof ($b^{N}\leq x$)]
-This is a proof by cases, since either $N=\log_{b}(x)$ or $N<\log_{b}(x)$.
-
-In the first situation, when $N=\log_{b}(x)$, it immediately follows 
-from the identity $b^{\log_{b}(x)}=x$.
-
-In the second situation, when $N<\log_{b}(x)$, since $b>1$ is a valid radix,
-we obtain the result using Theorem [[POWER:39]] which proves for any
-real numbers $y<z$ and $b>1$ we have $b^{y}<b^{z}$.
+\begin{proof}[Subproof ($N\leq\log_{b}(x)$)]
+We can consider two cases from the assumption $b^{N}\leq x$: either
+$b^{N} = x$ or $b^{N}<x$. In the first case, we find $b^{N}=x$ implies
+$N=\log_{b}(x)$ by the definition of the logarithm. In the second case,
+when $b^{N}<x$, since $b^{N}>0$, we find $N=\log_{b}(b^{N})$ by the law
+of logarithms, and then we obtain the result since Theorem [[POWER:57]]
+proves $\alpha>1$ and $\beta>0$ and $\gamma>\beta$ implies
+$\log_{\alpha}(\gamma) > \log_{\alpha}(\beta)$.
 \end{proof}
 
-<<Subproof: $b^{N}\leq x$>>=
+<<Subproof: $N\leq\log_{b}(x)$>>=
 proof
-  N = log(b,x) or N < log(b,x) by INT_1:25, INT_1:26; then
-  per cases;
-  suppose N = log(b, x);
-    hence thesis by A1;
+  b to_power N = x or b to_power N < x by A1, XXREAL_0:1;
+  then per cases;
+  suppose b to_power N = x;
+    hence thesis by A3, POWER:def 3;
   end;
-  suppose N < log(b, x);
-    then N < log(b,x) & b > 1 by Def1;
-    hence thesis by A1, POWER:39;
+  suppose A5: b to_power N < x;
+    A6: b to_power N > 0 by POWER:34;
+    then N = log(b, b to_power N) by A3, POWER:def 3;
+    hence thesis by A3, A5, A6, POWER:57;
   end;
 end;
-@
+@ 
+
+\begin{proof}[Subproof ($\log_{b}(x)<N+1$)]
+We see that $b>1$, $x>0$, and $x<b^{N+1}$ implies $\log_{b}(x)<N+1$
+thanks to Theorem [[POWER:57]].
+\end{proof}
+
+<<Subproof: $\log_{b}(x)<N+1$>>=
+proof
+  b to_power (N + 1) > 0 by POWER:34;
+  then N + 1 = log(b, b to_power (N + 1)) by A3, POWER:def 3;
+  hence log(b,x) < (N+1) by A2, A3, POWER:57;
+end;
+@ 
 
