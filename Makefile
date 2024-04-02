@@ -1,7 +1,7 @@
 TEX=latex
 BIB=bibtex
 FILE=driver
-NW=nw/float.nw nw/prelim.nw nw/environ.nw
+NW=nw/float.nw nw/prelim.nw nw/definitions.nw nw/formats.nw nw/environ.nw
 NOWEBOPTS=-latex -n
 
 all: doc

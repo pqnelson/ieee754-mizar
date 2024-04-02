@@ -1,0 +1,180 @@
+% -*- mode: poly-noweb; noweb-code-mode: mizar-mode; -*-
+\section{Floating-Point Formats}
+
+\subsection{Overview}
+
+\subsubsection{Formats}
+The basic idea is that we have a ``floating-point format'', which
+``represent'' a finite subset of the extended reals adjoined with a
+special [[NaN]] symbol. The standard explicitly states that ``Formats
+are characterized by their radix, precision, and exponent range'' and
+each format can represent a unique set of ``floating-point data''.
+
+Do not be confused: a floating-point format is uniquely identified by
+its tuple of parameters $(\beta,p,e_{\text{min}}, e_{\text{max}})$
+\emph{but} it refers a set of ``floating-point data'' [i.e., a finite
+subset of the extended reals $\ExtRR$ equipped with the symbol
+\texttt{NaN} and adjoined with a ``signed zero'' $-0$ treated as a
+numeric].
+
+This is then in contrast to a ``representation'' of floating-point data,
+which is the set of triples $(s,e,m)\in\{0,1\}\times\ZZ\times\NN$ within
+the specified range, unioned with the signed infinities and both the
+quiet and signaling NaN constants.
+
+When we have some floating-point format $F(\beta,p,e_{\text{min}}, e_{\text{max}})$ given, we use a
+\emph{rounding function} $R\colon\ExtRR\to F(\beta,p,e_{\text{min}}, e_{\text{max}})$ to map extended real
+numbers to floating-point numbers. This $R$ is surjective on
+$F(\beta,p,e_{\text{min}}, e_{\text{max}})\setminus\{\mathtt{NaN},-0\}$, $R$ must be monotonic, and preserves
+zero $R(0)=+0$ and infinities. There are multiple possible rounding
+functions, the IEEE-754 standard gives us 5 possibilities. These
+rounding functions parametrize the elementary arithmetic operators
+$\star_{R}\colon F\times F\to F$ where
+$\star\in\{+,-,\times,\div,\sqrt{\enspace}\}$. But we are getting ahead
+of ourselves.
+
+\begin{definition}
+We define \define{Signed Zero} to be the term equal to $-0 := (0,0)$.
+\end{definition}
+
+This is in accordance with the Mizar formalization of negative
+numbers. If $n\in\NN$, then $-n\in\ZZ$ is defined as $(0,n)$. If
+$x\in\RR$ is positive, then $-x\in\RR$ is defined as $(0,x)$. It stands
+to reason that $-0$ would be defined following the same
+pattern. However, this has the peculiar quirk that
+$-0=\{\{0\},\{0,0\}\}=\{\{0\}\}=\{1\}$.
+
+<<Definition: $-0$>>=
+definition
+  func -0 -> object equals [0,0];
+  coherence;
+end;
+@ %def -0
+
+\begin{definition}
+We define the symbol \define{NaN} to be the term equal to $\NaN{} := (1,0)$.
+\end{definition}
+
+Since Mizar defines the complex numbers as the set
+\begin{equation}
+\CC = (\hom(\{0,1\},\RR)\setminus\{f\in\hom(\{0,1\},\RR)\mid f(1)=0\})\cup\RR,
+\end{equation}
+where $\hom(A,B)$ is the set of functions $f\colon A\to B$ from the set
+$A$ to the set $B$, this avoids accidental ``collisions'' of
+values. That is to say, $(1,0)$ does not refer to a complex number.
+
+<<Definition: [[NaN]]>>=
+definition
+  func NaN -> object equals [1,0];
+  coherence;
+end;
+@ %def NaN
+
+\begin{definition}
+Let $\beta$ be a valid radix real number, let $p$ be a natural number,
+let $e_{\text{min}}\in\ZZ\cup\{-\infty\}$ and
+$e_{\text{max}}\in\NN\cup\{+\infty\}$ be negative and positive integers
+or infinities.
+We define the set of \define{Floating-Point Numbers} to be the subset
+$\FF_{n}(\beta,p,e_{\text{min}},e_{\text{max}})$ of $\ExtRR$ equal to
+$\{x\in\RR \mid \exists M,e\in\ZZ, x=M\beta^{e-p+1}\land
+|M|\leq\beta^{p}-1\land e_{\text{min}}\leq e\leq e_{\text{max}}\}$.
+\end{definition}
+
+We're allowing the exponents to possible be infinite because other users
+of our formalization may wish to prove results using, e.g., Trefethan
+and Bau's ``idealized floating-point arithmetic'' which has
+$e_{\text{min}}=-\infty$ and $e_{\text{max}}=+\infty$.
+
+We should adhere to Mizar's naming conventions, and use
+[[SCREAMING_SNAKE_CASE]] when defining new sets of numbers. After all,
+we're really defining the set of floating-point numbers here. We will
+use the identifier [[FLOAT]] for the floating-point format, and
+[[Float]] for elements of [[FLOAT]]. We are currently going to define
+the set [[FLOAT_NUMBER]] as a subset of the extended reals.
+
+<<Definition: subset of floating-point numbers for a format>>=
+definition
+  let beta be valid_radix Real;
+  let p be Nat;
+  let eMin be Element of INT \/ {-infty};
+  let eMax be ExtNat;
+  func FLOAT_NUMBER(beta, p, eMin, eMax) -> Subset of ExtREAL equals
+  {x where x is Real : ex M, e being Integer
+   st x = M * (beta to_power (e - p + 1)) & |.M.| <= beta to_power (p-1)
+   & eMin <= e & e <= eMax };
+  coherence;
+end;
+@ %def FLOAT_NUMBER
+
+\begin{definition}
+Let $\beta$ be a valid radix real number, let $p$ be a natural number,
+let $e_{\text{min}}\in\ZZ\cup\{-\infty\}$ and
+$e_{\text{max}}\in\NN\cup\{+\infty\}$ be negative and positive integers
+or infinities.
+We define the \define{Floating-Point Format} to be the set
+$\FF(\beta,p,e_{\text{min}},e_{\text{max}})$ consisting of:
+\begin{enumerate}
+\item for any $x\in\RR$, we have $x\in\FF(\beta,p,e_{\text{min}},e_{\text{max}})$ if and only if there are integers $M$ and $e$ such that
+  $x=M\beta^{e-p}$ and $|M|\leq \beta^{p}-1$ and
+  $e_{\text{min}}\leq e\leq e_{\text{max}}$
+\item $-\infty\in\FF(\beta,p,e_{\text{min}},e_{\text{max}})$
+\item $+\infty\in\FF(\beta,p,e_{\text{min}},e_{\text{max}})$
+\item $\NaN\in\FF(\beta,p,e_{\text{min}},e_{\text{max}})$
+\item $-0\in\FF(\beta,p,e_{\text{min}},e_{\text{max}})$
+\end{enumerate}
+\end{definition}
+
+<<Definition: floating-point format as [[FLOAT]]>>=
+definition
+  let beta be valid_radix Real;
+  let p be Nat;
+  let eMin be Element of INT \/ {-infty};
+  let eMax be ExtNat;
+  func FLOAT(beta, p, eMin, eMax) -> set equals
+  FLOAT_NUMBER(beta, p, eMin, eMax) \/ {+infty, -infty, -0, NaN};
+  coherence;
+end;
+@ %def FLOAT
+
+\begin{definition}
+Let $\beta$ be a valid radix real number, let $p$ be a natural number,
+let $e_{\text{min}}\in\ZZ\cup\{-\infty\}$ and
+$e_{\text{max}}\in\NN\cup\{+\infty\}$ be negative and positive integers
+or infinities.
+We define the set of \define{Floating-Point Representations} to be the
+set $\FF_{r}(\beta,p,e_{\text{min}},e_{\text{max}})$ equal to
+$\{(s,e,m)\in\{0,1\}\times\ZZ\times\NN\mid (-1)^{s}m\times\beta^{e}\in\FF(\beta,p,e_{\text{min}},e_{\text{max}})\lor(s=1,e=m=0)\}\cup\{+\infty,-\infty,\qNaN,\sNaN\}$.
+\end{definition}
+
+This is a little too clever: signed zeros are now treated ``as if'' they
+were a distinct real number (not equal to zero), but infinities as well
+as \qNaN\ and \sNaN\ are treated as formal symbols. It is not until the
+binary encoding do we treat $-\infty$ as $(1,e_{\text{max}},0)$ and
+$+\infty$ as $(0,e_{\text{max}},0)$ (and similarly for the NaNs). We
+should really be doing it \emph{here}, but the IEEE committee felt
+differently. This is how the text read in the 2008 revision, as well.
+
+However, one merit of this approach is that we could formalize a notion
+of representations for ``idealized floating point'' which would take
+$e_{\text{min}}=-\infty$ and $e_{\text{max}}=+\infty$. If we used
+triples exclusively as the definition of a representation, then we'd
+have to allow $e\in\ZZ\cup\{+\infty\}$ and insist $e=+\infty$ be
+reserved for \NaN\ and $\pm\infty$. I'm not sure that's much better.
+
+<<Definition: Floating-point representation>>=
+definition
+  let beta be valid_radix Real;
+  let p be Nat;
+  let eMin be Element of INT \/ {-infty};
+  let eMax be ExtNat;
+  func FLOAT_REP(beta, p, eMin, eMax) -> set equals
+  {[s,e,m] where s is Element of {0,1}, e is Int, m is Nat :
+  (s = 1 & e = 0 & m = 0)
+  or (ex x being Element of FLOAT_NUMBER(beta, p, eMin, eMax)
+      st x = ((-1) |^ s) * m * (beta to_power (e - p + 1)))} 
+  \/ {-infty, +infty, qNaN, sNaN};
+  coherence;
+end;
+@ %def FLOAT_REP
+

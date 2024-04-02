@@ -21,6 +21,7 @@
 \newcommand\NN{\mathbb{N}}
 \newcommand\QQ{\mathbb{Q}}
 \newcommand\RR{\mathbb{R}}
+\newcommand\ExtRR{\overline{\RR}}
 \newcommand\ZZ{\mathbb{Z}}
 \DeclareMathOperator\dom{dom}
 \DeclareMathOperator\rng{rng}
@@ -30,6 +31,33 @@
 \newcommand\into{\hookrightarrow}
 \newcommand\concatenate{^{\frown}}
 
+% floating-point related notation
+\DeclareMathOperator{\fl}{\mathtt{fl}}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\RD}{RD}
+\DeclareMathOperator{\RN}{RN}
+\DeclareMathOperator{\RU}{RU}
+\DeclareMathOperator{\RZ}{RZ}
+\DeclareMathOperator{\XOR}{XOR}
+\DeclareMathOperator{\isNaN}{isNaN}
+\DeclareMathOperator{\isSignaling}{isSignaling}
+\newcommand\NaN{\mbox{\textup{\texttt{NaN}}}}
+\newcommand\qNaN{\mbox{\textup{\texttt{qNaN}}}}
+\newcommand\sNaN{\mbox{\textup{\texttt{sNaN}}}}
+
+\newcommand\roundError{\varepsilon}
+
+\def\machEps{\varepsilon_{\text{mach}}}
+\def\machinePrec{\varepsilon_{\text{prec}}}
+\def\machinePrecision{\machinePrec}
+\def\flLt{\prec}
+\def\flGt{\succ}
+\def\flApprox{\sim}
+\def\flEq{\approx}
+\DeclareMathOperator{\ulp}{ulp}
+\DeclareMathOperator{\ULP}{ULP}
+
+% Image and imaginary numbers
 \let\oldIm\Im
 \renewcommand\Im{\mathop{\mathrm{Im}}\nolimits}
 

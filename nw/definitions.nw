@@ -1,0 +1,33 @@
+% -*- mode: poly-noweb; noweb-code-mode: mizar-mode; -*-
+\section{Definitions, abbreviations, and acronyms}
+
+\subsection{Definitions}
+This is a selection of the vocabulary defined in the Standard, but with
+a number of observations, thoughts, and comments.
+
+\begin{itemize}
+\item Floating-point datum: ``a floating-point number or non-number (NaN)
+  that is representable in a floating-point format.''
+\item Floating-point number: ``a finite or infinite number that is
+  representable in a floating-point format. A floating-point datum that
+  is not a NaN. All floating-point numbers, including zeros and
+  infinities, are signed.'' I am reading
+  this as: an extended real number which is representable exactly in a
+  floating-point format. The problem with this reading is that the real
+  number $0$ is not signed.
+
+  Therefore, I am forced to interpret $+0$ as $0\in\RR$, and $-0$ as a
+  new symbol adjoined to a floating-point format which is treated as a
+  number defined by various identities.
+\item Floating-point representation: ``An unencoded member of a
+  floating-point format, representing a finite number, a signed
+  infinity, a quiet NaN, or a signaling NaN. A representation of a
+  finite number has three components: a sign, an exponent, and a
+  significand; its numerical value is the signed product of its
+  significand and its radix raised to the power of its exponent.''
+  Well, this is ambiguous (``its radix'' presumably means ``the radix of
+  its format'').
+\item Format: ``a set of representations of numerical values and symbols,
+  perhaps accompanied by an encoding.'' But an ``encoding'' is not
+  really defined thus far (it will be defined later in \S3.2 as ``An \emph{encoding} maps a representation of a floating-point datum to a bit string.'').
+\end{itemize}
