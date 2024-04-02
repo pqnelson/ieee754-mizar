@@ -21,10 +21,13 @@ the terms are, to distinguish them from identifiers of variables. The
 We begin by importing the vocabularies for the
 extended real number system.
 
+The [[Real]] type and [[Integer]] type are provided by the [[REAL_1]]
+and [[INT_1]] vocabularies.
+
 <<[[float_1.miz]] vocabularies>>=
 vocabularies NUMBERS, ORDINAL1, CARD_1, SUBSET_1, XBOOLE_0, ARYTM_2, ARYTM_3,
   ZFMISC_1, XCMPLX_0, XXREAL_0, TARSKI, FUNCT_7,
-  REAL_1,
+  REAL_1, INT_1, PREPOWER, POWER,
   FLOAT_1;
 @
 
@@ -39,15 +42,20 @@ found, and uses the type system to discern which definition fits the usage.
 
 <<[[float_1.miz]] notations>>=
 notations TARSKI, XBOOLE_0, ZFMISC_1, SUBSET_1, ORDINAL1, ARYTM_2, NUMBERS,
-  XXREAL_0, XREAL_0;
+  XCMPLX_0, XXREAL_0, XREAL_0, INT_1,
+  PREPOWER, POWER;
 @ 
 
 \subsection{Constructors}
 The constructors directive helps Mizar determine \emph{which} definition
-to use for each term. 
+to use for each term. We need to refer to the elementary arithmetic
+operators defined in [[XCMPLX_0]]. We also need [[Integer]] type defined
+in [[INT_1]]. We rely on definitions found in [[PREPOWER]] and [[POWER]]
+for $x^{y}$.
 
 <<[[float_1.miz]] constructors>>=
-constructors ARYTM_2, NUMBERS, XXREAL_0, XREAL_0;
+constructors ARYTM_2, NUMBERS, XCMPLX_0, XXREAL_0, XREAL_0, INT_1,
+  PREPOWER, POWER;
 @ 
 
 \subsection{Registrations}
@@ -56,7 +64,7 @@ some attributes imply others (e.g., [[natural]] numbers are [[complex]]
 automatically) which are handled by registrations.
 
 <<[[float_1.miz]] registrations>>=
-registrations ORDINAL1, XBOOLE_0, XCMPLX_0, XREAL_0, INT_1, RAT_1;
+registrations ORDINAL1, XBOOLE_0, XCMPLX_0, XXREAL_0, XREAL_0, INT_1, RAT_1;
 @ 
 
 \subsection{Requirements}
@@ -75,7 +83,7 @@ When using theorems from other Mizar articles, we need to tell Mizar
 which articles we will be relying on.
 
 <<[[float_1.miz]] theorems>>=
-theorems XXREAL_0;
+theorems INT_1, POWER, XXREAL_0;
 @ 
 
 \subsection{Schemes}

@@ -9,6 +9,10 @@ begin :: Preliminaries
 <<Cluster: existence of valid radix number>>
 
 <<Registration: valid radix implies positive>>
+
+<<Reserve: $b$ refers to a valid radix real number>>
+
+<<Theorem: each $x$ has an $N$ such that $b^{N}\leq x<b^{N+1}$>>
 @
 
 \subsection{Valid radix for a non-integer base of numeration}
@@ -119,4 +123,71 @@ We need to construct the sequence $\{D_{n}\}_{n\in\NN_{0}}$ consisting
 of the finite sequences $D_{n}=(d_{0},\dots,d_{n})$ so we might use it
 in determining the floating-point number corresponding to $x$ in base
 $\beta$.
+
+Mizar implements $x^{y}$ for any $x,y\in\RR$ as ``[[x to_power y]]'' in
+Definition [[POWER:def 2]]. For our interests, we will be considering
+$\beta^{n}$ for $n\in\ZZ$, which is implemented as ``[[beta #Z n]]''
+as defined in Definition [[PREPOWER:def 3]].
+
+\begin{reserve}
+We will use $b$ to refer to any valid radix real number.
+\end{reserve}
+
+<<Reserve: $b$ refers to a valid radix real number>>=
+reserve b for valid_radix Real;
+@ 
+
+\begin{theorem}[Existence]
+For any positive real $x\in\RR$, there exists an integer $N\in\ZZ$
+such that $b^{N}\leq x<b^{N+1}$.
+\end{theorem}
+
+\begin{proof}
+Take $N=\lfloor\log_{b}(x)\rfloor$.
+We see that $x=b^{\log_{b}(x)}$, of course.
+We can relegate the subproof of the claim $b^{N}\leq x$ to its own niche.
+Then we use the fact that $\log_{b}(x)<N+1$ to prove $x<b^{N+1}$.
+\end{proof}
+
+<<Theorem: each $x$ has an $N$ such that $b^{N}\leq x<b^{N+1}$>>=
+theorem
+  for x being positive Real
+  ex N being Integer
+  st b to_power N <= x & x < b to_power (N + 1)
+proof
+  let x be positive Real;
+  take N = [\ log(b, x) /];
+  b > 0 & b <> 1 by Def1; then
+  A1: x = b to_power log(b, x) by POWER:def 3;
+  thus b to_power N <= x
+  <<Subproof: $b^{N}\leq x$>>
+  log(b,x) < N + 1 & b > 1 by Def1, INT_1:29;
+  hence x < b to_power (N + 1) by A1, POWER:39;
+end;
+@
+
+\begin{proof}[Subproof ($b^{N}\leq x$)]
+This is a proof by cases, since either $N=\log_{b}(x)$ or $N<\log_{b}(x)$.
+
+In the first situation, when $N=\log_{b}(x)$, it immediately follows 
+from the identity $b^{\log_{b}(x)}=x$.
+
+In the second situation, when $N<\log_{b}(x)$, since $b>1$ is a valid radix,
+we obtain the result using Theorem [[POWER:39]] which proves for any
+real numbers $y<z$ and $b>1$ we have $b^{y}<b^{z}$.
+\end{proof}
+
+<<Subproof: $b^{N}\leq x$>>=
+proof
+  N = log(b,x) or N < log(b,x) by INT_1:25, INT_1:26; then
+  per cases;
+  suppose N = log(b, x);
+    hence thesis by A1;
+  end;
+  suppose N < log(b, x);
+    then N < log(b,x) & b > 1 by Def1;
+    hence thesis by A1, POWER:39;
+  end;
+end;
+@
 
