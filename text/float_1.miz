@@ -21,7 +21,8 @@ environ
    PREPOWER, POWER;
  registrations ORDINAL1, XBOOLE_0, XCMPLX_0, XXREAL_0, XREAL_0, INT_1, RAT_1;
  requirements REAL, SUBSET, BOOLE, NUMERALS, ARITHM;
- theorems INT_1, POWER, XREAL_1, XXREAL_0;
+ theorems ENUMSET1, INT_1, NUMBERS, ORDINAL1, POWER, TARSKI, XBOOLE_0,
+   XREAL_1, XXREAL_0, XTUPLE_0, ZFMISC_1;
 
 begin :: Preliminaries
 
@@ -143,3 +144,37 @@ proof
 end;
 
 
+begin :: 3. Floating-point formats
+
+definition
+  func -0 -> object equals [0,0];
+  coherence;
+end;
+
+theorem Th4:
+  -0 <> +infty & -0 <> -infty
+proof
+  A1: 0 in REAL by NUMBERS:19, TARSKI:def 3;
+  +infty = [0,0] implies contradiction
+  proof
+    assume +infty = [0,0];
+    then +infty = {{0},{0,0}} by TARSKI:def 5
+               .= {{0}, {0}} by ENUMSET1:29
+               .= {{0}} by ENUMSET1:29;
+    hence contradiction by A1, TARSKI:def 1, XXREAL_0:def 2, ORDINAL1:def 13;
+  end;
+  hence -0 <> +infty;
+  -infty = [0,0] implies contradiction
+  by A1, XXREAL_0:def 3, XTUPLE_0:1, ORDINAL1:def 13;
+  hence thesis;
+end;
+
+theorem
+  not -0 in ExtREAL
+proof
+  A1: not -0 in REAL by NUMBERS:def 1, ZFMISC_1:56;
+  not -0 in {+infty, -infty} by Th4, TARSKI:def 2;
+  then not (-0 in REAL or -0 in {+infty, -infty}) by A1;
+  then not -0 in REAL \/ {+infty, -infty} by XBOOLE_0:def 3;
+  hence thesis by NUMBERS:def 5, XXREAL_0:def 2, XXREAL_0:def 3;
+end;

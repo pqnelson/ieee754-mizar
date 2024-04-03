@@ -85,7 +85,8 @@ When using theorems from other Mizar articles, we need to tell Mizar
 which articles we will be relying on.
 
 <<[[float_1.miz]] theorems>>=
-theorems INT_1, POWER, XREAL_1, XXREAL_0;
+theorems ENUMSET1, INT_1, NUMBERS, ORDINAL1, POWER, TARSKI, XBOOLE_0,
+  XREAL_1, XXREAL_0, XTUPLE_0, ZFMISC_1;
 @ 
 
 \subsection{Schemes}
