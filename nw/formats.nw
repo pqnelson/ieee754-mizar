@@ -9,6 +9,20 @@ begin :: 3. Floating-point formats
 <<Theorem: $-0\neq+\infty$ and $-0\neq-\infty$>>
 
 <<Theorem: $-0\notin\ExtRR$>>
+
+<<Lemma: $\forall n\in\NN, (n,0)\notin\QQ_{+}$>>
+
+<<Lemma: $\forall a,b\in\NN, a=\{b\}\implies b=0$>>
+
+<<Lemma: $\forall i\in\NN,i\neq0\implies\{i\}\notin\QQ_{+}$>>
+
+<<Lemma: For all $i\in\NN$, $(i,0)$ is not a Dedekind cut>>
+
+<<Theorem: $\forall n\in\NN_{0},(n,0)\notin\RR$>>
+
+<<Definition: [[NaN]]>>
+
+<<Theorem: $\NaN\notin\RR$>>
 @ 
 
 \subsection{Overview}
@@ -108,7 +122,7 @@ proof
 end;
 @ 
 
-\begin{theorem}
+\begin{theorem}\label{thm:formats:-0-is-not-real}
 Signed zero is not an element of the extended reals $-0\notin\ExtRR$.
 \end{theorem}
 
@@ -118,7 +132,7 @@ that $-0\notin\RR$. The result follows immediately.
 \end{proof}
 
 <<Theorem: $-0\notin\ExtRR$>>=
-theorem
+theorem Th5:
   not -0 in ExtREAL
 proof
   A1: not -0 in REAL by NUMBERS:def 1, ZFMISC_1:56;
@@ -127,18 +141,180 @@ proof
   then not -0 in REAL \/ {+infty, -infty} by XBOOLE_0:def 3;
   hence thesis by NUMBERS:def 5, XXREAL_0:def 2, XXREAL_0:def 3;
 end;
-@ 
+@ %def Th5
+
+\begin{lemma}
+There is no natural number $n\in\NN$ such that $(n,0)\in\QQ_{+}$, i.e.,
+the ordered pair $(n,0)$ is not a positive rational number.
+\end{lemma}
+
+Lemmas are ``private theorems'' which are used to carve out
+uninteresting and lengthy subproofs. We will need 4 lemmas to prove
+$(n,0)\notin\RR$. 
+
+\begin{proof}[Proof sketch]
+Assume for contradiction $(n,0)\in\QQ_{+}$. But rational numbers are
+either natural numbers or pairs of natural numbers $(a,b)$ such that
+$b\neq0$ and $b\neq1$. However, $(n,0)\notin\NN$, which means that
+$(a,b)=(n,0)$ and this gives us the contradiction --- $b=0$ and $b\neq0$.
+\end{proof}
+
+<<Lemma: $\forall n\in\NN, (n,0)\notin\QQ_{+}$>>=
+Lm1:
+  for n being Nat
+  holds not [n,0] in RAT+
+proof
+  let n be Nat;
+  assume A1: [n,0] in RAT+;
+  n in omega by ORDINAL1:def 12;
+  then 0 <> {} by A1, ARYTM_3:33;
+  hence contradiction by ORDINAL1:def 13;
+end;
+@ %def Lm1
+
+\begin{lemma}
+Let $a,b\in\NN$. If $a=\{b\}$, then $b=0$.
+\end{lemma}
+
+\begin{proof}[Proof sketch]
+Assume $a=\{b\}$. Then there exists a natural number $c$ such that
+$a=c\cup\{c\}$.
+But then this means $\{b\}=\{c\}\cup c$ which forces $c=0$, and
+therefore $b=0$.
+\end{proof}
+
+<<Lemma: $\forall a,b\in\NN, a=\{b\}\implies b=0$>>=
+Lm2:
+  for a,b being Nat
+  st a = {b}
+  holds b = {}
+proof
+  let a,b be Nat;
+  assume A1: a = {b};
+  then consider c being Nat such that
+  A2: a = succ c by CARD_1:36;
+  {b} = c \/ {c} by A1, A2, ORDINAL1:def 1;
+  then c = {} by ZFMISC_1:38, ZFMISC_1:140;
+  then a = {} \/ {{}} by A2, ORDINAL1:def 1;
+  hence thesis by A1, ZFMISC_1:3;
+end;
+@ %def Lm2
+
+\begin{lemma}
+Let $i\in\NN$ be a nonzero natural number $i\neq0$. Then the singleton
+consisting of $i$ is not a positive rational number
+$\{i\}\notin\QQ_{+}$.
+\end{lemma}
+
+\begin{proof}[Proof sketch]
+Assume $i\neq0$. This is another proof by contradiction. Assume
+$\{i\}\in\QQ_{+}$. Then either $\{i\}\in\NN$ (which leads to
+$0\in\{i\}$, i.e., $0=i$ --- a contradiction) or there exists natural
+numbers $a,b\in\NN$ such that they are coprime and $b\neq0$ and $b\neq1$
+and $\{i\}=(a,b)$.
+But then this implies $a=b$ and $\{i\}=\{\{b\}\}$, which means $i=\{b\}$
+and by our previous lemma $b=0$ --- contradicting the requirement $b\neq0$.
+\end{proof}
+
+<<Lemma: $\forall i\in\NN,i\neq0\implies\{i\}\notin\QQ_{+}$>>=
+Lm3:
+  for i being Nat st i <> 0
+  holds not {i} in RAT+
+proof
+  let i be Nat such that
+  A1: i <> 0;
+  assume A2: {i} in RAT+;
+  then per cases by ARYTM_3:29;
+  suppose {i} in omega;
+    then {} in {i} by ORDINAL3:8;
+    hence contradiction by A1, ORDINAL1:def 13, TARSKI:def 1;
+  end;
+  suppose ex a,b being Element of omega st ({i} = [a,b] &
+    a,b are_coprime & b <> {} & b <> 1);
+    then consider a,b being Element of omega such that
+    A3: ({i} = [a,b] & a,b are_coprime & b <> {} & b <> 1);
+    {i} = {{a}, {a,b}} by A3, TARSKI:def 5;
+    then {a} = {a,b} by ZFMISC_1:5;
+    then A4: a = b by ZFMISC_1:5;
+    then {i} = {{b}, {b,b}} by A3, TARSKI:def 5
+            .= {{b}, {b}} by ENUMSET1:29
+            .= {{b}} by ENUMSET1:29;
+    hence contradiction by A3, Lm2, ZFMISC_1:3;
+  end;
+end;
+@ %def Lm3
+
+\begin{lemma}
+For any nonzero natural number $i\in\NN$,
+we have the ordered pair $(i,0)$ is not a Dedekind cut.
+\end{lemma}
+
+\begin{proof}[Proof sketch]
+If $(i,0)$ were a Dedekind cut, then this would force the singleton
+consisting of $i$ to be a positive rational number
+$\{i\}\in\QQ_{+}$. This contradicts the previous lemma.
+\end{proof}
+
+<<Lemma: For all $i\in\NN$, $(i,0)$ is not a Dedekind cut>>=
+Lm4:
+  for i being Nat st i <> 0
+  holds not [i,0] in DEDEKIND_CUTS
+proof
+  let i be Nat such that
+  A1: i <> 0;
+  assume [i,0] in DEDEKIND_CUTS;
+  then [i,0] in {A where A is Subset of RAT+ : for r being Element of RAT+
+  st r in A holds ((for s being Element of RAT+ st s <=' r holds s in A)
+                   & ex s being Element of RAT+ st (s in A & r < s)) }
+  by ARYTM_2:def 1;
+  then consider A being Subset of RAT+ such that
+  A2: [i,0] = A
+    & for r being Element of RAT+ st r in A
+      holds (for s being Element of RAT+ st s <=' r holds s in A)
+          & ex s being Element of RAT+ st s in A & r < s;
+  A = {{i}, {i,0}} by A2, TARSKI:def 5;
+  then {i} in RAT+ & {i,0} in RAT+ by ZFMISC_1:32;
+  hence contradiction by A1, Lm3;
+end;
+@ %def Lm4
 
 \begin{theorem}
-There is no natural number $n\in\NN$ such that $(n,0)\in\QQ$.
+For all $n\in\NN_{0}$, we have $(n,0)\notin\RR$.
 \end{theorem}
+
+\begin{proof}[Proof sketch]
+We have proven the $n=0$ case already in
+Theorem~\ref{thm:formats:-0-is-not-real}, so we just need to consider
+the nonzero case. If $(n,0)$ were a positive real number, then either it
+is a positive rational number $(n,0)\in\QQ_{+}$ or it is a Dedekind cut (which we know is false
+thanks to our lemmas). We can see that $(n,0)$ cannot be a negative real
+number, otherwise there would exists a positive real $x\in\RR_{+}$ such
+that $(n,0)=(0,x)$ since that's how we encoded $-x=(0,x)$. But this
+means the first components of the ordered pairs would be equal, $n=0$,
+which contradicts the assumption that $n\neq0$.
+\end{proof}
 
 This will be important because we're going to encode \NaN, \qNaN, \sNaN,
 as $(n,0)$ for $n\geq1$. This basically uses Theorem [[ARYTM_3:33]].
 
-\begin{theorem}
-For all positive $n\in\NN$, we have $(n,0)\notin\RR$.
-\end{theorem}
+<<Theorem: $\forall n\in\NN_{0},(n,0)\notin\RR$>>=
+theorem Th6:
+  for i being Nat
+  holds not [i,0] in REAL
+proof
+  let i be Nat;
+  per cases;
+  suppose i = 0;
+    hence thesis by Th5, NUMBERS:def 5, XBOOLE_0:def 3;
+  end;
+  suppose A1: i <> 0;
+    then not ([i,0] in RAT+ or [i,0] in DEDEKIND_CUTS) by Lm1,Lm4;
+    then A2: not [i,0] in REAL+ by ARYTM_2:def 2, XBOOLE_0:def 3;
+    not [i,0] in [:{0},REAL+:] by A1, ZFMISC_1:105;
+    hence thesis by A2, XBOOLE_0:def 3, NUMBERS:def 1;
+  end;
+end;
+@ %def Th6
 
 \begin{definition}
 We define the symbol \define{NaN} to be the term equal to $\NaN{} := (1,0)$.
@@ -158,6 +334,23 @@ definition
   coherence;
 end;
 @ %def NaN
+
+\begin{voc}
+We tell Mizar to expect [[NaN]] to be recognized as a token for a term.
+\end{voc}
+
+<<DICT/float-1.voc>>=
+ONaN
+@ 
+
+\begin{theorem}
+We see that $\NaN\notin\RR$.
+\end{theorem}
+
+<<Theorem: $\NaN\notin\RR$>>=
+theorem
+  not NaN in REAL by Th6;
+@ 
 
 \begin{definition}
 Let $\beta$ be a valid radix real number, let $p$ be a natural number,

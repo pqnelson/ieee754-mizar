@@ -29,7 +29,7 @@ and [[INT_1]] vocabularies.
 <<[[float_1.miz]] vocabularies>>=
 vocabularies NUMBERS, ORDINAL1, CARD_1, SUBSET_1, XBOOLE_0, ARYTM_2, ARYTM_3,
   ZFMISC_1, XCMPLX_0, XXREAL_0, TARSKI, FUNCT_7, RELAT_1,
-  REAL_1, INT_1, PREPOWER, POWER, ARYTM_1,
+  REAL_1, INT_1, PREPOWER, POWER, ARYTM_1, NAT_1,
   FLOAT_1;
 @
 
@@ -43,8 +43,8 @@ The notations directive lists articles where the definitions may be
 found, and uses the type system to discern which definition fits the usage.
 
 <<[[float_1.miz]] notations>>=
-notations TARSKI, XBOOLE_0, ZFMISC_1, SUBSET_1, ORDINAL1, ARYTM_2, NUMBERS,
-  XCMPLX_0, XXREAL_0, XREAL_0, INT_1,
+notations TARSKI, XBOOLE_0, ZFMISC_1, SUBSET_1, ORDINAL1, ARYTM_2, ARYTM_3,
+  NUMBERS, XCMPLX_0, XXREAL_0, XREAL_0, INT_1,
   PREPOWER, POWER;
 @ 
 
@@ -56,7 +56,7 @@ in [[INT_1]]. We rely on definitions found in [[PREPOWER]] and [[POWER]]
 for $x^{y}$.
 
 <<[[float_1.miz]] constructors>>=
-constructors ARYTM_2, NUMBERS, XCMPLX_0, XXREAL_0, XREAL_0, INT_1,
+constructors ARYTM_2, ARYTM_3, NUMBERS, XCMPLX_0, XXREAL_0, XREAL_0, INT_1,
   PREPOWER, POWER;
 @ 
 
@@ -85,8 +85,8 @@ When using theorems from other Mizar articles, we need to tell Mizar
 which articles we will be relying on.
 
 <<[[float_1.miz]] theorems>>=
-theorems ENUMSET1, INT_1, NUMBERS, ORDINAL1, POWER, TARSKI, XBOOLE_0,
-  XREAL_1, XXREAL_0, XTUPLE_0, ZFMISC_1;
+theorems ARYTM_2, ARYTM_3, CARD_1, ENUMSET1, INT_1, NUMBERS, ORDINAL1, ORDINAL2, ORDINAL3, POWER,
+  TARSKI, XBOOLE_0, XREAL_1, XXREAL_0, XTUPLE_0, ZFMISC_1;
 @ 
 
 \subsection{Schemes}

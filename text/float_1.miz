@@ -12,17 +12,17 @@
 environ
  vocabularies NUMBERS, ORDINAL1, CARD_1, SUBSET_1, XBOOLE_0, ARYTM_2, ARYTM_3,
    ZFMISC_1, XCMPLX_0, XXREAL_0, TARSKI, FUNCT_7, RELAT_1,
-   REAL_1, INT_1, PREPOWER, POWER, ARYTM_1,
+   REAL_1, INT_1, PREPOWER, POWER, ARYTM_1, NAT_1,
    FLOAT_1;
- notations TARSKI, XBOOLE_0, ZFMISC_1, SUBSET_1, ORDINAL1, ARYTM_2, NUMBERS,
-   XCMPLX_0, XXREAL_0, XREAL_0, INT_1,
+ notations TARSKI, XBOOLE_0, ZFMISC_1, SUBSET_1, ORDINAL1, ARYTM_2, ARYTM_3,
+   NUMBERS, XCMPLX_0, XXREAL_0, XREAL_0, INT_1,
    PREPOWER, POWER;
- constructors ARYTM_2, NUMBERS, XCMPLX_0, XXREAL_0, XREAL_0, INT_1,
+ constructors ARYTM_2, ARYTM_3, NUMBERS, XCMPLX_0, XXREAL_0, XREAL_0, INT_1,
    PREPOWER, POWER;
  registrations ORDINAL1, XBOOLE_0, XCMPLX_0, XXREAL_0, XREAL_0, INT_1, RAT_1;
  requirements REAL, SUBSET, BOOLE, NUMERALS, ARITHM;
- theorems ENUMSET1, INT_1, NUMBERS, ORDINAL1, POWER, TARSKI, XBOOLE_0,
-   XREAL_1, XXREAL_0, XTUPLE_0, ZFMISC_1;
+ theorems ARYTM_2, ARYTM_3, CARD_1, ENUMSET1, INT_1, NUMBERS, ORDINAL1, ORDINAL2, ORDINAL3, POWER,
+   TARSKI, XBOOLE_0, XREAL_1, XXREAL_0, XTUPLE_0, ZFMISC_1;
 
 begin :: Preliminaries
 
@@ -169,7 +169,7 @@ proof
   hence thesis;
 end;
 
-theorem
+theorem Th5:
   not -0 in ExtREAL
 proof
   A1: not -0 in REAL by NUMBERS:def 1, ZFMISC_1:56;
@@ -178,3 +178,101 @@ proof
   then not -0 in REAL \/ {+infty, -infty} by XBOOLE_0:def 3;
   hence thesis by NUMBERS:def 5, XXREAL_0:def 2, XXREAL_0:def 3;
 end;
+
+Lm1:
+  for n being Nat
+  holds not [n,0] in RAT+
+proof
+  let n be Nat;
+  assume A1: [n,0] in RAT+;
+  n in omega by ORDINAL1:def 12;
+  then 0 <> {} by A1, ARYTM_3:33;
+  hence contradiction by ORDINAL1:def 13;
+end;
+
+Lm2:
+  for a,b being Nat
+  st a = {b}
+  holds b = {}
+proof
+  let a,b be Nat;
+  assume A1: a = {b};
+  then consider c being Nat such that
+  A2: a = succ c by CARD_1:36;
+  {b} = c \/ {c} by A1, A2, ORDINAL1:def 1;
+  then c = {} by ZFMISC_1:38, ZFMISC_1:140;
+  then a = {} \/ {{}} by A2, ORDINAL1:def 1;
+  hence thesis by A1, ZFMISC_1:3;
+end;
+
+Lm3:
+  for i being Nat st i <> 0
+  holds not {i} in RAT+
+proof
+  let i be Nat such that
+  A1: i <> 0;
+  assume A2: {i} in RAT+;
+  then per cases by ARYTM_3:29;
+  suppose {i} in omega;
+    then {} in {i} by ORDINAL3:8;
+    hence contradiction by A1, ORDINAL1:def 13, TARSKI:def 1;
+  end;
+  suppose ex a,b being Element of omega st ({i} = [a,b] &
+    a,b are_coprime & b <> {} & b <> 1);
+    then consider a,b being Element of omega such that
+    A3: ({i} = [a,b] & a,b are_coprime & b <> {} & b <> 1);
+    {i} = {{a}, {a,b}} by A3, TARSKI:def 5;
+    then {a} = {a,b} by ZFMISC_1:5;
+    then A4: a = b by ZFMISC_1:5;
+    then {i} = {{b}, {b,b}} by A3, TARSKI:def 5
+            .= {{b}, {b}} by ENUMSET1:29
+            .= {{b}} by ENUMSET1:29;
+    hence contradiction by A3, Lm2, ZFMISC_1:3;
+  end;
+end;
+
+Lm4:
+  for i being Nat st i <> 0
+  holds not [i,0] in DEDEKIND_CUTS
+proof
+  let i be Nat such that
+  A1: i <> 0;
+  assume [i,0] in DEDEKIND_CUTS;
+  then [i,0] in {A where A is Subset of RAT+ : for r being Element of RAT+
+  st r in A holds ((for s being Element of RAT+ st s <=' r holds s in A)
+                   & ex s being Element of RAT+ st (s in A & r < s)) }
+  by ARYTM_2:def 1;
+  then consider A being Subset of RAT+ such that
+  A2: [i,0] = A
+    & for r being Element of RAT+ st r in A
+      holds (for s being Element of RAT+ st s <=' r holds s in A)
+          & ex s being Element of RAT+ st s in A & r < s;
+  A = {{i}, {i,0}} by A2, TARSKI:def 5;
+  then {i} in RAT+ & {i,0} in RAT+ by ZFMISC_1:32;
+  hence contradiction by A1, Lm3;
+end;
+
+theorem Th6:
+  for i being Nat
+  holds not [i,0] in REAL
+proof
+  let i be Nat;
+  per cases;
+  suppose i = 0;
+    hence thesis by Th5, NUMBERS:def 5, XBOOLE_0:def 3;
+  end;
+  suppose A1: i <> 0;
+    then not ([i,0] in RAT+ or [i,0] in DEDEKIND_CUTS) by Lm1,Lm4;
+    then A2: not [i,0] in REAL+ by ARYTM_2:def 2, XBOOLE_0:def 3;
+    not [i,0] in [:{0},REAL+:] by A1, ZFMISC_1:105;
+    hence thesis by A2, XBOOLE_0:def 3, NUMBERS:def 1;
+  end;
+end;
+
+definition
+  func NaN -> object equals [1,0];
+  coherence;
+end;
+
+theorem
+  not NaN in REAL by Th6;
