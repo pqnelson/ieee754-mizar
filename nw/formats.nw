@@ -371,6 +371,24 @@ theorem
   not NaN in ExtREAL by Th6;
 @ 
 
+\begin{reserve}
+We will reserve $p$ for some positive natural number, $e_{\text{min}}$
+for a negative integer smaller than $-1$ (possibly equal to $-\infty$),
+$e_{\text{max}}$ for a positive integer or $+\infty$.
+\end{reserve}
+
+The rationale for $e_{\text{min}}<-1$ is that subnormal floating-point
+numbers don't exist for $e_{\text{min}}=-1$ or
+$e_{\text{min}}=0$. Actually, this isn't true, it works fine even if we
+take $e_{\text{min}}=0$.
+
+<<Reserve: parameters for floating-point format>>=
+reserve beta for valid_radix Real;
+reserve p for positive Nat;
+reserve eMin for Element of [:{0},NAT \ {0,1}:] \/ {-infty};
+reserve eMax for positive ExtNat;
+@ 
+
 \begin{definition}
 Let $\beta$ be a valid radix real number, let $p$ be a natural number,
 let $e_{\text{min}}\in\ZZ\cup\{-\infty\}$ and
@@ -396,10 +414,7 @@ the set [[FLOAT_NUMBER]] as a subset of the extended reals.
 
 <<Definition: subset of floating-point numbers for a format>>=
 definition
-  let beta be valid_radix Real;
-  let p be Nat;
-  let eMin be Element of INT \/ {-infty};
-  let eMax be ExtNat;
+  let beta, p, eMin, eMax;
   func FLOAT_NUMBER(beta, p, eMin, eMax) -> Subset of ExtREAL equals
   {x where x is Real : ex M, e being Integer
    st x = M * (beta to_power (e - p + 1)) & |.M.| <= beta to_power (p-1)
@@ -428,15 +443,123 @@ $\FF(\beta,p,e_{\text{min}},e_{\text{max}})$ consisting of:
 
 <<Definition: floating-point format as [[FLOAT]]>>=
 definition
-  let beta be valid_radix Real;
-  let p be Nat;
-  let eMin be Element of INT \/ {-infty};
-  let eMax be ExtNat;
+  let beta, p, eMin, eMax;
   func FLOAT(beta, p, eMin, eMax) -> set equals
   FLOAT_NUMBER(beta, p, eMin, eMax) \/ {+infty, -infty, -0, NaN};
   coherence;
 end;
 @ %def FLOAT
+
+
+\begin{theorem}
+The smallest positive floating-point number for
+$\FF(b,p,e_{\text{min}},e_{\text{max}})$ is $b^{e_{\text{min}}-p+1}$.
+\end{theorem}
+
+<<Theorem: smallest floating-point number>>=
+theorem
+  for x being Element of FLOAT_NUMBER(b, p, eMin, eMax)
+  st x > 0
+  holds b to_power (eMin - p + 1) <= x;
+@
+
+\begin{theorem}
+Every floating-point number in
+$\FF(b,p,e_{\text{min}},e_{\text{max}})$ is an integer multiple of
+$b^{e_{\text{min}}-p+1}$.
+\end{theorem}
+
+The standard says this in passing, but doesn't prove it.
+
+<<Theorem: floating-point numbers are integer multiples of $b^{e_{\text{min}}-p+1}$>>=
+theorem
+  for x being Element of FLOAT_NUMBER(b, p, eMin, eMax)
+  ex n being Int
+  st n*(b to_power (eMin - p + 1)) = x;
+@
+
+\begin{definition}
+Let $x$ be a floating-point datum belonging to the format $\FF(b,p,e_{\text{min}},e_{\text{max}})$.
+We say $x$ is \define{Normal} if its magnitude lies between
+$b^{e_{\text{min}}}\leq|x|\leq b^{e_{\text{max}}}\cdot(b-b^{1-p})$.
+\end{definition}
+
+This definition gives us a peculiar situation: zero is not a normal
+floating-point number. Neither is it a subnormal number (which are
+defined to be nonzero). Perhaps there is a good rationale for this, but
+it seems unintuitive that $0$ is not normal.
+
+<<Definition: normal floating-point number>>=
+definition
+  let b, p, eMin, eMax;
+  let IT be Element of FLOAT(b,p,eMin,eMax);
+  attr IT is normal means
+  ex x being Real st x = IT
+  & beta to_power eMin <= |.x.|
+  & |.x.| <= (b to_power eMax)*(b - (b to_power (1 - p)));
+end;
+@ %def normal
+
+\begin{registration}
+Observe there exists a normal floating-point datum (take $b^{e_{\text{min}}}$).
+\end{registration}
+
+<<Register: normal floating-point datum>>=
+registration
+  let b, p, eMin, eMax;
+  cluster normal for Element of FLOAT(b,p,eMin,eMax);
+  existence
+  proof
+    eMax >= 1;
+    A1: (b to_power eMax)*(b - (b to_power (1 - p))) >= b*(b - 1);
+
+    take x = b to_power eMin;
+    :: x <= 1 & b*(b - 1) > 1;
+    |.x.| <= b*(b - 1);
+    hence |.x.| <= (b to_power eMax)*(b - (b to_power (1 - p))) by A1;
+
+    thus b to_power eMin <= |.x.|;
+  end;
+end;
+@ 
+
+\begin{definition}
+Let $x$ be a floating-point datum belonging to the format $\FF(b,p,e_{\text{min}},e_{\text{max}})$.
+We say $x$ is \define{Subnormal} if its magnitude lies between
+$0<|x|<b^{e_{\text{min}}}$.
+\end{definition}
+
+<<Definition: subnormal floating-point datum>>=
+definition
+  let b, p, eMin, eMax;
+  let IT be Element of FLOAT(b,p,eMin,eMax);
+  attr IT is subnormal means
+  ex x being Real st x = IT
+  & 0 < |.x.|
+  & |.x.| < b to_power eMin;
+end;
+@ %def subnormal
+
+\begin{registration}
+Observe that $b^{e_{\text{min}}-p+1}$ is a subnormal floating-point number.
+\end{registration}
+
+<<Register: subnormal for floating-point numbers>>=
+registration
+  let b, p, eMin, eMax;
+  cluster normal for Element of FLOAT(b,p,eMin,eMax);
+  existence
+  proof
+    set M = 1, e = eMin;
+    set x = M * (b to_power (e - p + 1));
+    x in FLOAT_NUMBER(b,p,eMin,eMax);
+    then reconsider f=x as Element of FLOAT(b,p,eMin,eMax);
+    take f;
+    0 < |.x.| & |.x.| < b to_power eMin;
+    hence thesis;
+  end;
+end;
+@ 
 
 \begin{definition}
 Let $\beta$ be a valid radix real number, let $p$ be a natural number,
@@ -465,10 +588,7 @@ reserved for \NaN\ and $\pm\infty$. I'm not sure that's much better.
 
 <<Definition: Floating-point representation>>=
 definition
-  let beta be valid_radix Real;
-  let p be Nat;
-  let eMin be Element of INT \/ {-infty};
-  let eMax be ExtNat;
+  let beta, p, eMin, eMax;
   func FLOAT_REP(beta, p, eMin, eMax) -> set equals
   {[s,e,m] where s is Element of {0,1}, e is Int, m is Nat :
   (s = 1 & e = 0 & m = 0)
