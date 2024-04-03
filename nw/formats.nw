@@ -6,7 +6,7 @@ begin :: 3. Floating-point formats
 
 <<Definition: $-0$>>
 
-<<Theorem: $-0\neq+\infty$ and $-0\neq-\infty$>>
+<<Theorem: for $n\in\NN$, $(n,0)\neq+\infty$ and $(n,0)\neq-\infty$>>
 
 <<Theorem: $-0\notin\ExtRR$>>
 
@@ -18,11 +18,11 @@ begin :: 3. Floating-point formats
 
 <<Lemma: For all $i\in\NN$, $(i,0)$ is not a Dedekind cut>>
 
-<<Theorem: $\forall n\in\NN_{0},(n,0)\notin\RR$>>
+<<Theorem: $\forall n\in\NN_{0},(n,0)\notin\ExtRR$>>
 
 <<Definition: [[NaN]]>>
 
-<<Theorem: $\NaN\notin\RR$>>
+<<Theorem: $\NaN\notin\ExtRR$>>
 @ 
 
 \subsection{Overview}
@@ -84,41 +84,49 @@ O-0
 @
 
 \begin{theorem}
-Signed zero is not infinite.
+Let $n$ be a natural number. Then the ordered pair $(n,0)$ is not infinite.
 \end{theorem}
 
 \begin{proof}
-We begin by observing that $0\in\RR$.
+We begin by observing that $n\in\RR$.
   
-For proving $-0\neq+\infty$, this is because the set theoretic
-implementation for positive infinity is $+\infty=\RR$. Then $(0,0)=\{\{0\}\}$
-set theoretically, so we would violate regularity if $-0=+\infty=\RR$ since
-$0\in\{0\}\in-0$ would give us a chain of subsets (violating regularity).
+For proving $(n,0)\neq+\infty$, this is because the set theoretic
+implementation for positive infinity is $+\infty=\RR$. Then $(n,0)=\{\{n\},\{n,0\}\}$
+set theoretically, and since $n\in\RR$ this would require $n=\{n\}$
+(which violates regularity) or $n=\{n,0\}$ (which violates regularity).
 
 Now, Mizar encodes negatives numbers $-x$ as the ordered pair $(0,x)$ for any $x>0$. 
 In fact, $-\infty=(0,+\infty)$. So if $-0=-\infty$, then this would
-correspond to $(0,0)=(0,+\infty)$ and projecting the second components
+correspond to $(n,0)=(0,+\infty)$ and projecting the second components
 of the ordered pairs gives us $0=+\infty$ which is a contradiction
 (since $0\in\RR$, we contradict the axiom of regularity again).
 \end{proof}
 
-<<Theorem: $-0\neq+\infty$ and $-0\neq-\infty$>>=
+<<Theorem: for $n\in\NN$, $(n,0)\neq+\infty$ and $(n,0)\neq-\infty$>>=
 theorem Th4:
-  -0 <> +infty & -0 <> -infty
+  for n being Nat
+  holds [n,0] <> +infty & [n,0] <> -infty
 proof
-  A1: 0 in REAL by NUMBERS:19, TARSKI:def 3;
-  +infty = [0,0] implies contradiction
+  let n be Nat;
+  A1: n in REAL by NUMBERS:19, TARSKI:def 3, ORDINAL1:def 12;
+  +infty = [n,0] implies contradiction
   proof
-    assume +infty = [0,0];
-    then +infty = {{0},{0,0}} by TARSKI:def 5
-               .= {{0}, {0}} by ENUMSET1:29
-               .= {{0}} by ENUMSET1:29;
-    hence contradiction by A1, TARSKI:def 1, XXREAL_0:def 2, ORDINAL1:def 13;
+    assume A2: +infty = [n,0];
+    then +infty = {{n}, {n,0}} by TARSKI:def 5;
+    then n = {n} or n = {n,0} by A1, TARSKI:def 2, XXREAL_0:def 2;
+    then per cases;
+    suppose n = {n};
+      hence contradiction by ZFMISC_1:140;
+    end;
+    suppose n = {n,0};
+      then n in n or n in 0 by TARSKI:def 2;
+      hence contradiction by ORDINAL1:def 13;
+    end;
   end;
-  hence -0 <> +infty;
-  -infty = [0,0] implies contradiction
+  hence [n,0] <> +infty;
+  -infty = [n,0] implies contradiction
   by A1, XXREAL_0:def 3, XTUPLE_0:1, ORDINAL1:def 13;
-  hence thesis;
+  hence [n,0] <> -infty;
 end;
 @ 
 
@@ -136,7 +144,8 @@ theorem Th5:
   not -0 in ExtREAL
 proof
   A1: not -0 in REAL by NUMBERS:def 1, ZFMISC_1:56;
-  not -0 in {+infty, -infty} by Th4, TARSKI:def 2;
+  [0,0] <> +infty & [0,0] <> -infty by Th4;
+  then not -0 in {+infty, -infty} by TARSKI:def 2;
   then not (-0 in REAL or -0 in {+infty, -infty}) by A1;
   then not -0 in REAL \/ {+infty, -infty} by XBOOLE_0:def 3;
   hence thesis by NUMBERS:def 5, XXREAL_0:def 2, XXREAL_0:def 3;
@@ -292,27 +301,37 @@ number, otherwise there would exists a positive real $x\in\RR_{+}$ such
 that $(n,0)=(0,x)$ since that's how we encoded $-x=(0,x)$. But this
 means the first components of the ordered pairs would be equal, $n=0$,
 which contradicts the assumption that $n\neq0$.
+
+Then we see that $(n,0)$ is not $\pm\infty$ due to earlier results, and
+this means that $(n,0)$ cannot be an extended real number.
 \end{proof}
 
 This will be important because we're going to encode \NaN, \qNaN, \sNaN,
 as $(n,0)$ for $n\geq1$. This basically uses Theorem [[ARYTM_3:33]].
 
-<<Theorem: $\forall n\in\NN_{0},(n,0)\notin\RR$>>=
+<<Theorem: $\forall n\in\NN_{0},(n,0)\notin\ExtRR$>>=
 theorem Th6:
   for i being Nat
-  holds not [i,0] in REAL
+  holds not [i,0] in ExtREAL
 proof
   let i be Nat;
-  per cases;
-  suppose i = 0;
-    hence thesis by Th5, NUMBERS:def 5, XBOOLE_0:def 3;
+  A1: not [i,0] in REAL
+  proof
+    per cases;
+    suppose i = 0;
+      hence thesis by Th5, NUMBERS:def 5, XBOOLE_0:def 3;
+    end;
+    suppose A1: i <> 0;
+      then not ([i,0] in RAT+ or [i,0] in DEDEKIND_CUTS) by Lm1,Lm4;
+      then A2: not [i,0] in REAL+ by ARYTM_2:def 2, XBOOLE_0:def 3;
+      not [i,0] in [:{0},REAL+:] by A1, ZFMISC_1:105;
+      hence thesis by A2, XBOOLE_0:def 3, NUMBERS:def 1;
+    end;
   end;
-  suppose A1: i <> 0;
-    then not ([i,0] in RAT+ or [i,0] in DEDEKIND_CUTS) by Lm1,Lm4;
-    then A2: not [i,0] in REAL+ by ARYTM_2:def 2, XBOOLE_0:def 3;
-    not [i,0] in [:{0},REAL+:] by A1, ZFMISC_1:105;
-    hence thesis by A2, XBOOLE_0:def 3, NUMBERS:def 1;
-  end;
+  [i,0] <> +infty & [i,0] <> -infty by Th4;
+  then not [i,0] in {+infty,-infty} by TARSKI:def 2;
+  then not [i,0] in REAL \/ {+infty,-infty} by A1, XBOOLE_0:def 3;
+  hence not [i,0] in ExtREAL by NUMBERS:def 5, XXREAL_0:def 2,def 3;
 end;
 @ %def Th6
 
@@ -344,12 +363,12 @@ ONaN
 @ 
 
 \begin{theorem}
-We see that $\NaN\notin\RR$.
+We see that $\NaN\notin\ExtRR$.
 \end{theorem}
 
-<<Theorem: $\NaN\notin\RR$>>=
+<<Theorem: $\NaN\notin\ExtRR$>>=
 theorem
-  not NaN in REAL by Th6;
+  not NaN in ExtREAL by Th6;
 @ 
 
 \begin{definition}
