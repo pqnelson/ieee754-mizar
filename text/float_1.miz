@@ -11,18 +11,21 @@
 
 environ
  vocabularies NUMBERS, ORDINAL1, CARD_1, SUBSET_1, XBOOLE_0, ARYTM_2, ARYTM_3,
-   ZFMISC_1, XCMPLX_0, XXREAL_0, TARSKI, FUNCT_7, RELAT_1,
-   REAL_1, INT_1, PREPOWER, POWER, ARYTM_1, NAT_1,
+   ZFMISC_1, XCMPLX_0, XREAL_0, XXREAL_0, TARSKI, FUNCT_7, RELAT_1,
+   REAL_1, INT_1, PREPOWER, POWER, ARYTM_1, NAT_1, COUNTERS,
+   COMPLEX1, FINSET_1,
    FLOAT_1;
  notations TARSKI, XBOOLE_0, ZFMISC_1, SUBSET_1, ORDINAL1, ARYTM_2, ARYTM_3,
-   NUMBERS, XCMPLX_0, XXREAL_0, XREAL_0, INT_1,
+   XXREAL_3, NUMBERS, XCMPLX_0, XXREAL_0, XREAL_0, INT_1, COUNTERS, COMPLEX1, FINSET_1,
    PREPOWER, POWER;
- constructors ARYTM_2, ARYTM_3, NUMBERS, XCMPLX_0, XXREAL_0, XREAL_0, INT_1,
-   PREPOWER, POWER;
- registrations ORDINAL1, XBOOLE_0, XCMPLX_0, XXREAL_0, XREAL_0, INT_1, RAT_1;
+ constructors ARYTM_2, ARYTM_3, NUMBERS, XCMPLX_0, XXREAL_0, XXREAL_3, XREAL_0, INT_1,
+   COMPLEX1, FINSET_1, COUNTERS, PREPOWER, POWER;
+ registrations ORDINAL1, XBOOLE_0, COUNTERS, NUMBER01,
+   XCMPLX_0, XXREAL_0, XREAL_0, XXREAL_3, FINSET_1, RAT_1, INT_1,
+   FOMODEL0;
  requirements REAL, SUBSET, BOOLE, NUMERALS, ARITHM;
- theorems ARYTM_2, ARYTM_3, CARD_1, ENUMSET1, INT_1, NUMBERS, ORDINAL1, ORDINAL2, ORDINAL3, POWER,
-   TARSKI, XBOOLE_0, XREAL_1, XXREAL_0, XTUPLE_0, ZFMISC_1;
+ theorems ARYTM_2, ARYTM_3, CARD_1, COUNTERS, ENUMSET1, FINSET_1, INT_1, NUMBERS, ORDINAL1, ORDINAL2, ORDINAL3, POWER,
+   TARSKI, XBOOLE_0, XBOOLE_1, XREAL_0, XREAL_1, XXREAL_0, XXREAL_3, XTUPLE_0, ZFMISC_1;
 
 begin :: Preliminaries
 
@@ -143,6 +146,330 @@ proof
   end;
 end;
 
+definition
+  func ExtINT -> Subset of ExtREAL equals
+  INT \/ {-infty,+infty};
+  coherence
+  proof
+    INT c= REAL & REAL c= ExtREAL by XBOOLE_0:def 8, NUMBERS:5,31; then
+    A1: INT c= ExtREAL by XBOOLE_1:1;
+    {-infty,+infty} c= ExtREAL by XBOOLE_1:7, XXREAL_0:def 4;
+    hence thesis by A1, XBOOLE_1:8;
+  end;
+end;
+
+theorem Th2:
+  INT c< ExtINT & ExtNAT c< ExtINT & ExtINT c< ExtREAL
+proof
+  thus INT c< ExtINT
+  proof
+    +infty in {+infty,-infty} by TARSKI:def 2; then
+    A1: +infty in ExtINT by XBOOLE_0:def 3;
+    not +infty in INT;
+    hence thesis by A1, XBOOLE_0:def 8, XBOOLE_1:7;
+  end;
+  thus ExtNAT c< ExtINT
+  proof
+    -1 in INT & not -1 in NAT & not -1 in {+infty} by INT_1:def 1;
+    then A2: -1 in ExtINT & not -1 in ExtNAT by XBOOLE_0:def 3;
+    NAT c= INT & {+infty} c= {-infty,+infty} by NUMBERS:17, ZFMISC_1:7;
+    hence thesis by A2, COUNTERS:def 1, XBOOLE_1:13, XBOOLE_0:def 8;
+  end;
+  thus ExtINT c< ExtREAL
+  proof
+    not REAL c= INT by XBOOLE_0:def 10, NUMBERS:15,25;
+    then consider x being object such that
+    A3: x in REAL & not x in INT
+    by TARSKI:def 3; 
+    not x in {-infty,+infty} by A3, TARSKI:def 2;
+    then x in ExtREAL & not x in ExtINT by A3, XXREAL_0:def 4, XBOOLE_0:def 3;
+    hence thesis by XBOOLE_0:def 8;
+  end;
+end;
+
+registration
+  cluster ExtINT -> non empty infinite;
+  coherence by Th2, FINSET_1:1, XBOOLE_0:def 8;
+end;
+
+definition
+  let x be object;
+  attr x is ext-integer means :Def2:
+  x in ExtINT;
+end;
+
+registration
+  cluster +infty -> ext-integer;
+  coherence
+  proof
+    +infty in {+infty,-infty} by TARSKI:def 2;
+    hence thesis by XBOOLE_0:def 3;
+  end;
+  cluster -infty -> ext-integer;
+  coherence
+  proof
+    -infty in {+infty,-infty} by TARSKI:def 2;
+    hence thesis by XBOOLE_0:def 3;
+  end;
+  cluster ext-integer -> ext-real for object;
+  coherence;
+  cluster ext-natural -> ext-integer for object;
+  coherence
+  proof
+    let x be object;
+    assume x is ext-natural;
+    then x in ExtNAT by COUNTERS:def 2;
+    hence thesis by Th2, TARSKI:def 3, XBOOLE_0:def 8;
+  end;
+end;
+
+registration
+  cluster zero ext-integer for object;
+  existence
+  proof
+    take 0;
+    thus thesis;
+  end;
+  cluster non zero ext-integer for object;
+  existence
+  proof
+    take 1;
+    thus thesis;
+  end;
+  cluster ext-integer for set;
+  existence
+  proof
+    take 0;
+    thus thesis;
+  end;
+  cluster -> ext-integer for Element of ExtINT;
+  coherence;
+  cluster -> ext-integer for Element of ExtNAT;
+  coherence;
+end;
+
+definition
+  mode ExtInt is ext-integer ExtReal;
+end;
+
+registration
+  sethood of ExtInt
+  proof
+    take ExtINT;
+    thus thesis by Def2;
+  end;
+end;
+
+theorem Th4:
+  for x being object
+  holds x is ExtInt iff (x is Integer or x = -infty or x = +infty)
+proof
+  let x be object;
+  thus x is ExtInt implies (x is Integer or x = -infty or x = +infty)
+  proof
+    assume A1: x is ExtInt;
+    assume A2: not x is Integer & not x = -infty;
+    x in INT \/ {-infty, +infty} by A1, Def2;
+    then x in INT or x in {-infty, +infty} by XBOOLE_0:def 3;
+    hence x = +infty by A2, TARSKI:def 2;
+  end;
+  thus (x is Integer or x = -infty or x = +infty) implies x is ExtInt
+  proof
+    assume x is Integer or x = -infty or x = +infty;
+    then x in INT or x in {-infty,+infty} by INT_1:def 2, TARSKI:def 2;
+    then x in INT \/ {-infty,+infty} by XBOOLE_0:def 3;
+    hence x is ExtInt by Def2;
+  end;
+end;
+
+registration
+  cluster zero -> ext-integer for object;
+  coherence;
+  cluster integer -> ext-integer for object;
+  coherence by Th4;
+end;
+
+registration
+  cluster natural -> ext-integer for object;
+  coherence;
+end;
+
+registration
+  cluster positive for ExtInt;
+  existence
+  proof
+    take 1;
+    thus thesis;
+  end;
+  cluster non positive for ExtInt;
+  existence
+  proof
+    take -1;
+    thus thesis;
+  end;
+  cluster negative for ExtInt;
+  existence
+  proof
+    take -1;
+    thus thesis;
+  end;
+  cluster non negative for ExtInt;
+  existence
+  proof
+    take 1;
+    thus thesis;
+  end;
+end;
+
+registration
+  let m be ExtInt;
+  cluster - m -> ext-integer;
+  coherence
+  proof
+    per cases by Th4;
+    suppose m is Integer;
+      then reconsider M=m as Integer;
+      -M is Integer;
+      hence thesis by XXREAL_3:def 3;
+    end;
+    suppose m=-infty;
+      hence thesis by XXREAL_3:def 3;
+    end;
+    suppose m=+infty;
+      hence thesis by XXREAL_3:def 3;
+    end;
+  end;
+end;
+
+registration
+  let m, n be ExtInt;
+  cluster min(m, n) -> ext-integer;
+  coherence by XXREAL_0:def 9;
+  cluster max(m, n) -> ext-integer;
+  coherence by XXREAL_0:def 10;
+  cluster m + n -> ext-integer;
+  coherence
+  proof
+    per cases by Th4;
+    suppose A1: m is Integer;
+      then reconsider M=m as Integer;
+      per cases by Th4;
+      suppose n is Integer;
+        then reconsider N=n as Integer;
+        M + N is Integer;
+        hence thesis by XXREAL_3:def 2;
+      end;
+      suppose n=-infty;
+        hence thesis by A1, XXREAL_3:def 2;
+      end;
+      suppose n=+infty;
+        hence thesis by A1, XXREAL_3:def 2;
+      end;
+    end;
+    suppose A2: m=-infty;
+      per cases by Th4;
+      suppose n is Integer;
+        hence thesis by A2, XXREAL_3:def 2;
+      end;
+      suppose n=-infty;
+        hence thesis by A2, XXREAL_3:def 2;
+      end;
+      suppose n=+infty;
+        hence thesis by A2;
+      end;
+    end;
+    suppose A3: m=+infty;
+      per cases by Th4;
+      suppose n is Integer;
+        hence thesis by A3, XXREAL_3:def 2;
+      end;
+      suppose n=-infty;
+        hence thesis by A3;
+      end;
+      suppose n=+infty;
+        hence thesis by A3;
+      end;
+    end;
+  end;
+  cluster m * n -> ext-integer;
+  coherence
+  proof
+    per cases by Th4;
+    suppose m is Integer;
+      then reconsider M=m as Integer;
+      per cases by Th4;
+      suppose n is Integer;
+        then reconsider N=n as Integer;
+        M * N is Integer;
+        hence thesis by XXREAL_3:def 5;
+      end;
+      suppose B1: n=-infty;
+        m is positive or m is negative or m is zero;
+        hence thesis by B1, XXREAL_3:def 5;
+      end;
+      suppose B2: n=+infty;
+        m is positive or m is negative or m is zero;
+        hence thesis by B2, XXREAL_3:def 5;
+      end;
+    end;
+    suppose A2: m=-infty;
+      per cases by Th4;
+      suppose n is Integer;
+        n is positive or n is negative or n is zero;
+        hence thesis by A2, XXREAL_3:def 5;
+      end;
+      suppose n=-infty;
+        hence thesis by A2, XXREAL_3:def 5;
+      end;
+      suppose n=+infty;
+        hence thesis by A2, XXREAL_3:def 5;
+      end;
+    end;
+    suppose A3: m=+infty;
+      per cases by Th4;
+      suppose n is Integer;
+        n is positive or n is negative or n is zero;
+        hence thesis by A3, XXREAL_3:def 5;
+      end;
+      suppose n=-infty;
+        hence thesis by A3, XXREAL_3:def 5;
+      end;
+      suppose n=+infty;
+        hence thesis by A3;
+      end;
+    end;
+  end;
+end;
+
+registration
+  let m, n be ExtInt;
+  cluster m - n -> ext-integer;
+  coherence
+  proof
+    (- n) is ext-integer & m + (- n) is ext-integer &
+    m - n = m + (- n) by XXREAL_3:def 4;
+    hence thesis;
+  end;
+end;
+
+registration
+  cluster non negative -> ext-natural for ExtInt;
+  coherence
+  proof
+    let x be ExtInt;
+    assume A1: x is non negative;
+    x is Integer or x = -infty or x = +infty by Th4;
+    hence thesis by A1;
+  end;
+end;
+
+theorem
+  for x being object
+  holds x is positive ExtInt iff (x is positive Integer or x = +infty) by Th4;
+
+theorem
+  for x being object
+  holds x is negative ExtInt iff (x is negative Integer or x = -infty) by Th4;
 
 begin :: 3. Floating-point formats
 
@@ -161,7 +488,7 @@ proof
   proof
     assume A2: +infty = [n,0];
     then +infty = {{n}, {n,0}} by TARSKI:def 5;
-    then n = {n} or n = {n,0} by A1, TARSKI:def 2, XXREAL_0:def 2;
+    then n = {n} or n = {n,0};
     then per cases;
     suppose n = {n};
       hence contradiction by ZFMISC_1:140;
@@ -172,20 +499,16 @@ proof
     end;
   end;
   hence [n,0] <> +infty;
-  -infty = [n,0] implies contradiction
-  by A1, XXREAL_0:def 3, XTUPLE_0:1, ORDINAL1:def 13;
-  hence [n,0] <> -infty;
+  thus [n,0] <> -infty by A1, XXREAL_0:def 3, XTUPLE_0:1, ORDINAL1:def 13;
 end;
 
 theorem Th5:
   not -0 in ExtREAL
 proof
-  A1: not -0 in REAL by NUMBERS:def 1, ZFMISC_1:56;
   [0,0] <> +infty & [0,0] <> -infty by Th4;
-  then not -0 in {+infty, -infty} by TARSKI:def 2;
-  then not (-0 in REAL or -0 in {+infty, -infty}) by A1;
-  then not -0 in REAL \/ {+infty, -infty} by XBOOLE_0:def 3;
-  hence thesis by NUMBERS:def 5, XXREAL_0:def 2, XXREAL_0:def 3;
+  then not (-0 in REAL or -0 in {+infty, -infty})
+  by NUMBERS:def 1, ZFMISC_1:56, TARSKI:def 2;
+  hence thesis by NUMBERS:def 5, XBOOLE_0:def 3, XXREAL_0:def 2,def 3;
 end;
 
 Lm1:
@@ -292,3 +615,47 @@ end;
 
 theorem
   not NaN in ExtREAL by Th6;
+
+reserve beta for valid_radix Real;
+reserve p for positive Integer;
+reserve eMin for negative ExtInt;
+reserve eMax for positive ExtNat;
+
+definition
+  let b, p, eMin, eMax;
+  func FLOAT_NUMBER(b, p, eMin, eMax) -> Subset of ExtREAL equals
+  {x where x is Real : ex M, e being Integer
+   st x = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
+   & eMin <= e & e <= eMax } \/ {+infty, -infty};
+  coherence
+  proof
+    set NUM = {x where x is Real : ex M, e being Integer
+    st x = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
+    & eMin <= e & e <= eMax };
+    set IT = NUM \/ {+infty, -infty};
+    for x being object st x in IT holds x in ExtREAL
+    proof
+      let x be object;
+      assume Z1: x in IT;
+      then per cases by XBOOLE_0:def 3;
+      suppose A1: x in NUM;
+        then ex y being Real st x = y & ex M, e being Integer
+        st y = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
+        & eMin <= e & e <= eMax;
+        then x in REAL by XREAL_0:def 1;
+        hence x in ExtREAL by XBOOLE_0:def 3, XXREAL_0:def 4;
+      end;
+      suppose A2: x in {-infty, +infty};
+        hence x in ExtREAL by XBOOLE_0:def 3, XXREAL_0:def 4;
+      end;
+    end;
+    hence thesis by TARSKI:def 3;
+  end;
+end;
+
+definition
+  let beta, p, eMin, eMax;
+  func FLOAT(beta, p, eMin, eMax) -> set equals
+  FLOAT_NUMBER(beta, p, eMin, eMax) \/ {-0, NaN};
+  coherence;
+end;

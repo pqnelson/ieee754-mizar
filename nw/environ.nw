@@ -26,10 +26,13 @@ The token ``$-$'' used for subtraction is defined in [[RELAT_1]].
 The [[Real]] type and [[Integer]] type are provided by the [[REAL_1]]
 and [[INT_1]] vocabularies.
 
+For the absolute value, this is defined in [[COMPLEX1]].
+
 <<[[float_1.miz]] vocabularies>>=
 vocabularies NUMBERS, ORDINAL1, CARD_1, SUBSET_1, XBOOLE_0, ARYTM_2, ARYTM_3,
-  ZFMISC_1, XCMPLX_0, XXREAL_0, TARSKI, FUNCT_7, RELAT_1,
-  REAL_1, INT_1, PREPOWER, POWER, ARYTM_1, NAT_1,
+  ZFMISC_1, XCMPLX_0, XREAL_0, XXREAL_0, TARSKI, FUNCT_7, RELAT_1,
+  REAL_1, INT_1, PREPOWER, POWER, ARYTM_1, NAT_1, COUNTERS,
+  COMPLEX1, FINSET_1,
   FLOAT_1;
 @
 
@@ -44,7 +47,7 @@ found, and uses the type system to discern which definition fits the usage.
 
 <<[[float_1.miz]] notations>>=
 notations TARSKI, XBOOLE_0, ZFMISC_1, SUBSET_1, ORDINAL1, ARYTM_2, ARYTM_3,
-  NUMBERS, XCMPLX_0, XXREAL_0, XREAL_0, INT_1,
+  XXREAL_3, NUMBERS, XCMPLX_0, XXREAL_0, XREAL_0, INT_1, COUNTERS, COMPLEX1, FINSET_1,
   PREPOWER, POWER;
 @ 
 
@@ -56,8 +59,8 @@ in [[INT_1]]. We rely on definitions found in [[PREPOWER]] and [[POWER]]
 for $x^{y}$.
 
 <<[[float_1.miz]] constructors>>=
-constructors ARYTM_2, ARYTM_3, NUMBERS, XCMPLX_0, XXREAL_0, XREAL_0, INT_1,
-  PREPOWER, POWER;
+constructors ARYTM_2, ARYTM_3, NUMBERS, XCMPLX_0, XXREAL_0, XXREAL_3, XREAL_0, INT_1,
+  COMPLEX1, FINSET_1, COUNTERS, PREPOWER, POWER;
 @ 
 
 \subsection{Registrations}
@@ -65,8 +68,12 @@ Attributes need to be registered as an adjective for a type. Further,
 some attributes imply others (e.g., [[natural]] numbers are [[complex]]
 automatically) which are handled by registrations.
 
+For positive Integers, we need to use [[NUMBER01]].
+
 <<[[float_1.miz]] registrations>>=
-registrations ORDINAL1, XBOOLE_0, XCMPLX_0, XXREAL_0, XREAL_0, INT_1, RAT_1;
+registrations ORDINAL1, XBOOLE_0, COUNTERS, NUMBER01,
+  XCMPLX_0, XXREAL_0, XREAL_0, XXREAL_3, FINSET_1, RAT_1, INT_1,
+  FOMODEL0;
 @ 
 
 \subsection{Requirements}
@@ -85,8 +92,8 @@ When using theorems from other Mizar articles, we need to tell Mizar
 which articles we will be relying on.
 
 <<[[float_1.miz]] theorems>>=
-theorems ARYTM_2, ARYTM_3, CARD_1, ENUMSET1, INT_1, NUMBERS, ORDINAL1, ORDINAL2, ORDINAL3, POWER,
-  TARSKI, XBOOLE_0, XREAL_1, XXREAL_0, XTUPLE_0, ZFMISC_1;
+theorems ARYTM_2, ARYTM_3, CARD_1, COUNTERS, ENUMSET1, FINSET_1, INT_1, NUMBERS, ORDINAL1, ORDINAL2, ORDINAL3, POWER,
+  TARSKI, XBOOLE_0, XBOOLE_1, XREAL_0, XREAL_1, XXREAL_0, XXREAL_3, XTUPLE_0, ZFMISC_1;
 @ 
 
 \subsection{Schemes}

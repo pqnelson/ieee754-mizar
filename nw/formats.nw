@@ -23,6 +23,12 @@ begin :: 3. Floating-point formats
 <<Definition: [[NaN]]>>
 
 <<Theorem: $\NaN\notin\ExtRR$>>
+
+<<Reserve: parameters for floating-point format>>
+
+<<Definition: subset of floating-point numbers for a format>>
+
+<<Definition: floating-point format as [[FLOAT]]>>
 @ 
 
 \subsection{Overview}
@@ -113,7 +119,7 @@ proof
   proof
     assume A2: +infty = [n,0];
     then +infty = {{n}, {n,0}} by TARSKI:def 5;
-    then n = {n} or n = {n,0} by A1, TARSKI:def 2, XXREAL_0:def 2;
+    then n = {n} or n = {n,0};
     then per cases;
     suppose n = {n};
       hence contradiction by ZFMISC_1:140;
@@ -124,9 +130,7 @@ proof
     end;
   end;
   hence [n,0] <> +infty;
-  -infty = [n,0] implies contradiction
-  by A1, XXREAL_0:def 3, XTUPLE_0:1, ORDINAL1:def 13;
-  hence [n,0] <> -infty;
+  thus [n,0] <> -infty by A1, XXREAL_0:def 3, XTUPLE_0:1, ORDINAL1:def 13;
 end;
 @ 
 
@@ -143,12 +147,10 @@ that $-0\notin\RR$. The result follows immediately.
 theorem Th5:
   not -0 in ExtREAL
 proof
-  A1: not -0 in REAL by NUMBERS:def 1, ZFMISC_1:56;
   [0,0] <> +infty & [0,0] <> -infty by Th4;
-  then not -0 in {+infty, -infty} by TARSKI:def 2;
-  then not (-0 in REAL or -0 in {+infty, -infty}) by A1;
-  then not -0 in REAL \/ {+infty, -infty} by XBOOLE_0:def 3;
-  hence thesis by NUMBERS:def 5, XXREAL_0:def 2, XXREAL_0:def 3;
+  then not (-0 in REAL or -0 in {+infty, -infty})
+  by NUMBERS:def 1, ZFMISC_1:56, TARSKI:def 2;
+  hence thesis by NUMBERS:def 5, XBOOLE_0:def 3, XXREAL_0:def 2,def 3;
 end;
 @ %def Th5
 
@@ -384,20 +386,20 @@ take $e_{\text{min}}=0$.
 
 <<Reserve: parameters for floating-point format>>=
 reserve beta for valid_radix Real;
-reserve p for positive Nat;
-reserve eMin for Element of [:{0},NAT \ {0,1}:] \/ {-infty};
+reserve p for positive Integer;
+reserve eMin for negative ExtInt;
 reserve eMax for positive ExtNat;
 @ 
 
 \begin{definition}
-Let $\beta$ be a valid radix real number, let $p$ be a natural number,
+Let $b$ be a valid radix real number, let $p$ be a natural number,
 let $e_{\text{min}}\in\ZZ\cup\{-\infty\}$ and
 $e_{\text{max}}\in\NN\cup\{+\infty\}$ be negative and positive integers
 or infinities.
 We define the set of \define{Floating-Point Numbers} to be the subset
-$\FF_{n}(\beta,p,e_{\text{min}},e_{\text{max}})$ of $\ExtRR$ equal to
-$\{x\in\RR \mid \exists M,e\in\ZZ, x=M\beta^{e-p+1}\land
-|M|\leq\beta^{p}-1\land e_{\text{min}}\leq e\leq e_{\text{max}}\}$.
+$\FF_{n}(b,p,e_{\text{min}},e_{\text{max}})$ of $\ExtRR$ equal to
+$\{x\in\RR \mid \exists M,e\in\ZZ, x=M\cdot b^{e-p+1}\land
+|M|\leq b^{p}-1\land e_{\text{min}}\leq e\leq e_{\text{max}}\}\cup\{\pm\infty\}$.
 \end{definition}
 
 We're allowing the exponents to possible be infinite because other users
@@ -414,12 +416,35 @@ the set [[FLOAT_NUMBER]] as a subset of the extended reals.
 
 <<Definition: subset of floating-point numbers for a format>>=
 definition
-  let beta, p, eMin, eMax;
-  func FLOAT_NUMBER(beta, p, eMin, eMax) -> Subset of ExtREAL equals
+  let b, p, eMin, eMax;
+  func FLOAT_NUMBER(b, p, eMin, eMax) -> Subset of ExtREAL equals
   {x where x is Real : ex M, e being Integer
-   st x = M * (beta to_power (e - p + 1)) & |.M.| <= beta to_power (p-1)
-   & eMin <= e & e <= eMax };
-  coherence;
+   st x = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
+   & eMin <= e & e <= eMax } \/ {+infty, -infty};
+  coherence
+  proof
+    set NUM = {x where x is Real : ex M, e being Integer
+    st x = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
+    & eMin <= e & e <= eMax };
+    set IT = NUM \/ {+infty, -infty};
+    for x being object st x in IT holds x in ExtREAL
+    proof
+      let x be object;
+      assume Z1: x in IT;
+      then per cases by XBOOLE_0:def 3;
+      suppose A1: x in NUM;
+        then ex y being Real st x = y & ex M, e being Integer
+        st y = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
+        & eMin <= e & e <= eMax;
+        then x in REAL by XREAL_0:def 1;
+        hence x in ExtREAL by XBOOLE_0:def 3, XXREAL_0:def 4;
+      end;
+      suppose A2: x in {-infty, +infty};
+        hence x in ExtREAL by XBOOLE_0:def 3, XXREAL_0:def 4;
+      end;
+    end;
+    hence thesis by TARSKI:def 3;
+  end;
 end;
 @ %def FLOAT_NUMBER
 
@@ -445,11 +470,20 @@ $\FF(\beta,p,e_{\text{min}},e_{\text{max}})$ consisting of:
 definition
   let beta, p, eMin, eMax;
   func FLOAT(beta, p, eMin, eMax) -> set equals
-  FLOAT_NUMBER(beta, p, eMin, eMax) \/ {+infty, -infty, -0, NaN};
+  FLOAT_NUMBER(beta, p, eMin, eMax) \/ {-0, NaN};
   coherence;
 end;
 @ %def FLOAT
 
+\begin{voc}
+We will tell Mizar to add [[FLOAT_NUMBER]] and [[FLOAT]] as new
+constants for its lexer to recognize.
+\end{voc}
+
+<<DICT/float-1.voc>>=
+OFLOAT_NUMBER
+OFLOAT
+@ 
 
 \begin{theorem}
 The smallest positive floating-point number for

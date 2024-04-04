@@ -1,3 +1,8 @@
 Vvalid_radix
+OExtINT
+Vext-integer
+MExtInt
 O-0
 ONaN
+OFLOAT_NUMBER
+OFLOAT

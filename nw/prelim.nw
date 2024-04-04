@@ -15,6 +15,8 @@ begin :: Preliminaries
 <<Theorem: exponent for $b$-expansion of $x$ is $\lfloor\log_{b}(x)\rfloor$>>
 
 <<Theorem: $1\leq x b^{-\lfloor\log_{b}(x)\rfloor}<b$>>
+
+<<Subsection: Defining the extended integers>>
 @
 
 \subsection{Valid radix for a non-integer base of numeration}
@@ -297,3 +299,559 @@ proof
   end;
 end;
 @ %def Th2
+
+\subsection{Extended Integers}
+We will need to define the extended integers for usage as exponents in
+floating-point formats. This is in analogy to the extended reals, which
+just adjoins infinities to the integers. We will follow the
+formalization of extended natural numbers in the Mizar article [[COUNTERS]]
+for guidance in which theorems to prove.
+
+<<Subsection: Defining the extended integers>>=
+<<Definition: Extended Integers>>
+
+<<Theorem: $\ExtNN\properSubset\ExtZZ$ and $\ExtZZ\properSubset\ExtRR$>>
+
+<<Register: $\ExtZZ$ is nonempty and infinite>>
+
+<<Definition: [[ext-integer]] attribute>>
+
+<<Register: $\pm\infty\in\ExtZZ$, $\ExtNN\subset\ExtZZ\subset\ExtRR$>>
+
+<<Register: zero and nonzero extended integers, applicability of [[ext-integer]] to elements of $\ExtNN$, $\ExtZZ$>>
+
+<<Define: [[ExtInt]] type>>
+
+<<Register: sethood for [[ExtInt]]>>
+
+<<Theorem: $\forall x, x\in\ExtZZ\iff x\in\ZZ\lor x=-\infty\lor x=+\infty$>>
+
+<<Register: 0 is an extended integer, as are integers>>
+
+<<Register: ``natural'' numbers are ``extended integer'' numbers>>
+
+<<Register: positive, negative, non-negative, non-positive are adjectives for extended integers>>
+
+<<Register: negating an extended integer is an extended integer>>
+
+<<Register: Addition, multiplication, maximum, and minimum of extended integers are extended integers.>>
+
+<<Register: subtracting extended integers yields an extended integer>>
+
+<<Register: non-negative extended integers are extended naturals>>
+
+<<Theorem: positive extended integers are either positive integers or $+\infty$>>
+
+<<Theorem: negative extended integers are either negative integers or $-\infty$>>
+@ 
+
+\begin{definition}
+We define the \define{Extended Integers} to be the subset $\ExtZZ$ of
+the extended reals $\ExtRR$ such that $\ExtZZ=\ZZ\cup\{\pm\infty\}$.
+\end{definition}
+
+\begin{proof}[Proof (well-definedness)]
+Mizar requires we prove newly defined terms are well-defined. For terms
+defined using [[equals]], this amounts to showing the type for the
+explicitly given term is correct.
+We need to prove that this term we construct \emph{really is} a subset
+of $\ExtRR$, which boils down to showing $\{\pm\infty\}\subset\ExtRR$
+and $\ZZ\subset\ExtRR$, then their union is precisely a subset of $\ExtRR$.
+\end{proof}
+
+<<Definition: Extended Integers>>=
+definition
+  func ExtINT -> Subset of ExtREAL equals
+  INT \/ {-infty,+infty};
+  coherence
+  proof
+    INT c= REAL & REAL c= ExtREAL by XBOOLE_0:def 8, NUMBERS:5,31; then
+    A1: INT c= ExtREAL by XBOOLE_1:1;
+    {-infty,+infty} c= ExtREAL by XBOOLE_1:7, XXREAL_0:def 4;
+    hence thesis by A1, XBOOLE_1:8;
+  end;
+end;
+@ %def ExtINT
+
+\begin{voc}
+We will tell Mizar to add [[ExtINT]] as a new constant for its lexer to
+recognize.
+\end{voc}
+
+<<DICT/float-1.voc>>=
+OExtINT
+@ 
+
+\begin{theorem}
+We see that $\ZZ\properSubset\ExtZZ$, $\ExtNN\properSubset\ExtZZ$, and $\ExtZZ\properSubset\ExtRR$.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+We see that $+\infty\in\ExtZZ$ but $+\infty\notin\ZZ$, which proves the
+first claim. Similarly, we see $-\infty\in\ExtZZ$ but
+$-\infty\notin\ExtNN$, which proves the second claim. And there exists
+some $x\in\RR$ such that $x\notin\ZZ$, and $x\notin\{\pm\infty\}$, which
+gives us some $x\in\ExtRR$ but $x\notin\ExtZZ$ establishing the third claim.
+\end{proof}
+
+<<Theorem: $\ExtNN\properSubset\ExtZZ$ and $\ExtZZ\properSubset\ExtRR$>>=
+theorem Th2:
+  INT c< ExtINT & ExtNAT c< ExtINT & ExtINT c< ExtREAL
+proof
+  thus INT c< ExtINT
+  proof
+    +infty in {+infty,-infty} by TARSKI:def 2; then
+    A1: +infty in ExtINT by XBOOLE_0:def 3;
+    not +infty in INT;
+    hence thesis by A1, XBOOLE_0:def 8, XBOOLE_1:7;
+  end;
+  thus ExtNAT c< ExtINT
+  proof
+    -1 in INT & not -1 in NAT & not -1 in {+infty} by INT_1:def 1;
+    then A2: -1 in ExtINT & not -1 in ExtNAT by XBOOLE_0:def 3;
+    NAT c= INT & {+infty} c= {-infty,+infty} by NUMBERS:17, ZFMISC_1:7;
+    hence thesis by A2, COUNTERS:def 1, XBOOLE_1:13, XBOOLE_0:def 8;
+  end;
+  thus ExtINT c< ExtREAL
+  proof
+    not REAL c= INT by XBOOLE_0:def 10, NUMBERS:15,25;
+    then consider x being object such that
+    A3: x in REAL & not x in INT
+    by TARSKI:def 3; 
+    not x in {-infty,+infty} by A3, TARSKI:def 2;
+    then x in ExtREAL & not x in ExtINT by A3, XXREAL_0:def 4, XBOOLE_0:def 3;
+    hence thesis by XBOOLE_0:def 8;
+  end;
+end;
+@ %def Th2
+
+\begin{registration}
+The set $\ExtZZ$ is nonempty and infinite.
+\end{registration}
+
+<<Register: $\ExtZZ$ is nonempty and infinite>>=
+registration
+  cluster ExtINT -> non empty infinite;
+  coherence by Th2, FINSET_1:1, XBOOLE_0:def 8;
+end;
+@
+
+\begin{definition}
+Let $x$ be an object. We say $x$ is \define{ext-integer} if $x\in\ExtZZ$.
+\end{definition}
+
+<<Definition: [[ext-integer]] attribute>>=
+definition
+  let x be object;
+  attr x is ext-integer means :Def2:
+  x in ExtINT;
+end;
+@ %def ext-integer Def2
+
+\begin{voc}
+We will tell Mizar to add [[ext-integer]] as a new attribute for its lexer to
+recognize.
+\end{voc}
+
+<<DICT/float-1.voc>>=
+Vext-integer
+@
+
+\begin{registration}
+We note that $\pm\infty$ is an extended-integer; extended integers are
+also extended reals; and extended naturals are extended integers.
+\end{registration}
+
+<<Register: $\pm\infty\in\ExtZZ$, $\ExtNN\subset\ExtZZ\subset\ExtRR$>>=
+registration
+  cluster +infty -> ext-integer;
+  coherence
+  proof
+    +infty in {+infty,-infty} by TARSKI:def 2;
+    hence thesis by XBOOLE_0:def 3;
+  end;
+  cluster -infty -> ext-integer;
+  coherence
+  proof
+    -infty in {+infty,-infty} by TARSKI:def 2;
+    hence thesis by XBOOLE_0:def 3;
+  end;
+  cluster ext-integer -> ext-real for object;
+  coherence;
+  cluster ext-natural -> ext-integer for object;
+  coherence
+  proof
+    let x be object;
+    assume x is ext-natural;
+    then x in ExtNAT by COUNTERS:def 2;
+    hence thesis by Th2, TARSKI:def 3, XBOOLE_0:def 8;
+  end;
+end;
+@
+
+\begin{registration}
+We observe there are zero and nonzero extended integers, and the
+adjective ``extended-integer'' applies to elements of $\ExtNN$ as well
+as $\ExtZZ$.
+\end{registration}
+
+<<Register: zero and nonzero extended integers, applicability of [[ext-integer]] to elements of $\ExtNN$, $\ExtZZ$>>=
+registration
+  cluster zero ext-integer for object;
+  existence
+  proof
+    take 0;
+    thus thesis;
+  end;
+  cluster non zero ext-integer for object;
+  existence
+  proof
+    take 1;
+    thus thesis;
+  end;
+  cluster ext-integer for set;
+  existence
+  proof
+    take 0;
+    thus thesis;
+  end;
+  cluster -> ext-integer for Element of ExtINT;
+  coherence;
+  cluster -> ext-integer for Element of ExtNAT;
+  coherence;
+end;
+@
+
+\begin{definition*}
+We now define the shorthand \define{ExtInt} for an extended-integer-like
+Extended real number.
+\end{definition*}
+
+Note that this is an un-numbered definition to Mizar, because it's
+literally an abbreviation.
+
+<<Define: [[ExtInt]] type>>=
+definition
+  mode ExtInt is ext-integer ExtReal;
+end;
+@ %def ExtInt
+
+\begin{voc}
+We tell Mizar about this new type [[ExtInt]].
+\end{voc}
+
+<<DICT/float-1.voc>>=
+MExtInt
+@
+
+\begin{registration}
+We note that the type [[ExtInt]] can be used interchangeably as
+``element of Extended Integers'', and thus we instruct Mizar
+accordingly. The technical jargon is that [[ExtInt]] has the ``sethood''
+property (i.e., there exists a set of all [[ExtInt]]s).
+\end{registration}
+
+<<Register: sethood for [[ExtInt]]>>=
+registration
+  sethood of ExtInt
+  proof
+    take ExtINT;
+    thus thesis by Def2;
+  end;
+end;
+@
+
+\begin{theorem}
+Let $x$ be any object. Then $x\in\ExtZZ$ if and only if $x\in\ZZ$ or
+$x=+\infty$ or $x=-\infty$.
+\end{theorem}
+
+<<Theorem: $\forall x, x\in\ExtZZ\iff x\in\ZZ\lor x=-\infty\lor x=+\infty$>>=
+theorem Th4:
+  for x being object
+  holds x is ExtInt iff (x is Integer or x = -infty or x = +infty)
+proof
+  let x be object;
+  thus x is ExtInt implies (x is Integer or x = -infty or x = +infty)
+  proof
+    assume A1: x is ExtInt;
+    assume A2: not x is Integer & not x = -infty;
+    x in INT \/ {-infty, +infty} by A1, Def2;
+    then x in INT or x in {-infty, +infty} by XBOOLE_0:def 3;
+    hence x = +infty by A2, TARSKI:def 2;
+  end;
+  thus (x is Integer or x = -infty or x = +infty) implies x is ExtInt
+  proof
+    assume x is Integer or x = -infty or x = +infty;
+    then x in INT or x in {-infty,+infty} by INT_1:def 2, TARSKI:def 2;
+    then x in INT \/ {-infty,+infty} by XBOOLE_0:def 3;
+    hence x is ExtInt by Def2;
+  end;
+end;
+@ %def Th4
+
+\begin{registration}
+We observe that zero is an extended integer, as are integers.
+\end{registration}
+
+<<Register: 0 is an extended integer, as are integers>>=
+registration
+  cluster zero -> ext-integer for object;
+  coherence;
+  cluster integer -> ext-integer for object;
+  coherence by Th4;
+end;
+@
+
+\begin{registration}
+We note that ``natural'' numbers are ``extended integer'' numbers.
+\end{registration}
+
+<<Register: ``natural'' numbers are ``extended integer'' numbers>>=
+registration
+  cluster natural -> ext-integer for object;
+  coherence;
+end;
+@ 
+
+\begin{registration}
+We can use ``positive'', ``negative'', and their negations, as
+adjectives for extended integers.
+\end{registration}
+
+<<Register: positive, negative, non-negative, non-positive are adjectives for extended integers>>=
+registration
+  cluster positive for ExtInt;
+  existence
+  proof
+    take 1;
+    thus thesis;
+  end;
+  cluster non positive for ExtInt;
+  existence
+  proof
+    take -1;
+    thus thesis;
+  end;
+  cluster negative for ExtInt;
+  existence
+  proof
+    take -1;
+    thus thesis;
+  end;
+  cluster non negative for ExtInt;
+  existence
+  proof
+    take 1;
+    thus thesis;
+  end;
+end;
+@ 
+
+\begin{registration}
+Negating an extended integer is an extended integer.
+\end{registration}
+
+<<Register: negating an extended integer is an extended integer>>=
+registration
+  let m be ExtInt;
+  cluster - m -> ext-integer;
+  coherence
+  proof
+    per cases by Th4;
+    suppose m is Integer;
+      then reconsider M=m as Integer;
+      -M is Integer;
+      hence thesis by XXREAL_3:def 3;
+    end;
+    suppose m=-infty;
+      hence thesis by XXREAL_3:def 3;
+    end;
+    suppose m=+infty;
+      hence thesis by XXREAL_3:def 3;
+    end;
+  end;
+end;
+@ 
+
+\begin{registration}
+Addition, subtraction, multiplication, maximum, and minimum of extended integers are extended integers.
+\end{registration}
+
+<<Register: Addition, multiplication, maximum, and minimum of extended integers are extended integers.>>=
+registration
+  let m, n be ExtInt;
+  cluster min(m, n) -> ext-integer;
+  coherence by XXREAL_0:def 9;
+  cluster max(m, n) -> ext-integer;
+  coherence by XXREAL_0:def 10;
+  cluster m + n -> ext-integer;
+  coherence
+  <<Proof: adding extended integers yields an extended integer>>
+  cluster m * n -> ext-integer;
+  coherence
+  <<Proof: multiplying extended integers yields an extended integer>>
+end;
+@
+
+\begin{proof}[Proof sketch (adding extended integers)]
+This boils down to a proof by cases, which is thoroughly
+unenlightening. When adding integers together, we get an integer; when
+adding infinity to an integer, we get an infinity.
+\end{proof}
+
+<<Proof: adding extended integers yields an extended integer>>=
+proof
+  per cases by Th4;
+  suppose A1: m is Integer;
+    then reconsider M=m as Integer;
+    per cases by Th4;
+    suppose n is Integer;
+      then reconsider N=n as Integer;
+      M + N is Integer;
+      hence thesis by XXREAL_3:def 2;
+    end;
+    suppose n=-infty;
+      hence thesis by A1, XXREAL_3:def 2;
+    end;
+    suppose n=+infty;
+      hence thesis by A1, XXREAL_3:def 2;
+    end;
+  end;
+  suppose A2: m=-infty;
+    per cases by Th4;
+    suppose n is Integer;
+      hence thesis by A2, XXREAL_3:def 2;
+    end;
+    suppose n=-infty;
+      hence thesis by A2, XXREAL_3:def 2;
+    end;
+    suppose n=+infty;
+      hence thesis by A2;
+    end;
+  end;
+  suppose A3: m=+infty;
+    per cases by Th4;
+    suppose n is Integer;
+      hence thesis by A3, XXREAL_3:def 2;
+    end;
+    suppose n=-infty;
+      hence thesis by A3;
+    end;
+    suppose n=+infty;
+      hence thesis by A3;
+    end;
+  end;
+end;
+@ 
+
+\begin{proof}[Proof sketch (multiplying extended integers)]
+This boils down to a proof by cases, which is thoroughly
+unenlightening. When multiplying integers together, we get an integer; when
+multiplying infinity to an integer, we get an infinity.
+\end{proof}
+
+<<Proof: multiplying extended integers yields an extended integer>>=
+proof
+  per cases by Th4;
+  suppose m is Integer;
+    then reconsider M=m as Integer;
+    per cases by Th4;
+    suppose n is Integer;
+      then reconsider N=n as Integer;
+      M * N is Integer;
+      hence thesis by XXREAL_3:def 5;
+    end;
+    suppose B1: n=-infty;
+      m is positive or m is negative or m is zero;
+      hence thesis by B1, XXREAL_3:def 5;
+    end;
+    suppose B2: n=+infty;
+      m is positive or m is negative or m is zero;
+      hence thesis by B2, XXREAL_3:def 5;
+    end;
+  end;
+  suppose A2: m=-infty;
+    per cases by Th4;
+    suppose n is Integer;
+      n is positive or n is negative or n is zero;
+      hence thesis by A2, XXREAL_3:def 5;
+    end;
+    suppose n=-infty;
+      hence thesis by A2, XXREAL_3:def 5;
+    end;
+    suppose n=+infty;
+      hence thesis by A2, XXREAL_3:def 5;
+    end;
+  end;
+  suppose A3: m=+infty;
+    per cases by Th4;
+    suppose n is Integer;
+      n is positive or n is negative or n is zero;
+      hence thesis by A3, XXREAL_3:def 5;
+    end;
+    suppose n=-infty;
+      hence thesis by A3, XXREAL_3:def 5;
+    end;
+    suppose n=+infty;
+      hence thesis by A3;
+    end;
+  end;
+end;
+@
+
+\begin{registration}
+Subtracting extended integers yields an extended integer.
+\end{registration}
+
+<<Register: subtracting extended integers yields an extended integer>>=
+registration
+  let m, n be ExtInt;
+  cluster m - n -> ext-integer;
+  coherence
+  proof
+    (- n) is ext-integer & m + (- n) is ext-integer &
+    m - n = m + (- n) by XXREAL_3:def 4;
+    hence thesis;
+  end;
+end;
+@ 
+
+\begin{registration}
+Non-negative extended integers are extended naturals.
+\end{registration}
+
+<<Register: non-negative extended integers are extended naturals>>=
+registration
+  cluster non negative -> ext-natural for ExtInt;
+  coherence
+  proof
+    let x be ExtInt;
+    assume A1: x is non negative;
+    x is Integer or x = -infty or x = +infty by Th4;
+    hence thesis by A1;
+  end;
+end;
+@
+
+\begin{theorem}
+We have $x$ is a positive extended integer if and only if either $x$ is
+a positive integer or $x=+\infty$.
+\end{theorem}
+
+<<Theorem: positive extended integers are either positive integers or $+\infty$>>=
+theorem
+  for x being object
+  holds x is positive ExtInt iff (x is positive Integer or x = +infty) by Th4;
+@
+
+\begin{theorem}
+We have $x$ is a negative extended integer if and only if either $x$ is
+a negative integer or $x=-\infty$.
+\end{theorem}
+
+<<Theorem: negative extended integers are either negative integers or $-\infty$>>=
+theorem
+  for x being object
+  holds x is negative ExtInt iff (x is negative Integer or x = -infty) by Th4;
+@ 
