@@ -13,18 +13,18 @@ environ
  vocabularies NUMBERS, ORDINAL1, CARD_1, SUBSET_1, XBOOLE_0, ARYTM_2, ARYTM_3,
    ZFMISC_1, XCMPLX_0, XREAL_0, XXREAL_0, TARSKI, FUNCT_7, RELAT_1,
    REAL_1, INT_1, PREPOWER, POWER, ARYTM_1, NAT_1, COUNTERS,
-   COMPLEX1, FINSET_1,
+   COMPLEX1, FINSET_1, NEWTON,
    FLOAT_1;
  notations TARSKI, XBOOLE_0, ZFMISC_1, SUBSET_1, ORDINAL1, ARYTM_2, ARYTM_3,
-   XXREAL_3, NUMBERS, XCMPLX_0, XXREAL_0, XREAL_0, INT_1, COUNTERS, COMPLEX1, FINSET_1,
+   XXREAL_3, NUMBERS, XCMPLX_0, XXREAL_0, XREAL_0, NEWTON, INT_1, COUNTERS, COMPLEX1, FINSET_1,
    PREPOWER, POWER;
  constructors ARYTM_2, ARYTM_3, NUMBERS, XCMPLX_0, XXREAL_0, XXREAL_3, XREAL_0, INT_1,
-   COMPLEX1, FINSET_1, COUNTERS, PREPOWER, POWER;
+   COMPLEX1, NEWTON, FINSET_1, COUNTERS, PREPOWER, POWER;
  registrations ORDINAL1, XBOOLE_0, COUNTERS, NUMBER01,
    XCMPLX_0, XXREAL_0, XREAL_0, XXREAL_3, FINSET_1, RAT_1, INT_1,
-   FOMODEL0;
+   FOMODEL0, NEWTON;
  requirements REAL, SUBSET, BOOLE, NUMERALS, ARITHM;
- theorems ARYTM_2, ARYTM_3, CARD_1, COUNTERS, ENUMSET1, FINSET_1, INT_1, NUMBERS, ORDINAL1, ORDINAL2, ORDINAL3, POWER,
+ theorems ARYTM_2, ARYTM_3, CARD_1, COMPLEX1, COUNTERS, ENUMSET1, FINSET_1, INT_1, NUMBERS, ORDINAL1, ORDINAL2, ORDINAL3, POWER,
    TARSKI, XBOOLE_0, XBOOLE_1, XREAL_0, XREAL_1, XXREAL_0, XXREAL_3, XTUPLE_0, ZFMISC_1;
 
 begin :: Preliminaries
@@ -49,9 +49,43 @@ registration
   coherence by Def1, XXREAL_0:def 6;
 end;
 
-reserve b for valid_radix Real;
+registration
+  let x be positive Real;
+  let y be Real;
+  cluster x to_power y -> positive;
+  coherence by POWER:34;
+end;
 
 theorem Th1:
+  for x,y,z being Real
+  st x <= y & z > 1
+  holds z to_power x <= z to_power y
+proof
+  let x,y,z be Real;
+  assume A1: x <= y;
+  assume A2: z > 1;
+  x < y or x = y by A1, XXREAL_0:1;
+  hence thesis by A2, POWER:39;
+end;
+
+theorem ThNatPowers:
+  for x being Real
+  for y being Real
+  st x in NAT & y in NAT
+  holds x to_power y in NAT
+proof
+  let x be Real;
+  let y be Real;
+  assume A1: x in NAT;
+  assume A2: y in NAT;
+  reconsider X=x, Y=y as Nat by A1,A2;
+  X to_power Y = X |^ Y by POWER:41;
+  hence x to_power y in NAT by ORDINAL1:def 12;
+end;
+
+reserve b for valid_radix Real;
+
+theorem Th1b:
   for x being positive Real
   for N being Integer
   holds (b to_power N <= x & x < b to_power (N + 1))
@@ -131,7 +165,7 @@ proof
   proof
     set z = b to_power N;
     1 / z = b to_power (- N) by POWER:28;
-    hence 1 <= x * (b to_power (- N)) by A2, A3, Th1, XREAL_1:64;
+    hence 1 <= x * (b to_power (- N)) by A2, A3, Th1b, XREAL_1:64;
   end;
 
   thus x * (b to_power (- N)) < b
@@ -142,7 +176,7 @@ proof
      = b * ((b to_power N) * (b to_power (- N)))
     .= b by A3;
     0 < (b to_power (- N)) by POWER:34;
-    hence x * (b to_power (- N)) < b by Th1, B1, XREAL_1:68;
+    hence x * (b to_power (- N)) < b by Th1b, B1, XREAL_1:68;
   end;
 end;
 
@@ -626,12 +660,12 @@ definition
   func FLOAT_NUMBER(b, p, eMin, eMax) -> Subset of ExtREAL equals
   {x where x is Real : ex M, e being Integer
    st x = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
-   & eMin <= e & e <= eMax } \/ {+infty, -infty};
+   & eMin - 1 < e & e <= eMax } \/ {+infty, -infty};
   coherence
   proof
     set NUM = {x where x is Real : ex M, e being Integer
     st x = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
-    & eMin <= e & e <= eMax };
+    & eMin - 1 < e & e <= eMax };
     set IT = NUM \/ {+infty, -infty};
     for x being object st x in IT holds x in ExtREAL
     proof
@@ -641,7 +675,7 @@ definition
       suppose A1: x in NUM;
         then ex y being Real st x = y & ex M, e being Integer
         st y = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
-        & eMin <= e & e <= eMax;
+        & eMin - 1 < e & e <= eMax;
         then x in REAL by XREAL_0:def 1;
         hence x in ExtREAL by XBOOLE_0:def 3, XXREAL_0:def 4;
       end;
@@ -653,9 +687,134 @@ definition
   end;
 end;
 
+theorem Th11:
+  for x being Real
+  holds x in FLOAT_NUMBER(b, p, eMin, eMax) iff
+  (ex M, e being Integer
+  st x = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
+  & eMin - 1 < e & e <= eMax)
+proof
+  set NUM = {x where x is Real : ex M, e being Integer
+   st x = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
+   & eMin - 1 < e & e <= eMax };
+  let x be Real;
+  thus x in FLOAT_NUMBER(b, p, eMin, eMax) implies
+  (ex M, e being Integer
+  st x = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
+  & eMin - 1 < e & e <= eMax)
+  proof
+    assume A1: x in FLOAT_NUMBER(b, p, eMin, eMax);
+    then x in NUM or x in {+infty, -infty} by XBOOLE_0:def 3;
+    then ex y being Real st x = y & ex M, e being Integer
+    st y = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
+    & eMin - 1 < e & e <= eMax by TARSKI:def 2;
+    hence thesis;
+  end;
+  thus (ex M, e being Integer
+  st x = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
+  & eMin - 1 < e & e <= eMax) implies x in FLOAT_NUMBER(b, p, eMin, eMax)
+  proof
+    given M, e being Integer such that 
+    A1: x = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
+    & eMin - 1 < e & e <= eMax;
+    x in NUM by A1;
+    hence x in FLOAT_NUMBER(b, p, eMin, eMax) by XBOOLE_0:def 3;
+  end;
+end;
+
+theorem Th12:
+  for x being positive Real
+  holds x in FLOAT_NUMBER(b, p, eMin, eMax) iff
+  (ex M, e being Integer
+  st x = M * (b to_power (e - p + 1)) & 0 < M & M <= b to_power (p-1)
+  & eMin - 1 < e & e <= eMax)
+proof
+  let x be positive Real;
+  thus x in FLOAT_NUMBER(b, p, eMin, eMax) implies (ex M, e being Integer
+  st x = M * (b to_power (e - p + 1)) & 0 < M & M <= b to_power (p-1)
+  & eMin - 1 < e & e <= eMax)
+  proof
+    assume x in FLOAT_NUMBER(b, p, eMin, eMax);
+    then consider M, e being Integer such that
+    A1: x = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
+    & eMin - 1 < e & e <= eMax by Th11;
+    take M, e;
+    thus thesis by A1, COMPLEX1:43;
+  end;
+  given M, e being Integer such that 
+  A2: x = M * (b to_power (e - p + 1)) & 0 < M & M <= b to_power (p-1) & eMin - 1 < e & e <= eMax;
+  |.M.| = M by A2, COMPLEX1:43;
+  hence thesis by A2, Th11;
+end;
+
 definition
   let beta, p, eMin, eMax;
   func FLOAT(beta, p, eMin, eMax) -> set equals
   FLOAT_NUMBER(beta, p, eMin, eMax) \/ {-0, NaN};
   coherence;
+end;
+
+theorem
+  for eMin being negative Integer
+  for x being ExtReal
+  st x in FLOAT_NUMBER(b, p, eMin, eMax)
+   & x > 0
+   holds b to_power (eMin - p + 1) <= x
+proof
+  let eMin be negative Integer;
+  let x be ExtReal;
+  assume A1: x in FLOAT_NUMBER(b, p, eMin, eMax);
+  assume A2: x > 0;
+  x in REAL \/ {+infty,-infty} by XXREAL_0:def 1,def 4;
+  then x in REAL or x in {+infty,-infty} by XBOOLE_0:def 3;
+  then per cases by TARSKI:def 2;
+  suppose x in REAL;
+    then reconsider X=x as positive Real by A2;
+    consider M, e being Integer such that
+    A3: X = M * (b to_power (e - p + 1)) & 0 < M & M <= b to_power (p-1)
+    & eMin - 1 < e & e <= eMax by A1, Th12;
+    eMin - 1 + 1 <= e by A3, INT_1:7;
+    then eMin + (1 - p) <= e + (1 - p) by XREAL_1:6;
+    then A4: (b to_power (eMin - p + 1)) <= (b to_power (e - p + 1))
+    by Def1, Th1;
+    0 + 1 <= M by A3, INT_1:7;
+    then 1 * (b to_power (e - p + 1)) <= M * (b to_power (e - p + 1))
+    by XREAL_1:64;
+    hence (b to_power (eMin - p + 1)) <= x by A3, A4, XXREAL_0:2;
+  end;
+  suppose x=+infty;
+    hence b to_power (eMin - p + 1) <= x by XREAL_0:def 1, XXREAL_0:9;
+  end;
+  suppose x=-infty;
+    hence thesis by A2;
+  end;
+end;
+
+theorem
+  for eMin being negative Integer
+  for x being Real
+  st x in FLOAT_NUMBER(b, p, eMin, eMax) & b in INT
+  ex n being Integer
+  st n*(b to_power (eMin - p + 1)) = x
+proof
+  let eMin be negative Integer;
+  let x be Real;
+  assume A1: x in FLOAT_NUMBER(b, p, eMin, eMax);
+  assume b in INT;
+  then A2: b in NAT by INT_1:3;
+  consider M, e being Integer such that
+  A3: x = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
+  & eMin - 1 < e & e <= eMax by A1,Th11;
+  (eMin - 1) + 1 <= e by A3, INT_1:7;
+  then eMin - eMin <= e - eMin by XREAL_1:9;
+  then e - eMin in NAT by INT_1:3;
+  then b to_power (e - eMin) in NAT by A2, ThNatPowers;
+  then reconsider n = M * (b to_power (e - eMin)) as Integer;
+  take n;
+  thus n*(b to_power (eMin - p + 1))
+   = (M * (b to_power (e - eMin))) * (b to_power (eMin - p + 1))
+  .= M * ((b to_power (e - eMin)) * (b to_power (eMin - p + 1)))
+  .= M * (b to_power ((e - eMin) + (eMin - p + 1))) by POWER:27
+  .= M * (b to_power (e - p + 1))
+  .= x by A3;
 end;

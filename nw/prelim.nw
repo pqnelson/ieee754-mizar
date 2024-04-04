@@ -10,6 +10,12 @@ begin :: Preliminaries
 
 <<Registration: valid radix implies positive>>
 
+<<Register: $x^{y}$ is positive>>
+
+<<Theorem: $x\leq y$ and $z>1$ implies $z^{x}\leq z^{y}$>>
+
+<<Theorem: $x,y\in\NN$ implies $x^{y}\in\NN$>>
+
 <<Reserve: $b$ refers to a valid radix real number>>
 
 <<Theorem: exponent for $b$-expansion of $x$ is $\lfloor\log_{b}(x)\rfloor$>>
@@ -87,6 +93,61 @@ registration
 end;
 @
 
+\begin{registration}
+Let $x$ be a positive real number, and let $y$ be a real number.
+Then $x^{y}$ is positive.
+\end{registration}
+
+<<Register: $x^{y}$ is positive>>=
+registration
+  let x be positive Real;
+  let y be Real;
+  cluster x to_power y -> positive;
+  coherence by POWER:34;
+end;
+@ 
+
+\begin{theorem}
+Let $x$, $y$, $z$ be real numbers. If $x\leq y$ and $z>1$,
+then $z^{x}\leq z^{y}$.
+\end{theorem}
+
+<<Theorem: $x\leq y$ and $z>1$ implies $z^{x}\leq z^{y}$>>=
+theorem Th1:
+  for x,y,z being Real
+  st x <= y & z > 1
+  holds z to_power x <= z to_power y
+proof
+  let x,y,z be Real;
+  assume A1: x <= y;
+  assume A2: z > 1;
+  x < y or x = y by A1, XXREAL_0:1;
+  hence thesis by A2, POWER:39;
+end;
+@ %def Th1
+
+\begin{theorem}
+Let $x$, $y$ be real numbers. If $x\in\NN$ and $y\in\NN$,
+then $x^{y}\in\NN$.
+\end{theorem}
+
+<<Theorem: $x,y\in\NN$ implies $x^{y}\in\NN$>>=
+theorem ThNatPowers:
+  for x being Real
+  for y being Real
+  st x in NAT & y in NAT
+  holds x to_power y in NAT
+proof
+  let x be Real;
+  let y be Real;
+  assume A1: x in NAT;
+  assume A2: y in NAT;
+  reconsider X=x, Y=y as Nat by A1,A2;
+  X to_power Y = X |^ Y by POWER:41;
+  hence x to_power y in NAT by ORDINAL1:def 12;
+end;
+@ %def ThNatPowers
+
 \subsection{Non-integer base of numeration}
 Now, when we consider a non-integer base of numeration $\beta>1$ for a
 real number $x\in\RR$, we are considering a [possibly infinite] sequence
@@ -158,7 +219,7 @@ The backwards direction
 \end{proof}
 
 <<Theorem: exponent for $b$-expansion of $x$ is $\lfloor\log_{b}(x)\rfloor$>>=
-theorem Th1:
+theorem Th1b:
   for x being positive Real
   for N being Integer
   holds (b to_power N <= x & x < b to_power (N + 1))
@@ -182,7 +243,7 @@ proof
   thus N = [\ log(b, x) /] implies (b to_power N <= x & x < b to_power (N + 1))
   <<Subproof: $N\lfloor\log_{b}(x)\rfloor$ implies $b^{N}\leq x<b^{N+1}$>>
 end;
-@ %def Th1
+@ %def Th1b
 
 \begin{proof}[Subproof ($N\leq\log_{b}(x)$)]
 We can consider two cases from the assumption $b^{N}\leq x$: either
@@ -284,7 +345,7 @@ proof
   proof
     set z = b to_power N;
     1 / z = b to_power (- N) by POWER:28;
-    hence 1 <= x * (b to_power (- N)) by A2, A3, Th1, XREAL_1:64;
+    hence 1 <= x * (b to_power (- N)) by A2, A3, Th1b, XREAL_1:64;
   end;
 
   thus x * (b to_power (- N)) < b
@@ -295,7 +356,7 @@ proof
      = b * ((b to_power N) * (b to_power (- N)))
     .= b by A3;
     0 < (b to_power (- N)) by POWER:34;
-    hence x * (b to_power (- N)) < b by Th1, B1, XREAL_1:68;
+    hence x * (b to_power (- N)) < b by Th1b, B1, XREAL_1:68;
   end;
 end;
 @ %def Th2
