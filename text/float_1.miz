@@ -816,6 +816,35 @@ proof
   hence thesis by A2, Th11;
 end;
 
+theorem Th17:
+  for b being valid_radix Nat
+  holds 1 in FLOAT_NUMBER(b, p, eMin, eMax)
+proof
+  let b be valid_radix Nat;
+  1 is positive Real;
+  ex M, e being Integer
+  st 1 = M * (b to_power (e - p + 1)) & 0 < M & M <= b to_power (p-1)
+  & eMin - 1 < e & e <= eMax
+  proof
+    p >= 0 + 1 by INT_1:7;
+    then A1: p - 1 in NAT by INT_1:5;
+    then reconsider p1=p - 1 as Nat;
+    b to_power (p - 1) = b |^ p1 by POWER:41;
+    then reconsider M = b to_power (p - 1) as Integer;
+    take M;
+    take e = 0;
+    thus M * (b to_power (e - p + 1))
+          = (b to_power (p - 1)) * (b to_power (e - p + 1))
+         .= b to_power ((p - 1) + (e - p + 1)) by POWER:27
+         .= 1 by POWER:24;
+    thus 0 < M;
+    thus M <= b to_power (p-1);
+    thus eMin - 1 < e;
+    thus e <= eMax;
+  end;
+  hence 1 in FLOAT_NUMBER(b, p, eMin, eMax) by Th12;
+end;
+
 definition
   let beta, p, eMin, eMax;
   func FLOAT(beta, p, eMin, eMax) -> set equals
@@ -956,7 +985,7 @@ proof
   hence x is normal by A1,Def8;
 end;
 
-theorem
+theorem ThNormalFloatInPosInfty:
   for x being Element of FLOAT(b, p, eMin, eMax)
   st x=1 & eMax=+infty
   holds x is normal
@@ -975,6 +1004,53 @@ proof
     then b to_power iMin < |.x1.| by A1,COMPLEX1:48,POWER:36;
     hence x is normal by A2,Def8;
   end;
+end;
+
+theorem ThExistenceNormalFloat:
+  for b being valid_radix Nat
+  ex x being Element of FLOAT(b, p, eMin, eMax)
+  st x is normal
+proof
+  let b be valid_radix Nat;
+  1 in FLOAT_NUMBER(b, p, eMin, eMax) by Th17; then
+  A1: 1 in FLOAT(b, p, eMin, eMax) by XBOOLE_0:def 3;
+  per cases;
+  suppose eMin=-infty;
+    hence thesis by A1, ThNormalFloatInNegInfty;
+  end;
+  suppose eMax=+infty;
+    hence thesis by A1, ThNormalFloatInPosInfty;
+  end;
+  suppose A2: eMin <> -infty & eMax <> +infty;
+    then reconsider iMin=eMin as negative Integer by ThNegExtInt;
+    reconsider iMax=eMax as positive Integer by A2, ThPosExtInt;
+    reconsider x0 = 1 as Element of FLOAT(b, p, eMin, eMax) by A1;
+    take x0;
+    ex x being Real st x = x0
+    & b to_power iMin <= |.x.|
+    & |.x.| <= (b to_power iMax)*(b - (b to_power (1 - p)))
+    proof
+      take x = 1;
+      thus x = x0;
+      b > 1 & iMin < 0 by Def1;
+      hence b to_power iMin <= |.x.| by COMPLEX1:48, POWER:36;
+      1 < b by Def1;
+      then A3: 1 + 1 <= b by INT_1:7;
+      then 2 + (- 1) <= b + (- 1) by XREAL_1:6;
+      then A4: 2 * 1 <= b * (b - 1) by A3, XREAL_1:66;
+      b * (b - 1) <= (b to_power iMax)*(b - (b to_power (1 - p))) by Lm21;
+      then 2 <= (b to_power iMax)*(b - (b to_power (1 - p))) by A4, XXREAL_0:2;
+      hence |.x.| <= (b to_power iMax)*(b - (b to_power (1 - p)))
+      by COMPLEX1:48, XXREAL_0:2;
+    end;
+    hence x0 is normal by Def8;
+  end;
+end;
+
+registration
+  let b be valid_radix Nat, p, eMin, eMax;
+  cluster normal for Element of FLOAT(b,p,eMin,eMax);
+  existence by ThExistenceNormalFloat;
 end;
 
 definition
