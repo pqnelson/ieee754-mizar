@@ -6,7 +6,9 @@ begin :: Preliminaries
 
 <<Definition: valid radix>>
 
-<<Cluster: existence of valid radix number>>
+<<Cluster: existence of valid radix real number>>
+
+<<Cluster: existence of a valid radix natural number>>
 
 <<Registration: valid radix implies positive>>
 
@@ -60,12 +62,18 @@ We observe that there exists a valid radix real number (which allows us
 to use [[valid_radix]] as an adjective).
 \end{registration}
 
+A ``registration'' in Mizar is a theorem that instructs Mizar to
+automatically process attributes for us. In this case, this is an
+existence theorem, and it allows us to use [[valid_radix]] as an
+adjective for the [[Real]] type --- so we can work with [[valid_radix Real]]
+numbers.
+
 \begin{proof}[Proof sketch]
 We just need to prove there exists a real number $x$ such that $x$ is a
 valid radix. For example, $x=2$ is such a number.
 \end{proof}
 
-<<Cluster: existence of valid radix number>>=
+<<Cluster: existence of valid radix real number>>=
 registration
   cluster valid_radix for Real;
   existence
@@ -75,6 +83,21 @@ registration
   end;
 end;
 @
+
+\begin{registration}
+We observe that there exists a valid radix natural number.
+\end{registration}
+
+<<Cluster: existence of a valid radix natural number>>=
+registration
+  cluster valid_radix for Nat;
+  existence
+  proof
+    take 2;
+    thus thesis;
+  end;
+end;
+@ 
 
 \begin{registration}
 We observe that valid radix numbers are positive.
@@ -901,10 +924,10 @@ a positive integer or $x=+\infty$.
 \end{theorem}
 
 <<Theorem: positive extended integers are either positive integers or $+\infty$>>=
-theorem
+theorem ThPosExtInt:
   for x being object
   holds x is positive ExtInt iff (x is positive Integer or x = +infty) by Th4;
-@
+@ %def ThPosExtInt
 
 \begin{theorem}
 We have $x$ is a negative extended integer if and only if either $x$ is
@@ -912,7 +935,7 @@ a negative integer or $x=-\infty$.
 \end{theorem}
 
 <<Theorem: negative extended integers are either negative integers or $-\infty$>>=
-theorem
+theorem ThNegExtInt:
   for x being object
   holds x is negative ExtInt iff (x is negative Integer or x = -infty) by Th4;
-@ 
+@ %def ThNegExtInt

@@ -28,7 +28,13 @@ begin :: 3. Floating-point formats
 
 <<Definition: subset of floating-point numbers for a format>>
 
+<<Theorem: infinity is a float-poing number>>
+
 <<Theorem: criteria for real numbers to be exact floating-point numbers>>
+
+<<Lemma: if $y$ is floating-point number, then $-y$ is a floating-point number>>
+
+<<Theorem: floating-point numbers closed under negation>>
 
 <<Theorem: criteria for positive real numbers to be exact floating-point numbers>>
 
@@ -37,6 +43,20 @@ begin :: 3. Floating-point formats
 <<Theorem: smallest floating-point number>>
 
 <<Theorem: floating-point numbers are integer multiples of $b^{e_{\text{min}}-p+1}$>>
+
+<<Definition: normal floating-point number>>
+
+<<Lemma: $b^{1-p}\leq1$ and $1\leq b^{p-1}$>>
+
+<<Lemma: $b\leq b^{e_{\text{max}}}$>>
+
+<<Lemma: $b(b-1)\leq b^{e_{\text{max}}}(b-b^{1-p})$>>
+
+<<Theorem: $1\in\FF(b,p,-\infty,e_{\text{max}})$ is normal>>
+
+<<Theorem: $1\in\FF(b,p,e_{\text{min}},+\infty)$>>
+
+<<Definition: subnormal floating-point datum>>
 @ 
 
 \subsection{Overview}
@@ -468,6 +488,32 @@ end;
 @ %def FLOAT_NUMBER
 
 \begin{theorem}
+Infinity is a floating-point number.
+\end{theorem}
+
+This is explicitly part of the standard, in \S3.2, that $+\infty$ and
+$-\infty$ are floating-point numbers.
+
+\begin{remark}
+We will adopt the naming convention that theorems which appear in the
+Standard will be labeled ``$\mathtt{St}cs\beta x$'' where $c$ is the
+clause, $s$ the subclause, $\beta$ the sub-subclause, and $x$ is a
+unique number.
+\end{remark}
+
+<<Theorem: infinity is a float-poing number>>=
+theorem St3200:
+  -infty in FLOAT_NUMBER(b, p, eMin, eMax)
+  & +infty in FLOAT_NUMBER(b, p, eMin, eMax)
+proof
+  -infty in {-infty,+infty} by TARSKI:def 2;
+  hence -infty in FLOAT_NUMBER(b, p, eMin, eMax) by XBOOLE_0:def 3;
+  +infty in {-infty,+infty} by TARSKI:def 2;
+  hence +infty in FLOAT_NUMBER(b, p, eMin, eMax) by XBOOLE_0:def 3;
+end;
+@ %def St3200
+
+\begin{theorem}
 Let $x$ be a real number.
 Then $x\in\FF_{n}(b,p,e_{\text{min}},e_{\text{max}})$
 if and only if there exists integers $e$ and $M$ such that
@@ -515,6 +561,76 @@ proof
   end;
 end;
 @ %def Th11
+
+\begin{lemma}
+Let $y$ be an extended real number. If $y\in\RR$ and $y$ is a
+floating-point number, then $-y$ is a floating-point number.
+\end{lemma}
+
+<<Lemma: if $y$ is floating-point number, then $-y$ is a floating-point number>>=
+Lm7:
+  for y being ExtReal st y in REAL
+  holds y in FLOAT_NUMBER(b, p, eMin, eMax)
+  implies (- y) in FLOAT_NUMBER(b, p, eMin, eMax)
+proof
+  let y be ExtReal;
+  assume A2: y in REAL;
+  assume y in FLOAT_NUMBER(b, p, eMin, eMax);
+  then consider M, e being Integer such that
+  A3: y = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
+  & eMin - 1 < e & e <= eMax
+  by A2, Th11;
+  A4: (- M) * (b to_power (e - p + 1))
+  = - (M * (b to_power (e - p + 1)))
+  .= (-1) * ((M * (b to_power (e - p + 1))) qua ExtReal)
+  .= (-1) * (y) by A3
+  .= - y by XXREAL_3:91;
+  |.(- M).| = |.M.| by COMPLEX1:52;
+  hence (- y) in FLOAT_NUMBER(b, p, eMin, eMax) by A3,A4,Th11;
+end;
+@ %def Lm7
+
+\begin{theorem}
+Let $x$ be an extended real number. Then $x$ is a floating-point number
+if and only if $-x$ is a floating-point number.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+This is a proof by cases. Case 1: $x\in\RR$. Then we use the previous
+lemma to obtain the result. Case 2: $x=-\infty$. Then $-x=+\infty$ which
+is a floating-point number. Case 3: $x=+\infty$. Then $-x=-\infty$ which
+is a floating-point number.
+\end{proof}
+
+<<Theorem: floating-point numbers closed under negation>>=
+theorem
+  for x being ExtReal
+  holds x in FLOAT_NUMBER(b, p, eMin, eMax)
+  iff (- x) in FLOAT_NUMBER(b, p, eMin, eMax)
+proof
+  let x be ExtReal;
+  A1: - -infty = +infty & - +infty = -infty by XXREAL_3:def 3;
+  x in REAL \/ {+infty, -infty} by XXREAL_0:def 1,def 4;
+  then x in REAL or x in {+infty, -infty} by XBOOLE_0:def 3;
+  then per cases by TARSKI:def 2;
+  suppose CASE1: x in REAL;
+    thus x in FLOAT_NUMBER(b, p, eMin, eMax)
+    implies (- x) in FLOAT_NUMBER(b, p, eMin, eMax) by CASE1,Lm7;
+  
+    A2: - x in REAL by CASE1, XREAL_0:def 1;
+    assume (- x) in FLOAT_NUMBER(b, p, eMin, eMax);
+    then - (- x) = x & - (- x) in FLOAT_NUMBER(b, p, eMin, eMax) by Lm7,A2;
+    hence x in FLOAT_NUMBER(b, p, eMin, eMax);
+    hence thesis by Lm7;
+  end;
+  suppose CASE2: x=+infty;
+    hence thesis by A1, CASE2, St3200;
+  end;
+  suppose CASE3: x=-infty;
+    hence thesis by A1, CASE3, St3200;
+  end;
+end;
+@ 
 
 \begin{theorem}
 Let $x$ be a positive real number.
@@ -595,10 +711,10 @@ $\FF(b,p,e_{\text{min}},e_{\text{max}})$ is $b^{e_{\text{min}}-p+1}$.
 \end{theorem}
 
 When we allow $e_{\text{min}}=-\infty$, this theorem fails to hold
-(obviously). 
+(obviously).
 
 <<Theorem: smallest floating-point number>>=
-theorem
+theorem St3300:
   for eMin being negative Integer
   for x being ExtReal
   st x in FLOAT_NUMBER(b, p, eMin, eMax)
@@ -644,7 +760,7 @@ $b^{e_{\text{min}}-p+1}$.
 The standard says this in passing, but doesn't prove it.
 
 <<Theorem: floating-point numbers are integer multiples of $b^{e_{\text{min}}-p+1}$>>=
-theorem
+theorem St3301:
   for eMin being negative Integer
   for x being Real
   st x in FLOAT_NUMBER(b, p, eMin, eMax) & b in INT
@@ -676,9 +792,21 @@ end;
 
 \begin{definition}
 Let $x$ be a floating-point datum belonging to the format $\FF(b,p,e_{\text{min}},e_{\text{max}})$.
-We say $x$ is \define{Normal} if its magnitude lies between
-$b^{e_{\text{min}}}\leq|x|\leq b^{e_{\text{max}}}\cdot(b-b^{1-p})$.
+We say $x$ is \define{Normal} if
+\begin{enumerate}
+\item when $e_{\text{min}}=-\infty$, $x\neq0$;
+\item when $e_{\text{min}}\neq-\infty$ but $e_{\text{max}}=+\infty$,
+  the magnitude of $x$ is not less than $b^{e_{\text{min}}}\leq|x|$;
+\item otherwise, its magnitude lies between
+  $b^{e_{\text{min}}}\leq|x|\leq b^{e_{\text{max}}}\cdot(b-b^{1-p})$.
+\end{enumerate}
 \end{definition}
+
+\begin{remark}
+The Standard really specifies only case (3), since they have exponents
+be integers. We generalize to cases (1) and (2) in a manner to make sure
+non-normal numbers [zero] remain non-normal.
+\end{remark}
 
 This definition gives us a peculiar situation: zero is not a normal
 floating-point number. Neither is it a subnormal number (which are
@@ -689,12 +817,202 @@ it seems unintuitive that $0$ is not normal.
 definition
   let b, p, eMin, eMax;
   let IT be Element of FLOAT(b,p,eMin,eMax);
-  attr IT is normal means
-  ex x being Real st x = IT
-  & beta to_power eMin <= |.x.|
-  & |.x.| <= (b to_power eMax)*(b - (b to_power (1 - p)));
+  attr IT is normal means :Def8:
+  IT <> 0 if eMin =-infty,
+  ex iMin being negative Integer st iMin = eMin
+  & ex x being Real st x = IT
+  & b to_power iMin <= |.x.| if eMin <> -infty & eMax = +infty
+  otherwise ex iMin being negative Integer st iMin = eMin
+  & ex iMax being positive Integer st iMax = eMax
+  & ex x being Real st x = IT
+  & b to_power iMin <= |.x.|
+  & |.x.| <= (b to_power iMax)*(b - (b to_power (1 - p)));
+  consistency;
 end;
-@ %def normal
+@ %def normal Def8
+
+The question of \emph{when do normal floating-point numbers exist} is
+rather tricky to answer in the abstract, because we can always pick an
+arbitrarily small base to complicate things. When we work with
+$e_{\text{min}}$ and $e_{\text{max}}$ being integers, the condition for
+the existence of at least one normal floating-point number boils down to
+\begin{equation}
+b^{e_{\text{min}}}\leq b^{1+e_{\text{max}}}(1 - b^{-p}).
+\end{equation}
+
+\begin{proposition}
+When $e_{\text{min}}+e_{\text{max}}=1$, and $b=1+\varepsilon$ for $0<\varepsilon\ll4/(1+e_{\text{max}})$,
+there are no normal floating-point numbers.
+\end{proposition}
+\begin{proof}
+When $b=1+\varepsilon$ for a positive but tiny $\varepsilon$, we
+see the Binomial series truncated to first order gives us
+\begin{equation}
+1 + e_{\text{min}}\varepsilon\leq (1 + [1 + e_{\text{max}}]\varepsilon)(1 - (1 - p\varepsilon)) 
+= (1 + [1 + e_{\text{max}}]\varepsilon)p\varepsilon.
+\end{equation}
+Rearranging terms, we see this requires
+\begin{equation}
+1 + e_{\text{min}}\varepsilon\leq p\varepsilon + [1 + e_{\text{max}}]p\varepsilon^{2},
+\end{equation}
+or equivalently
+\begin{equation}
+1\leq(p- e_{\text{min}})\varepsilon + [1 + e_{\text{max}}]p\varepsilon^{2}.
+\end{equation}
+If we use the condition that the IEEE Standard uses relating exponents,
+$e_{\text{max}}+e_{\text{min}}=1$, and if we stipulate that $p>2$ and
+$e_{\text{max}}>1$, then we obtain the inequality
+\begin{equation}
+p + (1 + e_{\text{max}}) + 2p(1 + e_{\text{max}})\varepsilon\geq2 +
+\sqrt{p^{2} + (e_{\text{max}}-1)^{2}+p(6e_{\text{max}}+2)}.
+\end{equation}
+This gives us the inequality
+\begin{equation}
+\varepsilon\geq\frac{2 - p - (1 + e_{\text{max}}) + \sqrt{p^{2} + (e_{\text{max}}-1)^{2}+p(6e_{\text{max}}+2)}}{2p(1 + e_{\text{max}})}>0.
+\end{equation}
+When $p=7$ and $e_{\text{max}}=96$ (i.e., we use the decimale-32 format
+from the IEEE standard), we see that we need
+$\varepsilon\geq(4\sqrt{205}-51)/679\approx0.00923606$ for a normal
+floating-point number to exist. So for smaller bases (say, $b=1+10^{-5}$),
+there are no normal floating-point numbers with precision $p=7$ and
+exponent bounds $e_{\text{max}}=96$, $e_{\text{min}}=-95$. Worse, there
+are no values of $p$ and $e_{\text{max}}$ for which the right-hand side
+vanishes --- i.e., for which $\varepsilon\geq0$.
+
+When this inequality \emph{fails} to hold is of interest to us,
+specifically when
+\begin{equation}
+\varepsilon<\frac{2 - p - (1 + e_{\text{max}}) + \sqrt{p^{2} + (e_{\text{max}}-1)^{2}+p(6e_{\text{max}}+2)}}{2p(1 + e_{\text{max}})}.
+\end{equation}
+We can rearrange this expression to find
+\begin{subequations}
+\begin{equation}
+1 + e_{\text{max}} < \frac{1}{\varepsilon+2\varepsilon^{2}},
+\end{equation}
+and
+\begin{equation}
+2 < p < \frac{1 + \varepsilon - e_{\text{max}}\varepsilon}{\varepsilon + (1+e_{\text{max}})\varepsilon^{2}}.
+\end{equation}
+Observe since $0<\varepsilon\ll 1$, the upper bound on $p$ is meaningless.
+\end{subequations}
+The first inequality can be rearranged to find
+\begin{equation}
+4\varepsilon < \sqrt{\frac{9+e_{\text{max}}}{1+e_{\text{max}}}}-1 < \frac{4}{1+e_{\text{max}}}.
+\end{equation}
+Thus we obtain a criterion for the non-existence of normal floating-point
+numbers for an arbitrary radix $b=1+\varepsilon$ (for $0<\varepsilon\ll1$) when $e_{\text{min}}+e_{\text{max}}=1$.
+\end{proof}
+
+We need to prove a number of lemmas concerning the bounds on powers of
+the radix.
+
+\begin{lemma}
+Let $b$ be a valid radix number. Then $b^{1-p}\leq1$ and $1\leq b^{p-1}$.
+\end{lemma}
+
+\begin{proof}[Proof sketch]
+Since $p\geq1$, then $0\geq 1-p$ and so $b^{0}\geq b^{1-p}$.
+Similar reasoning gives $p-1\geq0$ thus $b^{p-1}\geq b^{0}$.
+\end{proof}
+
+<<Lemma: $b^{1-p}\leq1$ and $1\leq b^{p-1}$>>=
+Lm19:
+  b to_power (1 - p) <= 1
+  & 1 <= b to_power (p - 1)
+proof
+  A1: p >= 0 + 1 by INT_1:7;
+  then 1 - p <= 1 - 1 by XREAL_1:13;
+  then b to_power (1 - p) <= b to_power 0 by Def1,Th1;
+  hence b to_power (1 - p) <= 1 by POWER:24;
+  1 - 1 <= p - 1 by A1, XREAL_1:9;
+  then b to_power 0 <= b to_power (p - 1) by Def1,Th1;
+  hence 1 <= b to_power (p - 1) by POWER:24;
+end;
+@ %def Lm19
+
+\begin{lemma}
+Let $e_{\text{max}}$ be a positive integer. Then $b\leq b^{e_{\text{max}}}$.
+\end{lemma}
+
+<<Lemma: $b\leq b^{e_{\text{max}}}$>>=
+Lm20:
+  for eMax being positive Integer
+  holds b <= b to_power eMax
+proof
+  let eMax be positive Integer;
+  0 + 1 <= eMax by INT_1:7;
+  then b to_power 1 <= b to_power eMax by Def1,Th1;
+  hence b <= b to_power eMax by POWER:25;
+end;
+@ %def Lm20
+
+\begin{lemma}
+Let $e_{\text{max}}$ be a positive integer. Then $b(b-1)\leq b^{e_{\text{max}}}(b-b^{1-p})$.
+\end{lemma}
+
+<<Lemma: $b(b-1)\leq b^{e_{\text{max}}}(b-b^{1-p})$>>=
+Lm21:
+  for eMax being positive Integer
+  holds b * (b - 1) <= (b to_power eMax)*(b - (b to_power (1 - p)))
+proof
+  let eMax be positive Integer;
+  A1: 0 <= b - 1 & 0 <= b
+  proof
+    b > 1 by Def1;
+    hence 0 <= b - 1 by XREAL_1:48;
+    thus 0 <= b;
+  end;
+  1 >= b to_power (1 - p) by Lm19;
+  then A2: b - 1 <= b - (b to_power (1 - p)) by XREAL_1:13;
+  b <= b to_power eMax by Lm20;
+  hence b * (b - 1) <= (b to_power eMax)*(b - (b to_power (1 - p)))
+  by A1, A2, XREAL_1:66;
+end;
+@ %def Lm21
+
+\begin{theorem}
+We see $1\in\FF(b,p,-\infty,e_{\text{max}})$ is normal.
+\end{theorem}
+
+<<Theorem: $1\in\FF(b,p,-\infty,e_{\text{max}})$ is normal>>=
+theorem ThNormalFloatInNegInfty:
+  for x being Element of FLOAT(b, p, eMin, eMax)
+  st x=1 & eMin=-infty
+  holds x is normal
+proof
+  let x be Element of FLOAT(b, p, eMin, eMax);
+  assume A1: x=1;
+  assume eMin=-infty;
+  hence x is normal by A1,Def8;
+end;
+@ %def ThNormalFloatInNegInfty
+
+\begin{theorem}
+We see $1\in\FF(b,p,e_{\text{min}},+\infty)$ is normal.
+\end{theorem}
+
+<<Theorem: $1\in\FF(b,p,e_{\text{min}},+\infty)$>>=
+theorem
+  for x being Element of FLOAT(b, p, eMin, eMax)
+  st x=1 & eMax=+infty
+  holds x is normal
+proof
+  let x be Element of FLOAT(b, p, eMin, eMax);
+  assume A1: x=1;
+  assume A2: eMax=+infty;
+  per cases;
+  suppose eMin=-infty;
+    hence thesis by ThNormalFloatInNegInfty,A1;
+  end;
+  suppose A3: eMin <> -infty;
+    then reconsider iMin = eMin as negative Integer by ThNegExtInt;
+    reconsider x1=x as Real by A1;
+    b > 1 by Def1;
+    then b to_power iMin < |.x1.| by A1,COMPLEX1:48,POWER:36;
+    hence x is normal by A2,Def8;
+  end;
+end;
+@ 
 
 \begin{registration}
 Observe there exists a normal floating-point datum (take $b^{e_{\text{min}}}$).
@@ -725,14 +1043,20 @@ We say $x$ is \define{Subnormal} if its magnitude lies between
 $0<|x|<b^{e_{\text{min}}}$.
 \end{definition}
 
+\begin{remark}
+The Standard says that ``floating-point numbers for a format with magnitude less than $b^{e_{\text{min}}}$ are called subnormal because their
+magnitudes lie between zero and the smallest normal magnitude.''
+In particular, this means that subnormal numbers must be finite.
+\end{remark}
+
 <<Definition: subnormal floating-point datum>>=
 definition
   let b, p, eMin, eMax;
   let IT be Element of FLOAT(b,p,eMin,eMax);
   attr IT is subnormal means
-  ex x being Real st x = IT
-  & 0 < |.x.|
-  & |.x.| < b to_power eMin;
+  ex x being Real st x = IT &
+  ex iMin being negative Integer st iMin = eMin
+  & 0 < |.x.| & |.x.| < b to_power iMin;
 end;
 @ %def subnormal
 

@@ -13,7 +13,7 @@ environ
  vocabularies NUMBERS, ORDINAL1, CARD_1, SUBSET_1, XBOOLE_0, ARYTM_2, ARYTM_3,
    ZFMISC_1, XCMPLX_0, XREAL_0, XXREAL_0, TARSKI, FUNCT_7, RELAT_1,
    REAL_1, INT_1, PREPOWER, POWER, ARYTM_1, NAT_1, COUNTERS,
-   COMPLEX1, FINSET_1, NEWTON,
+   COMPLEX1, FINSET_1, NEWTON, PRE_TOPC, FUZNUM_1,
    FLOAT_1;
  notations TARSKI, XBOOLE_0, ZFMISC_1, SUBSET_1, ORDINAL1, ARYTM_2, ARYTM_3,
    XXREAL_3, NUMBERS, XCMPLX_0, XXREAL_0, XREAL_0, NEWTON, INT_1, COUNTERS, COMPLEX1, FINSET_1,
@@ -25,7 +25,7 @@ environ
    FOMODEL0, NEWTON;
  requirements REAL, SUBSET, BOOLE, NUMERALS, ARITHM;
  theorems ARYTM_2, ARYTM_3, CARD_1, COMPLEX1, COUNTERS, ENUMSET1, FINSET_1, INT_1, NUMBERS, ORDINAL1, ORDINAL2, ORDINAL3, POWER,
-   TARSKI, XBOOLE_0, XBOOLE_1, XREAL_0, XREAL_1, XXREAL_0, XXREAL_3, XTUPLE_0, ZFMISC_1;
+   TARSKI, XBOOLE_0, XBOOLE_1, XCMPLX_0, XCMPLX_1, XREAL_0, XREAL_1, XXREAL_0, XXREAL_3, XTUPLE_0, ZFMISC_1;
 
 begin :: Preliminaries
 
@@ -41,6 +41,15 @@ registration
   proof
     take x=2;
     thus thesis by Def1;
+  end;
+end;
+
+registration
+  cluster valid_radix for Nat;
+  existence
+  proof
+    take 2;
+    thus thesis;
   end;
 end;
 
@@ -497,13 +506,14 @@ registration
   end;
 end;
 
-theorem
+theorem ThPosExtInt:
   for x being object
   holds x is positive ExtInt iff (x is positive Integer or x = +infty) by Th4;
 
-theorem
+theorem ThNegExtInt:
   for x being object
   holds x is negative ExtInt iff (x is negative Integer or x = -infty) by Th4;
+
 
 begin :: 3. Floating-point formats
 
@@ -687,6 +697,16 @@ definition
   end;
 end;
 
+theorem St3200:
+  -infty in FLOAT_NUMBER(b, p, eMin, eMax)
+  & +infty in FLOAT_NUMBER(b, p, eMin, eMax)
+proof
+  -infty in {-infty,+infty} by TARSKI:def 2;
+  hence -infty in FLOAT_NUMBER(b, p, eMin, eMax) by XBOOLE_0:def 3;
+  +infty in {-infty,+infty} by TARSKI:def 2;
+  hence +infty in FLOAT_NUMBER(b, p, eMin, eMax) by XBOOLE_0:def 3;
+end;
+
 theorem Th11:
   for x being Real
   holds x in FLOAT_NUMBER(b, p, eMin, eMax) iff
@@ -722,6 +742,55 @@ proof
   end;
 end;
 
+Lm7:
+  for y being ExtReal st y in REAL
+  holds y in FLOAT_NUMBER(b, p, eMin, eMax)
+  implies (- y) in FLOAT_NUMBER(b, p, eMin, eMax)
+proof
+  let y be ExtReal;
+  assume A2: y in REAL;
+  assume y in FLOAT_NUMBER(b, p, eMin, eMax);
+  then consider M, e being Integer such that
+  A3: y = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
+  & eMin - 1 < e & e <= eMax
+  by A2, Th11;
+  A4: (- M) * (b to_power (e - p + 1))
+  = - (M * (b to_power (e - p + 1)))
+  .= (-1) * ((M * (b to_power (e - p + 1))) qua ExtReal)
+  .= (-1) * (y) by A3
+  .= - y by XXREAL_3:91;
+  |.(- M).| = |.M.| by COMPLEX1:52;
+  hence (- y) in FLOAT_NUMBER(b, p, eMin, eMax) by A3,A4,Th11;
+end;
+
+theorem
+  for x being ExtReal
+  holds x in FLOAT_NUMBER(b, p, eMin, eMax)
+  iff (- x) in FLOAT_NUMBER(b, p, eMin, eMax)
+proof
+  let x be ExtReal;
+  A1: - -infty = +infty & - +infty = -infty by XXREAL_3:def 3;
+  x in REAL \/ {+infty, -infty} by XXREAL_0:def 1,def 4;
+  then x in REAL or x in {+infty, -infty} by XBOOLE_0:def 3;
+  then per cases by TARSKI:def 2;
+  suppose CASE1: x in REAL;
+    thus x in FLOAT_NUMBER(b, p, eMin, eMax)
+    implies (- x) in FLOAT_NUMBER(b, p, eMin, eMax) by CASE1,Lm7;
+  
+    A2: - x in REAL by CASE1, XREAL_0:def 1;
+    assume (- x) in FLOAT_NUMBER(b, p, eMin, eMax);
+    then - (- x) = x & - (- x) in FLOAT_NUMBER(b, p, eMin, eMax) by Lm7,A2;
+    hence x in FLOAT_NUMBER(b, p, eMin, eMax);
+    hence thesis by Lm7;
+  end;
+  suppose CASE2: x=+infty;
+    hence thesis by A1, CASE2, St3200;
+  end;
+  suppose CASE3: x=-infty;
+    hence thesis by A1, CASE3, St3200;
+  end;
+end;
+
 theorem Th12:
   for x being positive Real
   holds x in FLOAT_NUMBER(b, p, eMin, eMax) iff
@@ -754,7 +823,7 @@ definition
   coherence;
 end;
 
-theorem
+theorem St3300:
   for eMin being negative Integer
   for x being ExtReal
   st x in FLOAT_NUMBER(b, p, eMin, eMax)
@@ -790,7 +859,7 @@ proof
   end;
 end;
 
-theorem
+theorem St3301:
   for eMin being negative Integer
   for x being Real
   st x in FLOAT_NUMBER(b, p, eMin, eMax) & b in INT
@@ -817,4 +886,102 @@ proof
   .= M * (b to_power ((e - eMin) + (eMin - p + 1))) by POWER:27
   .= M * (b to_power (e - p + 1))
   .= x by A3;
+end;
+
+definition
+  let b, p, eMin, eMax;
+  let IT be Element of FLOAT(b,p,eMin,eMax);
+  attr IT is normal means :Def8:
+  IT <> 0 if eMin =-infty,
+  ex iMin being negative Integer st iMin = eMin
+  & ex x being Real st x = IT
+  & b to_power iMin <= |.x.| if eMin <> -infty & eMax = +infty
+  otherwise ex iMin being negative Integer st iMin = eMin
+  & ex iMax being positive Integer st iMax = eMax
+  & ex x being Real st x = IT
+  & b to_power iMin <= |.x.|
+  & |.x.| <= (b to_power iMax)*(b - (b to_power (1 - p)));
+  consistency;
+end;
+
+Lm19:
+  b to_power (1 - p) <= 1
+  & 1 <= b to_power (p - 1)
+proof
+  A1: p >= 0 + 1 by INT_1:7;
+  then 1 - p <= 1 - 1 by XREAL_1:13;
+  then b to_power (1 - p) <= b to_power 0 by Def1,Th1;
+  hence b to_power (1 - p) <= 1 by POWER:24;
+  1 - 1 <= p - 1 by A1, XREAL_1:9;
+  then b to_power 0 <= b to_power (p - 1) by Def1,Th1;
+  hence 1 <= b to_power (p - 1) by POWER:24;
+end;
+
+Lm20:
+  for eMax being positive Integer
+  holds b <= b to_power eMax
+proof
+  let eMax be positive Integer;
+  0 + 1 <= eMax by INT_1:7;
+  then b to_power 1 <= b to_power eMax by Def1,Th1;
+  hence b <= b to_power eMax by POWER:25;
+end;
+
+Lm21:
+  for eMax being positive Integer
+  holds b * (b - 1) <= (b to_power eMax)*(b - (b to_power (1 - p)))
+proof
+  let eMax be positive Integer;
+  A1: 0 <= b - 1 & 0 <= b
+  proof
+    b > 1 by Def1;
+    hence 0 <= b - 1 by XREAL_1:48;
+    thus 0 <= b;
+  end;
+  1 >= b to_power (1 - p) by Lm19;
+  then A2: b - 1 <= b - (b to_power (1 - p)) by XREAL_1:13;
+  b <= b to_power eMax by Lm20;
+  hence b * (b - 1) <= (b to_power eMax)*(b - (b to_power (1 - p)))
+  by A1, A2, XREAL_1:66;
+end;
+
+theorem ThNormalFloatInNegInfty:
+  for x being Element of FLOAT(b, p, eMin, eMax)
+  st x=1 & eMin=-infty
+  holds x is normal
+proof
+  let x be Element of FLOAT(b, p, eMin, eMax);
+  assume A1: x=1;
+  assume eMin=-infty;
+  hence x is normal by A1,Def8;
+end;
+
+theorem
+  for x being Element of FLOAT(b, p, eMin, eMax)
+  st x=1 & eMax=+infty
+  holds x is normal
+proof
+  let x be Element of FLOAT(b, p, eMin, eMax);
+  assume A1: x=1;
+  assume A2: eMax=+infty;
+  per cases;
+  suppose eMin=-infty;
+    hence thesis by ThNormalFloatInNegInfty,A1;
+  end;
+  suppose A3: eMin <> -infty;
+    then reconsider iMin = eMin as negative Integer by ThNegExtInt;
+    reconsider x1=x as Real by A1;
+    b > 1 by Def1;
+    then b to_power iMin < |.x1.| by A1,COMPLEX1:48,POWER:36;
+    hence x is normal by A2,Def8;
+  end;
+end;
+
+definition
+  let b, p, eMin, eMax;
+  let IT be Element of FLOAT(b,p,eMin,eMax);
+  attr IT is subnormal means
+  ex x being Real st x = IT &
+  ex iMin being negative Integer st iMin = eMin
+  & 0 < |.x.| & |.x.| < b to_power iMin;
 end;
