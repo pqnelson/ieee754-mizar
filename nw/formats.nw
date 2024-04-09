@@ -48,6 +48,8 @@ begin :: 3. Floating-point formats
 
 <<Definition: normal floating-point number>>
 
+<<Theorem: criterion for normal floating-point numbers with $e_{\text{min}}\in\ZZ$ and $e_{\text{max}}\in\ZZ$>>
+
 <<Lemma: $b^{1-p}\leq1$ and $1\leq b^{p-1}$>>
 
 <<Lemma: $b\leq b^{e_{\text{max}}}$>>
@@ -871,6 +873,42 @@ definition
   consistency;
 end;
 @ %def normal Def8
+
+\begin{theorem}
+If $e_{\text{min}}\in\ZZ$ and $e_{\text{max}}\in\ZZ$,
+then $v\in\FF(b,p,e_{\text{min}},e_{\text{max}})$ is normal if and only if
+there exists a $x\in\RR$ such that $x=v$ and $b^{e_{\text{min}}}\leq x\leq b^{e_{\text{max}}}(b - b^{1-p})$.
+\end{theorem}
+
+<<Theorem: criterion for normal floating-point numbers with $e_{\text{min}}\in\ZZ$ and $e_{\text{max}}\in\ZZ$>>=
+theorem ThNormalFloatCriteriaFiniteExp:
+  for eMin being negative Integer
+  for eMax being positive Integer
+  for v being Element of FLOAT(b, p, eMin, eMax)
+  holds v is normal iff ex x being Real st x = v
+  & b to_power eMin <= |.x.|
+  & |.x.| <= (b to_power eMax)*(b - (b to_power (1 - p)))
+proof
+  let eMin be negative Integer;
+  let eMax be positive Integer;
+  let v be Element of FLOAT(b, p, eMin, eMax);
+  thus v is normal implies ex x being Real st x = v
+  & b to_power eMin <= |.x.|
+  & |.x.| <= (b to_power eMax)*(b - (b to_power (1 - p)))
+  proof
+    assume v is normal;
+    then ex iMin being negative Integer st iMin = eMin
+    & ex iMax being positive Integer st iMax = eMax
+    & ex x being Real st x = v
+    & b to_power iMin <= |.x.|
+    & |.x.| <= (b to_power iMax)*(b - (b to_power (1 - p))) by Def8;
+    hence thesis;
+  end;
+  given x being Real such that 
+  A1: x = v & b to_power eMin <= |.x.| & |.x.| <= (b to_power eMax)*(b - (b to_power (1 - p)));
+  thus v is normal by A1, Def8;
+end;
+@ %def ThNormalFloatCriteriaFiniteExp
 
 The question of \emph{when do normal floating-point numbers exist} is
 rather tricky to answer in the abstract, because we can always pick an

@@ -933,6 +933,34 @@ definition
   consistency;
 end;
 
+theorem ThNormalFloatCriteriaFiniteExp:
+  for eMin being negative Integer
+  for eMax being positive Integer
+  for v being Element of FLOAT(b, p, eMin, eMax)
+  holds v is normal iff ex x being Real st x = v
+  & b to_power eMin <= |.x.|
+  & |.x.| <= (b to_power eMax)*(b - (b to_power (1 - p)))
+proof
+  let eMin be negative Integer;
+  let eMax be positive Integer;
+  let v be Element of FLOAT(b, p, eMin, eMax);
+  thus v is normal implies ex x being Real st x = v
+  & b to_power eMin <= |.x.|
+  & |.x.| <= (b to_power eMax)*(b - (b to_power (1 - p)))
+  proof
+    assume v is normal;
+    then ex iMin being negative Integer st iMin = eMin
+    & ex iMax being positive Integer st iMax = eMax
+    & ex x being Real st x = v
+    & b to_power iMin <= |.x.|
+    & |.x.| <= (b to_power iMax)*(b - (b to_power (1 - p))) by Def8;
+    hence thesis;
+  end;
+  given x being Real such that 
+  A1: x = v & b to_power eMin <= |.x.| & |.x.| <= (b to_power eMax)*(b - (b to_power (1 - p)));
+  thus v is normal by A1, Def8;
+end;
+
 Lm19:
   b to_power (1 - p) <= 1
   & 1 <= b to_power (p - 1)
