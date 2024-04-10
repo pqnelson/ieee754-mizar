@@ -1,6 +1,36 @@
 % -*- mode: poly-noweb; noweb-code-mode: mizar-mode; -*-
 \section{Definitions, abbreviations, and acronyms}
 
+We will now focus on the basic terminology, and how to encode things
+like [[NaN]] into set theory.
+
+<<2. Definitions, abbreviations, and acronyms>>=
+begin :: 2. Definitions, abbreviations, and acronyms
+
+<<Definition: $-0$>>
+
+<<Theorem: for $n\in\NN$, $(n,0)\neq+\infty$ and $(n,0)\neq-\infty$>>
+
+<<Theorem: $-0\notin\ExtRR$>>
+
+<<Lemma: $\forall n\in\NN, (n,0)\notin\QQ_{+}$>>
+
+<<Lemma: $\forall a,b\in\NN, a=\{b\}\implies b=0$>>
+
+<<Lemma: $\forall i\in\NN,i\neq0\implies\{i\}\notin\QQ_{+}$>>
+
+<<Lemma: For all $i\in\NN$, $(i,0)$ is not a Dedekind cut>>
+
+<<Theorem: $\forall n\in\NN_{0},(n,0)\notin\ExtRR$>>
+
+<<Register: $(i,0)\notin\ExtRR$ for any $i\in\NN$>>
+
+<<Definition: [[NaN]]>>
+
+<<Theorem: $\NaN\notin\ExtRR$>>
+
+@ 
+
 \subsection{Definitions}
 This is a selection of the vocabulary defined in the Standard, but with
 a number of observations, thoughts, and comments.
@@ -31,3 +61,325 @@ a number of observations, thoughts, and comments.
   perhaps accompanied by an encoding.'' But an ``encoding'' is not
   really defined thus far (it will be defined later in \S3.2 as ``An \emph{encoding} maps a representation of a floating-point datum to a bit string.'').
 \end{itemize}
+
+\begin{definition}
+We define \define{Signed Zero} to be the term equal to $-0 := (0,0)$.
+\end{definition}
+
+This is in accordance with the Mizar formalization of negative
+numbers. If $n\in\NN$, then $-n\in\ZZ$ is defined as $(0,n)$. If
+$x\in\RR$ is positive, then $-x\in\RR$ is defined as $(0,x)$. It stands
+to reason that $-0$ would be defined following the same
+pattern. However, this has the peculiar quirk that
+$-0=\{\{0\},\{0,0\}\}=\{\{0\}\}=\{1\}$.
+
+<<Definition: $-0$>>=
+definition
+  func -0 -> object equals [0,0];
+  coherence;
+end;
+@ %def -0
+
+\begin{voc}
+We add ``$-0$'' as a token for Mizar to recognize.
+\end{voc}
+
+<<DICT/float-1.voc>>=
+O-0
+@
+
+\begin{theorem}
+Let $n$ be a natural number. Then the ordered pair $(n,0)$ is not infinite.
+\end{theorem}
+
+\begin{proof}
+We begin by observing that $n\in\RR$.
+  
+For proving $(n,0)\neq+\infty$, this is because the set theoretic
+implementation for positive infinity is $+\infty=\RR$. Then $(n,0)=\{\{n\},\{n,0\}\}$
+set theoretically, and since $n\in\RR$ this would require $n=\{n\}$
+(which violates regularity) or $n=\{n,0\}$ (which violates regularity).
+
+Now, Mizar encodes negatives numbers $-x$ as the ordered pair $(0,x)$ for any $x>0$. 
+In fact, $-\infty=(0,+\infty)$. So if $-0=-\infty$, then this would
+correspond to $(n,0)=(0,+\infty)$ and projecting the second components
+of the ordered pairs gives us $0=+\infty$ which is a contradiction
+(since $0\in\RR$, we contradict the axiom of regularity again).
+\end{proof}
+
+<<Theorem: for $n\in\NN$, $(n,0)\neq+\infty$ and $(n,0)\neq-\infty$>>=
+theorem Th4:
+  for n being Nat
+  holds [n,0] <> +infty & [n,0] <> -infty
+proof
+  let n be Nat;
+  A1: n in REAL by NUMBERS:19, TARSKI:def 3, ORDINAL1:def 12;
+  +infty = [n,0] implies contradiction
+  proof
+    assume A2: +infty = [n,0];
+    then +infty = {{n}, {n,0}} by TARSKI:def 5;
+    then n = {n} or n = {n,0};
+    then per cases;
+    suppose n = {n};
+      hence contradiction by ZFMISC_1:140;
+    end;
+    suppose n = {n,0};
+      then n in n or n in 0 by TARSKI:def 2;
+      hence contradiction by ORDINAL1:def 13;
+    end;
+  end;
+  hence [n,0] <> +infty;
+  thus [n,0] <> -infty by A1, XXREAL_0:def 3, XTUPLE_0:1, ORDINAL1:def 13;
+end;
+@ 
+
+\begin{theorem}\label{thm:formats:-0-is-not-real}
+Signed zero is not an element of the extended reals $-0\notin\ExtRR$.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+We can see that $-0\notin\{\pm\infty\}$ by the previous theorem, and
+that $-0\notin\RR$. The result follows immediately.
+\end{proof}
+
+<<Theorem: $-0\notin\ExtRR$>>=
+theorem Th5:
+  not -0 in ExtREAL
+proof
+  [0,0] <> +infty & [0,0] <> -infty by Th4;
+  then not (-0 in REAL or -0 in {+infty, -infty})
+  by NUMBERS:def 1, ZFMISC_1:56, TARSKI:def 2;
+  hence thesis by NUMBERS:def 5, XBOOLE_0:def 3, XXREAL_0:def 2,def 3;
+end;
+@ %def Th5
+
+\begin{lemma}
+There is no natural number $n\in\NN$ such that $(n,0)\in\QQ_{+}$, i.e.,
+the ordered pair $(n,0)$ is not a positive rational number.
+\end{lemma}
+
+Lemmas are ``private theorems'' which are used to carve out
+uninteresting and lengthy subproofs. We will need 4 lemmas to prove
+$(n,0)\notin\RR$. 
+
+\begin{proof}[Proof sketch]
+Assume for contradiction $(n,0)\in\QQ_{+}$. But rational numbers are
+either natural numbers or pairs of natural numbers $(a,b)$ such that
+$b\neq0$ and $b\neq1$. However, $(n,0)\notin\NN$, which means that
+$(a,b)=(n,0)$ and this gives us the contradiction --- $b=0$ and $b\neq0$.
+\end{proof}
+
+<<Lemma: $\forall n\in\NN, (n,0)\notin\QQ_{+}$>>=
+Lm1:
+  for n being Nat
+  holds not [n,0] in RAT+
+proof
+  let n be Nat;
+  assume A1: [n,0] in RAT+;
+  n in omega by ORDINAL1:def 12;
+  then 0 <> {} by A1, ARYTM_3:33;
+  hence contradiction by ORDINAL1:def 13;
+end;
+@ %def Lm1
+
+\begin{lemma}
+Let $a,b\in\NN$. If $a=\{b\}$, then $b=0$.
+\end{lemma}
+
+\begin{proof}[Proof sketch]
+Assume $a=\{b\}$. Then there exists a natural number $c$ such that
+$a=c\cup\{c\}$.
+But then this means $\{b\}=\{c\}\cup c$ which forces $c=0$, and
+therefore $b=0$.
+\end{proof}
+
+<<Lemma: $\forall a,b\in\NN, a=\{b\}\implies b=0$>>=
+Lm2:
+  for a,b being Nat
+  st a = {b}
+  holds b = {}
+proof
+  let a,b be Nat;
+  assume A1: a = {b};
+  then consider c being Nat such that
+  A2: a = succ c by CARD_1:36;
+  {b} = c \/ {c} by A1, A2, ORDINAL1:def 1;
+  then c = {} by ZFMISC_1:38, ZFMISC_1:140;
+  then a = {} \/ {{}} by A2, ORDINAL1:def 1;
+  hence thesis by A1, ZFMISC_1:3;
+end;
+@ %def Lm2
+
+\begin{lemma}
+Let $i\in\NN$ be a nonzero natural number $i\neq0$. Then the singleton
+consisting of $i$ is not a positive rational number
+$\{i\}\notin\QQ_{+}$.
+\end{lemma}
+
+\begin{proof}[Proof sketch]
+Assume $i\neq0$. This is another proof by contradiction. Assume
+$\{i\}\in\QQ_{+}$. Then either $\{i\}\in\NN$ (which leads to
+$0\in\{i\}$, i.e., $0=i$ --- a contradiction) or there exists natural
+numbers $a,b\in\NN$ such that they are coprime and $b\neq0$ and $b\neq1$
+and $\{i\}=(a,b)$.
+But then this implies $a=b$ and $\{i\}=\{\{b\}\}$, which means $i=\{b\}$
+and by our previous lemma $b=0$ --- contradicting the requirement $b\neq0$.
+\end{proof}
+
+<<Lemma: $\forall i\in\NN,i\neq0\implies\{i\}\notin\QQ_{+}$>>=
+Lm3:
+  for i being Nat st i <> 0
+  holds not {i} in RAT+
+proof
+  let i be Nat such that
+  A1: i <> 0;
+  assume A2: {i} in RAT+;
+  then per cases by ARYTM_3:29;
+  suppose {i} in omega;
+    then {} in {i} by ORDINAL3:8;
+    hence contradiction by A1, ORDINAL1:def 13, TARSKI:def 1;
+  end;
+  suppose ex a,b being Element of omega st ({i} = [a,b] &
+    a,b are_coprime & b <> {} & b <> 1);
+    then consider a,b being Element of omega such that
+    A3: ({i} = [a,b] & a,b are_coprime & b <> {} & b <> 1);
+    {i} = {{a}, {a,b}} by A3, TARSKI:def 5;
+    then {a} = {a,b} by ZFMISC_1:5;
+    then A4: a = b by ZFMISC_1:5;
+    then {i} = {{b}, {b,b}} by A3, TARSKI:def 5
+            .= {{b}, {b}} by ENUMSET1:29
+            .= {{b}} by ENUMSET1:29;
+    hence contradiction by A3, Lm2, ZFMISC_1:3;
+  end;
+end;
+@ %def Lm3
+
+\begin{lemma}
+For any nonzero natural number $i\in\NN$,
+we have the ordered pair $(i,0)$ is not a Dedekind cut.
+\end{lemma}
+
+\begin{proof}[Proof sketch]
+If $(i,0)$ were a Dedekind cut, then this would force the singleton
+consisting of $i$ to be a positive rational number
+$\{i\}\in\QQ_{+}$. This contradicts the previous lemma.
+\end{proof}
+
+<<Lemma: For all $i\in\NN$, $(i,0)$ is not a Dedekind cut>>=
+Lm4:
+  for i being Nat st i <> 0
+  holds not [i,0] in DEDEKIND_CUTS
+proof
+  let i be Nat such that
+  A1: i <> 0;
+  assume [i,0] in DEDEKIND_CUTS;
+  then [i,0] in {A where A is Subset of RAT+ : for r being Element of RAT+
+  st r in A holds ((for s being Element of RAT+ st s <=' r holds s in A)
+                   & ex s being Element of RAT+ st (s in A & r < s)) }
+  by ARYTM_2:def 1;
+  then consider A being Subset of RAT+ such that
+  A2: [i,0] = A
+    & for r being Element of RAT+ st r in A
+      holds (for s being Element of RAT+ st s <=' r holds s in A)
+          & ex s being Element of RAT+ st s in A & r < s;
+  A = {{i}, {i,0}} by A2, TARSKI:def 5;
+  then {i} in RAT+ & {i,0} in RAT+ by ZFMISC_1:32;
+  hence contradiction by A1, Lm3;
+end;
+@ %def Lm4
+
+\begin{theorem}
+For all $n\in\NN_{0}$, we have $(n,0)\notin\RR$.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+We have proven the $n=0$ case already in
+Theorem~\ref{thm:formats:-0-is-not-real}, so we just need to consider
+the nonzero case. If $(n,0)$ were a positive real number, then either it
+is a positive rational number $(n,0)\in\QQ_{+}$ or it is a Dedekind cut (which we know is false
+thanks to our lemmas). We can see that $(n,0)$ cannot be a negative real
+number, otherwise there would exists a positive real $x\in\RR_{+}$ such
+that $(n,0)=(0,x)$ since that's how we encoded $-x=(0,x)$. But this
+means the first components of the ordered pairs would be equal, $n=0$,
+which contradicts the assumption that $n\neq0$.
+
+Then we see that $(n,0)$ is not $\pm\infty$ due to earlier results, and
+this means that $(n,0)$ cannot be an extended real number.
+\end{proof}
+
+This will be important because we're going to encode \NaN, \qNaN, \sNaN,
+as $(n,0)$ for $n\geq1$. This basically uses Theorem [[ARYTM_3:33]].
+
+<<Theorem: $\forall n\in\NN_{0},(n,0)\notin\ExtRR$>>=
+theorem Th6:
+  for i being Nat
+  holds not [i,0] in ExtREAL
+proof
+  let i be Nat;
+  A1: not [i,0] in REAL
+  proof
+    per cases;
+    suppose i = 0;
+      hence thesis by Th5, NUMBERS:def 5, XBOOLE_0:def 3;
+    end;
+    suppose A1: i <> 0;
+      then not ([i,0] in RAT+ or [i,0] in DEDEKIND_CUTS) by Lm1,Lm4;
+      then A2: not [i,0] in REAL+ by ARYTM_2:def 2, XBOOLE_0:def 3;
+      not [i,0] in [:{0},REAL+:] by A1, ZFMISC_1:105;
+      hence thesis by A2, XBOOLE_0:def 3, NUMBERS:def 1;
+    end;
+  end;
+  [i,0] <> +infty & [i,0] <> -infty by Th4;
+  then not [i,0] in {+infty,-infty} by TARSKI:def 2;
+  then not [i,0] in REAL \/ {+infty,-infty} by A1, XBOOLE_0:def 3;
+  hence not [i,0] in ExtREAL by NUMBERS:def 5, XXREAL_0:def 2,def 3;
+end;
+@ %def Th6
+
+\begin{registration}
+We register the fact that $(i,0)\notin\ExtRR$ for any $i\in\NN$.
+\end{registration}
+
+<<Register: $(i,0)\notin\ExtRR$ for any $i\in\NN$>>=
+registration
+  let i be Nat;
+  cluster [i,0] -> non ext-real;
+  coherence by Th6, XXREAL_0:def 1;
+end;
+@ 
+
+\begin{definition}
+We define the symbol \define{NaN} to be the term equal to $\NaN{} := (1,0)$.
+\end{definition}
+
+Since Mizar defines the complex numbers as the set
+\begin{equation}
+\CC = (\hom(\{0,1\},\RR)\setminus\{f\in\hom(\{0,1\},\RR)\mid f(1)=0\})\cup\RR,
+\end{equation}
+where $\hom(A,B)$ is the set of functions $f\colon A\to B$ from the set
+$A$ to the set $B$, this avoids accidental ``collisions'' of
+values. That is to say, $(1,0)$ does not refer to a complex number.
+
+<<Definition: [[NaN]]>>=
+definition
+  func NaN -> object equals [1,0];
+  coherence;
+end;
+@ %def NaN
+
+\begin{voc}
+We tell Mizar to expect [[NaN]] to be recognized as a token for a term.
+\end{voc}
+
+<<DICT/float-1.voc>>=
+ONaN
+@ 
+
+\begin{theorem}
+We see that $\NaN\notin\ExtRR$.
+\end{theorem}
+
+<<Theorem: $\NaN\notin\ExtRR$>>=
+theorem
+  not NaN in ExtREAL by Th6;
+@ 
