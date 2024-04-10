@@ -669,21 +669,21 @@ theorem
 
 begin :: 3. Floating-point formats
 
-reserve beta for valid_radix Real;
+reserve beta for positive Real;
 reserve p for positive Nat;
 reserve eMin for negative ExtInt;
 reserve eMax for positive ExtNat;
 
 definition
-  let b, p, eMin, eMax;
-  func FLOAT_NUMBER(b, p, eMin, eMax) -> Subset of ExtREAL equals
+  let beta, p, eMin, eMax;
+  func FLOAT_NUMBER(beta, p, eMin, eMax) -> Subset of ExtREAL equals
   {x where x is Real : ex M, e being Integer
-   st x = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
+   st x = M * (beta to_power (e - p + 1)) & |.M.| <= beta to_power (p-1)
    & eMin - 1 < e & e <= eMax } \/ {+infty, -infty};
   coherence
   proof
     set NUM = {x where x is Real : ex M, e being Integer
-    st x = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
+    st x = M * (beta to_power (e - p + 1)) & |.M.| <= beta to_power (p-1)
     & eMin - 1 < e & e <= eMax };
     set IT = NUM \/ {+infty, -infty};
     for x being object st x in IT holds x in ExtREAL
@@ -693,7 +693,7 @@ definition
       then per cases by XBOOLE_0:def 3;
       suppose A1: x in NUM;
         then ex y being Real st x = y & ex M, e being Integer
-        st y = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
+        st y = M * (beta to_power (e - p + 1)) & |.M.| <= beta to_power (p-1)
         & eMin - 1 < e & e <= eMax;
         then x in REAL by XREAL_0:def 1;
         hence x in ExtREAL by XBOOLE_0:def 3, XXREAL_0:def 4;
@@ -707,18 +707,18 @@ definition
 end;
 
 theorem ThZeroInFloatNumber:
-  0 in FLOAT_NUMBER(b, p, eMin, eMax)
+  0 in FLOAT_NUMBER(beta, p, eMin, eMax)
 proof
   set NUM = {x where x is Real : ex M, e being Integer
-  st x = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
+  st x = M * (beta to_power (e - p + 1)) & |.M.| <= beta to_power (p-1)
   & eMin - 1 < e & e <= eMax };
-  ex M, e being Integer st 0 = M * (b to_power (e - p + 1))
-  & |.M.| <= b to_power (p-1) & eMin - 1 < e & e <= eMax
+  ex M, e being Integer st 0 = M * (beta to_power (e - p + 1))
+  & |.M.| <= beta to_power (p-1) & eMin - 1 < e & e <= eMax
   proof
     set M = 0, e = 0;
     take M, e;
-    thus 0 = M * (b to_power (e - p + 1));
-    thus |.M.| <= b to_power (p-1) by COMPLEX1:44;
+    thus 0 = M * (beta to_power (e - p + 1));
+    thus |.M.| <= beta to_power (p-1) by COMPLEX1:44;
     thus eMin - 1 < e;
     thus e <= eMax;
   end;
@@ -727,94 +727,94 @@ proof
 end;
 
 registration
-  let b, p, eMin, eMax;
-  cluster real for Element of FLOAT_NUMBER(b, p, eMin, eMax);
+  let beta, p, eMin, eMax;
+  cluster real for Element of FLOAT_NUMBER(beta, p, eMin, eMax);
   existence
   proof
-    reconsider v=0 as Element of FLOAT_NUMBER(b, p, eMin, eMax)
+    reconsider v=0 as Element of FLOAT_NUMBER(beta, p, eMin, eMax)
     by ThZeroInFloatNumber;
     take v;
     thus thesis;
   end;
-  cluster -> ext-real for Element of FLOAT_NUMBER(b, p, eMin, eMax);
+  cluster -> ext-real for Element of FLOAT_NUMBER(beta, p, eMin, eMax);
   coherence
   proof
-    let x be Element of FLOAT_NUMBER(b, p, eMin, eMax);
+    let x be Element of FLOAT_NUMBER(beta, p, eMin, eMax);
     x in ExtREAL by TARSKI:def 3;
     hence thesis;
   end;
 end;
 
 theorem St3200:
-  -infty in FLOAT_NUMBER(b, p, eMin, eMax)
-  & +infty in FLOAT_NUMBER(b, p, eMin, eMax)
+  -infty in FLOAT_NUMBER(beta, p, eMin, eMax)
+  & +infty in FLOAT_NUMBER(beta, p, eMin, eMax)
 proof
   -infty in {-infty,+infty} by TARSKI:def 2;
-  hence -infty in FLOAT_NUMBER(b, p, eMin, eMax) by XBOOLE_0:def 3;
+  hence -infty in FLOAT_NUMBER(beta, p, eMin, eMax) by XBOOLE_0:def 3;
   +infty in {-infty,+infty} by TARSKI:def 2;
-  hence +infty in FLOAT_NUMBER(b, p, eMin, eMax) by XBOOLE_0:def 3;
+  hence +infty in FLOAT_NUMBER(beta, p, eMin, eMax) by XBOOLE_0:def 3;
 end;
 
 theorem Th11:
   for x being Real
-  holds x in FLOAT_NUMBER(b, p, eMin, eMax) iff
+  holds x in FLOAT_NUMBER(beta, p, eMin, eMax) iff
   (ex M, e being Integer
-  st x = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
+  st x = M * (beta to_power (e - p + 1)) & |.M.| <= beta to_power (p-1)
   & eMin - 1 < e & e <= eMax)
 proof
   set NUM = {x where x is Real : ex M, e being Integer
-   st x = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
+   st x = M * (beta to_power (e - p + 1)) & |.M.| <= beta to_power (p-1)
    & eMin - 1 < e & e <= eMax };
   let x be Real;
-  thus x in FLOAT_NUMBER(b, p, eMin, eMax) implies
+  thus x in FLOAT_NUMBER(beta, p, eMin, eMax) implies
   (ex M, e being Integer
-  st x = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
+  st x = M * (beta to_power (e - p + 1)) & |.M.| <= beta to_power (p-1)
   & eMin - 1 < e & e <= eMax)
   proof
-    assume A1: x in FLOAT_NUMBER(b, p, eMin, eMax);
+    assume A1: x in FLOAT_NUMBER(beta, p, eMin, eMax);
     then x in NUM or x in {+infty, -infty} by XBOOLE_0:def 3;
     then ex y being Real st x = y & ex M, e being Integer
-    st y = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
+    st y = M * (beta to_power (e - p + 1)) & |.M.| <= beta to_power (p-1)
     & eMin - 1 < e & e <= eMax by TARSKI:def 2;
     hence thesis;
   end;
   thus (ex M, e being Integer
-  st x = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
-  & eMin - 1 < e & e <= eMax) implies x in FLOAT_NUMBER(b, p, eMin, eMax)
+  st x = M * (beta to_power (e - p + 1)) & |.M.| <= beta to_power (p-1)
+  & eMin - 1 < e & e <= eMax) implies x in FLOAT_NUMBER(beta, p, eMin, eMax)
   proof
     given M, e being Integer such that 
-    A1: x = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
+    A1: x = M * (beta to_power (e - p + 1)) & |.M.| <= beta to_power (p-1)
     & eMin - 1 < e & e <= eMax;
     x in NUM by A1;
-    hence x in FLOAT_NUMBER(b, p, eMin, eMax) by XBOOLE_0:def 3;
+    hence x in FLOAT_NUMBER(beta, p, eMin, eMax) by XBOOLE_0:def 3;
   end;
 end;
 
 Lm7:
   for y being ExtReal st y in REAL
-  holds y in FLOAT_NUMBER(b, p, eMin, eMax)
-  implies (- y) in FLOAT_NUMBER(b, p, eMin, eMax)
+  holds y in FLOAT_NUMBER(beta, p, eMin, eMax)
+  implies (- y) in FLOAT_NUMBER(beta, p, eMin, eMax)
 proof
   let y be ExtReal;
   assume A2: y in REAL;
-  assume y in FLOAT_NUMBER(b, p, eMin, eMax);
+  assume y in FLOAT_NUMBER(beta, p, eMin, eMax);
   then consider M, e being Integer such that
-  A3: y = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
+  A3: y = M * (beta to_power (e - p + 1)) & |.M.| <= beta to_power (p-1)
   & eMin - 1 < e & e <= eMax
   by A2, Th11;
-  A4: (- M) * (b to_power (e - p + 1))
-  = - (M * (b to_power (e - p + 1)))
-  .= (-1) * ((M * (b to_power (e - p + 1))) qua ExtReal)
+  A4: (- M) * (beta to_power (e - p + 1))
+  = - (M * (beta to_power (e - p + 1)))
+  .= (-1) * ((M * (beta to_power (e - p + 1))) qua ExtReal)
   .= (-1) * (y) by A3
   .= - y by XXREAL_3:91;
   |.(- M).| = |.M.| by COMPLEX1:52;
-  hence (- y) in FLOAT_NUMBER(b, p, eMin, eMax) by A3,A4,Th11;
+  hence (- y) in FLOAT_NUMBER(beta, p, eMin, eMax) by A3,A4,Th11;
 end;
 
 theorem ThFloatClosedUnderNegation:
   for x being ExtReal
-  holds x in FLOAT_NUMBER(b, p, eMin, eMax)
-  iff (- x) in FLOAT_NUMBER(b, p, eMin, eMax)
+  holds x in FLOAT_NUMBER(beta, p, eMin, eMax)
+  iff (- x) in FLOAT_NUMBER(beta, p, eMin, eMax)
 proof
   let x be ExtReal;
   A1: - -infty = +infty & - +infty = -infty by XXREAL_3:def 3;
@@ -822,13 +822,13 @@ proof
   then x in REAL or x in {+infty, -infty} by XBOOLE_0:def 3;
   then per cases by TARSKI:def 2;
   suppose CASE1: x in REAL;
-    thus x in FLOAT_NUMBER(b, p, eMin, eMax)
-    implies (- x) in FLOAT_NUMBER(b, p, eMin, eMax) by CASE1,Lm7;
+    thus x in FLOAT_NUMBER(beta, p, eMin, eMax)
+    implies (- x) in FLOAT_NUMBER(beta, p, eMin, eMax) by CASE1,Lm7;
   
     A2: - x in REAL by CASE1, XREAL_0:def 1;
-    assume (- x) in FLOAT_NUMBER(b, p, eMin, eMax);
-    then - (- x) = x & - (- x) in FLOAT_NUMBER(b, p, eMin, eMax) by Lm7,A2;
-    hence x in FLOAT_NUMBER(b, p, eMin, eMax);
+    assume (- x) in FLOAT_NUMBER(beta, p, eMin, eMax);
+    then - (- x) = x & - (- x) in FLOAT_NUMBER(beta, p, eMin, eMax) by Lm7,A2;
+    hence x in FLOAT_NUMBER(beta, p, eMin, eMax);
     hence thesis by Lm7;
   end;
   suppose CASE2: x=+infty;
@@ -841,45 +841,45 @@ end;
 
 theorem ThFiniteFloatClosedUnderNegation:
   for x being Real
-  holds x in FLOAT_NUMBER(b, p, eMin, eMax)
-  iff (- x) in FLOAT_NUMBER(b, p, eMin, eMax)
+  holds x in FLOAT_NUMBER(beta, p, eMin, eMax)
+  iff (- x) in FLOAT_NUMBER(beta, p, eMin, eMax)
 proof
   let x be Real;
   reconsider y=x as ExtReal;
-  thus x in FLOAT_NUMBER(b, p, eMin, eMax)
-  implies -x in FLOAT_NUMBER(b, p, eMin, eMax)
+  thus x in FLOAT_NUMBER(beta, p, eMin, eMax)
+  implies -x in FLOAT_NUMBER(beta, p, eMin, eMax)
   proof
-    assume x in FLOAT_NUMBER(b, p, eMin, eMax);
-    then -y in FLOAT_NUMBER(b, p, eMin, eMax) by ThFloatClosedUnderNegation;
-    hence (- x) in FLOAT_NUMBER(b, p, eMin, eMax)
+    assume x in FLOAT_NUMBER(beta, p, eMin, eMax);
+    then -y in FLOAT_NUMBER(beta, p, eMin, eMax) by ThFloatClosedUnderNegation;
+    hence (- x) in FLOAT_NUMBER(beta, p, eMin, eMax)
     by XXREAL_3:def 3;
   end;
-  assume (- x) in FLOAT_NUMBER(b, p, eMin, eMax);
-  then -y in FLOAT_NUMBER(b, p, eMin, eMax) by XXREAL_3:def 3;
-  hence x in FLOAT_NUMBER(b, p, eMin, eMax) by ThFloatClosedUnderNegation;
+  assume (- x) in FLOAT_NUMBER(beta, p, eMin, eMax);
+  then -y in FLOAT_NUMBER(beta, p, eMin, eMax) by XXREAL_3:def 3;
+  hence x in FLOAT_NUMBER(beta, p, eMin, eMax) by ThFloatClosedUnderNegation;
 end;
 
 theorem Th12:
   for x being positive Real
-  holds x in FLOAT_NUMBER(b, p, eMin, eMax) iff
+  holds x in FLOAT_NUMBER(beta, p, eMin, eMax) iff
   (ex M, e being Integer
-  st x = M * (b to_power (e - p + 1)) & 0 < M & M <= b to_power (p-1)
+  st x = M * (beta to_power (e - p + 1)) & 0 < M & M <= beta to_power (p-1)
   & eMin - 1 < e & e <= eMax)
 proof
   let x be positive Real;
-  thus x in FLOAT_NUMBER(b, p, eMin, eMax) implies (ex M, e being Integer
-  st x = M * (b to_power (e - p + 1)) & 0 < M & M <= b to_power (p-1)
+  thus x in FLOAT_NUMBER(beta, p, eMin, eMax) implies (ex M, e being Integer
+  st x = M * (beta to_power (e - p + 1)) & 0 < M & M <= beta to_power (p-1)
   & eMin - 1 < e & e <= eMax)
   proof
-    assume x in FLOAT_NUMBER(b, p, eMin, eMax);
+    assume x in FLOAT_NUMBER(beta, p, eMin, eMax);
     then consider M, e being Integer such that
-    A1: x = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
+    A1: x = M * (beta to_power (e - p + 1)) & |.M.| <= beta to_power (p-1)
     & eMin - 1 < e & e <= eMax by Th11;
     take M, e;
     thus thesis by A1, COMPLEX1:43;
   end;
   given M, e being Integer such that 
-  A2: x = M * (b to_power (e - p + 1)) & 0 < M & M <= b to_power (p-1) & eMin - 1 < e & e <= eMax;
+  A2: x = M * (beta to_power (e - p + 1)) & 0 < M & M <= beta to_power (p-1) & eMin - 1 < e & e <= eMax;
   |.M.| = M by A2, COMPLEX1:43;
   hence thesis by A2, Th11;
 end;
@@ -921,91 +921,91 @@ definition
 end;
 
 definition
-  let b, p, eMin, eMax;
+  let beta, p, eMin, eMax;
   let IT be object;
-  attr IT is (b, p, eMin, eMax)-format_floating-point means :Def8a:
-  IT in FLOAT(b, p, eMin, eMax);
+  attr IT is (beta, p, eMin, eMax)-format_floating-point means :Def8a:
+  IT in FLOAT(beta, p, eMin, eMax);
 end;
 
 registration
-  let b, p, eMin, eMax;
-  cluster (b, p, eMin, eMax)-format_floating-point for Number;
+  let beta, p, eMin, eMax;
+  cluster (beta, p, eMin, eMax)-format_floating-point for Number;
   existence
   proof
     -0 in {-0, NaN} by TARSKI:def 2;
-    then -0 in FLOAT(b, p, eMin, eMax) by XBOOLE_0:def 3;
+    then -0 in FLOAT(beta, p, eMin, eMax) by XBOOLE_0:def 3;
     hence thesis by Def8a;
   end;
 end;
 
-:: Float of format b, p, eMin, eMax
+:: Float of format beta, p, eMin, eMax
 definition
-  let b, p, eMin, eMax;
-  mode Float of b, p, eMin, eMax is (b, p, eMin, eMax)-format_floating-point Number;
+  let beta, p, eMin, eMax;
+  mode Float of beta, p, eMin, eMax is (beta, p, eMin, eMax)-format_floating-point Number;
 end;
 
 theorem ThZeroIsFloat:
-  0 is Float of b, p, eMin, eMax
+  0 is Float of beta, p, eMin, eMax
 proof
-  0 in FLOAT_NUMBER(b, p, eMin, eMax)
+  0 in FLOAT_NUMBER(beta, p, eMin, eMax)
   by ThZeroInFloatNumber;
-  then 0 in FLOAT(b, p, eMin, eMax) by XBOOLE_0:def 3;
+  then 0 in FLOAT(beta, p, eMin, eMax) by XBOOLE_0:def 3;
   hence thesis by Def8a;
 end;
 
 registration
-  let b, p, eMin, eMax;
-  cluster ext-real for Float of b, p, eMin, eMax;
+  let beta, p, eMin, eMax;
+  cluster ext-real for Float of beta, p, eMin, eMax;
   existence
   proof
-    reconsider v=0 as Float of b,p,eMin,eMax by ThZeroIsFloat;
+    reconsider v=0 as Float of beta,p,eMin,eMax by ThZeroIsFloat;
     take v;
     thus thesis;
   end;
-  cluster real for Float of b, p, eMin, eMax;
+  cluster real for Float of beta, p, eMin, eMax;
   existence
   proof
-    reconsider v=0 as Float of b,p,eMin,eMax by ThZeroIsFloat;
+    reconsider v=0 as Float of beta,p,eMin,eMax by ThZeroIsFloat;
     take v;
     thus thesis;
   end;
 end;
 
 registration
-  let b, p, eMin, eMax;
-  cluster zero for Float of b, p, eMin, eMax;
+  let beta, p, eMin, eMax;
+  cluster zero for Float of beta, p, eMin, eMax;
   existence
   proof
-    reconsider v=0 as Float of b,p,eMin,eMax by ThZeroIsFloat;
+    reconsider v=0 as Float of beta,p,eMin,eMax by ThZeroIsFloat;
     take v;
     thus thesis;
   end;
-  cluster non zero for Float of b, p, eMin, eMax;
+  cluster non zero for Float of beta, p, eMin, eMax;
   existence
   proof
     NaN in {-0,NaN} by TARSKI:def 2;
-    then NaN in FLOAT(b,p,eMin,eMax) by XBOOLE_0:def 3;
-    then reconsider v=NaN as Float of b,p,eMin,eMax by Def8a;
+    then NaN in FLOAT(beta,p,eMin,eMax) by XBOOLE_0:def 3;
+    then reconsider v=NaN as Float of beta,p,eMin,eMax by Def8a;
     take v;
     thus thesis;
   end;
 end;
 
 theorem St3201:
-  -infty is Float of b,p,eMin,eMax
-  & +infty is Float of b,p,eMin,eMax
+  -infty is Float of beta,p,eMin,eMax
+  & +infty is Float of beta,p,eMin,eMax
 proof
-  -infty in FLOAT_NUMBER(b, p, eMin, eMax) by St3200;
-  then -infty in FLOAT(b, p, eMin, eMax) by XBOOLE_0:def 3;
-  hence -infty is Float of b, p, eMin, eMax by Def8a;
-  +infty in FLOAT_NUMBER(b, p, eMin, eMax) by St3200;
-  then +infty in FLOAT(b, p, eMin, eMax) by XBOOLE_0:def 3;
-  hence +infty is Float of b, p, eMin, eMax by Def8a;
+  -infty in FLOAT_NUMBER(beta, p, eMin, eMax) by St3200;
+  then -infty in FLOAT(beta, p, eMin, eMax) by XBOOLE_0:def 3;
+  hence -infty is Float of beta, p, eMin, eMax by Def8a;
+  +infty in FLOAT_NUMBER(beta, p, eMin, eMax) by St3200;
+  then +infty in FLOAT(beta, p, eMin, eMax) by XBOOLE_0:def 3;
+  hence +infty is Float of beta, p, eMin, eMax by Def8a;
 end;
 
 definition
-  let b, p, eMin, eMax;
-  let IT be Float of b, p, eMin, eMax;
+  let beta, p, eMin, eMax;
+  let IT be Float of beta, p, eMin, eMax;
   attr IT is positive means :Def9a:
   ex x being positive ExtReal st IT = x;
   attr IT is negative means :Def9b:
@@ -1013,82 +1013,82 @@ definition
 end;
 
 registration
-  let b, p, eMin, eMax;
-  cluster positive -> ext-real for Float of b,p,eMin,eMax;
+  let beta, p, eMin, eMax;
+  cluster positive -> ext-real for Float of beta,p,eMin,eMax;
   coherence by Def9a;
-  cluster negative -> ext-real for Float of b,p,eMin,eMax;
+  cluster negative -> ext-real for Float of beta,p,eMin,eMax;
   coherence by Def9b;
 end;
 
 registration
-  let b, p, eMin, eMax;
-  cluster positive for Float of b,p,eMin,eMax;
+  let beta, p, eMin, eMax;
+  cluster positive for Float of beta,p,eMin,eMax;
   existence
   proof
-    reconsider v=+infty as Float of b,p,eMin,eMax by St3201;
+    reconsider v=+infty as Float of beta,p,eMin,eMax by St3201;
     take v;
     thus thesis by Def9a;
   end;
-  cluster negative for Float of b,p,eMin,eMax;
+  cluster negative for Float of beta,p,eMin,eMax;
   existence
   proof
-    reconsider v=-infty as Float of b,p,eMin,eMax by St3201;
+    reconsider v=-infty as Float of beta,p,eMin,eMax by St3201;
     take v;
     thus thesis by Def9b;
   end;
-  cluster non positive for Float of b,p,eMin,eMax;
+  cluster non positive for Float of beta,p,eMin,eMax;
   existence
   proof
-    reconsider v=-infty as Float of b,p,eMin,eMax by St3201;
+    reconsider v=-infty as Float of beta,p,eMin,eMax by St3201;
     take v;
     thus thesis by Def9b;
   end;
-  cluster non negative for Float of b,p,eMin,eMax;
+  cluster non negative for Float of beta,p,eMin,eMax;
   existence
   proof
-    reconsider v=+infty as Float of b,p,eMin,eMax by St3201;
+    reconsider v=+infty as Float of beta,p,eMin,eMax by St3201;
     take v;
     thus thesis by Def9a;
   end;
 end;
 
 theorem ThNegativeFloat:
-  for v being negative Float of b,p,eMin,eMax
+  for v being negative Float of beta,p,eMin,eMax
   holds v < 0
 proof
-  let v be negative Float of b,p,eMin,eMax;
+  let v be negative Float of beta,p,eMin,eMax;
   ex x being negative ExtReal st x = v by Def9b;
   hence v < 0;
 end;
 
 theorem ThPositiveFloat:
-  for v being positive Float of b,p,eMin,eMax
+  for v being positive Float of beta,p,eMin,eMax
   holds v > 0
 proof
-  let v be positive Float of b,p,eMin,eMax;
+  let v be positive Float of beta,p,eMin,eMax;
   ex x being positive ExtReal st x = v by Def9a;
   hence v > 0;
 end;
 
 theorem ThRealFloatsAreInFLOATNUMBER:
   for x being object
-  holds x is ext-real Float of b, p, eMin, eMax
-  iff x in FLOAT_NUMBER(b, p, eMin, eMax)
+  holds x is ext-real Float of beta, p, eMin, eMax
+  iff x in FLOAT_NUMBER(beta, p, eMin, eMax)
 proof
   let x be object;
   hereby
-    assume A1: x is ext-real Float of b, p, eMin, eMax;
-    then x in FLOAT(b, p, eMin, eMax) by Def8a;
-    then x in FLOAT_NUMBER(b, p, eMin, eMax)
+    assume A1: x is ext-real Float of beta, p, eMin, eMax;
+    then x in FLOAT(beta, p, eMin, eMax) by Def8a;
+    then x in FLOAT_NUMBER(beta, p, eMin, eMax)
     or x in {-0, NaN} by XBOOLE_0:def 3;
-    then x in FLOAT_NUMBER(b, p, eMin, eMax)
+    then x in FLOAT_NUMBER(beta, p, eMin, eMax)
     or x=-0 or x=NaN by TARSKI:def 2;
-    hence x in FLOAT_NUMBER(b, p, eMin, eMax) by A1;
+    hence x in FLOAT_NUMBER(beta, p, eMin, eMax) by A1;
   end;
-  assume A2: x in FLOAT_NUMBER(b, p, eMin, eMax);
-  then x in FLOAT(b, p, eMin, eMax) by XBOOLE_0:def 3;
-  then x is Float of b, p, eMin, eMax by Def8a;
-  hence x is ext-real Float of b, p, eMin, eMax by A2;
+  assume A2: x in FLOAT_NUMBER(beta, p, eMin, eMax);
+  then x in FLOAT(beta, p, eMin, eMax) by XBOOLE_0:def 3;
+  then x is Float of beta, p, eMin, eMax by Def8a;
+  hence x is ext-real Float of beta, p, eMin, eMax by A2;
 end;
 
 theorem St3300:
@@ -1126,10 +1126,10 @@ proof
 end;
 
 theorem ThPositiveFloatIsRealOrInfinity:
-  for v being positive Float of b, p, eMin, eMax
+  for v being positive Float of beta, p, eMin, eMax
   holds v is real or v = +infty
 proof
-  let v be positive Float of b, p, eMin, eMax;
+  let v be positive Float of beta, p, eMin, eMax;
   assume not v is real;
   then A1: not v in REAL;
   ex x being positive ExtReal st x = v by Def9a;
@@ -1137,10 +1137,10 @@ proof
 end;
 
 theorem ThNegativeFloatIsRealOrInfinity:
-  for v being negative Float of b, p, eMin, eMax
+  for v being negative Float of beta, p, eMin, eMax
   holds v is real or v = -infty
 proof
-  let v be negative Float of b, p, eMin, eMax;
+  let v be negative Float of beta, p, eMin, eMax;
   assume not v is real;
   then A1: not v in REAL;
   ex x being negative ExtReal st x = v by Def9b;
@@ -1148,31 +1148,31 @@ proof
 end;
 
 theorem St3301:
-  b in INT implies
+  beta in INT implies
   for eMin being negative Integer
-  for x being real Float of b, p, eMin, eMax
+  for x being real Float of beta, p, eMin, eMax
   ex n being Integer
-  st n*(b to_power (eMin - p + 1)) = x
+  st n*(beta to_power (eMin - p + 1)) = x
 proof
-  assume b in INT;
-  then A1: b in NAT by INT_1:3;
+  assume beta in INT;
+  then A1: beta in NAT by INT_1:3;
   let eMin be negative Integer;
-  let x be real Float of b, p, eMin, eMax;
-  x in FLOAT_NUMBER(b, p, eMin, eMax) by ThRealFloatsAreInFLOATNUMBER;
+  let x be real Float of beta, p, eMin, eMax;
+  x in FLOAT_NUMBER(beta, p, eMin, eMax) by ThRealFloatsAreInFLOATNUMBER;
   then consider M, e being Integer such that
-  A2: x = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
+  A2: x = M * (beta to_power (e - p + 1)) & |.M.| <= beta to_power (p-1)
   & eMin - 1 < e & e <= eMax by Th11;
   (eMin - 1) + 1 <= e by A2, INT_1:7;
   then eMin - eMin <= e - eMin by XREAL_1:9;
   then e - eMin in NAT by INT_1:3;
-  then b to_power (e - eMin) in NAT by A1, ThNatPowers;
-  then reconsider n = M * (b to_power (e - eMin)) as Integer;
+  then beta to_power (e - eMin) in NAT by A1, ThNatPowers;
+  then reconsider n = M * (beta to_power (e - eMin)) as Integer;
   take n;
-  thus n*(b to_power (eMin - p + 1))
-   = (M * (b to_power (e - eMin))) * (b to_power (eMin - p + 1))
-  .= M * ((b to_power (e - eMin)) * (b to_power (eMin - p + 1)))
-  .= M * (b to_power ((e - eMin) + (eMin - p + 1))) by POWER:27
-  .= M * (b to_power (e - p + 1))
+  thus n*(beta to_power (eMin - p + 1))
+   = (M * (beta to_power (e - eMin))) * (beta to_power (eMin - p + 1))
+  .= M * ((beta to_power (e - eMin)) * (beta to_power (eMin - p + 1)))
+  .= M * (beta to_power ((e - eMin) + (eMin - p + 1))) by POWER:27
+  .= M * (beta to_power (e - p + 1))
   .= x by A2;
 end;
 
@@ -1234,58 +1234,58 @@ proof
 end;
 
 definition
-  let b, p, eMin, eMax;
-  let IT be Float of b, p, eMin, eMax;
+  let beta, p, eMin, eMax;
+  let IT be Float of beta, p, eMin, eMax;
   attr IT is normal means :Def8:
-  IT <> 0 & IT in FLOAT_NUMBER(b,p,eMin,eMax) if eMin =-infty,
+  IT <> 0 & IT in FLOAT_NUMBER(beta,p,eMin,eMax) if eMin =-infty,
   ex iMin being negative Integer st iMin = eMin
   & ex x being Real st x = IT
-  & b to_power iMin <= |.x.| if eMin <> -infty & eMax = +infty
+  & beta to_power iMin <= |.x.| if eMin <> -infty & eMax = +infty
   otherwise ex iMin being negative Integer st iMin = eMin
   & ex iMax being positive Integer st iMax = eMax
   & ex x being Real st x = IT
-  & b to_power iMin <= |.x.|
-  & |.x.| <= (b to_power iMax)*(b - (b to_power (1 - p)));
+  & beta to_power iMin <= |.x.|
+  & |.x.| <= (beta to_power iMax)*(beta - (beta to_power (1 - p)));
   consistency;
 end;
 
 theorem ThNormalInFloatNumber:
-  for v being Float of b, p, eMin, eMax
+  for v being Float of beta, p, eMin, eMax
   st v is normal
-  holds v in FLOAT_NUMBER(b, p, eMin, eMax)
+  holds v in FLOAT_NUMBER(beta, p, eMin, eMax)
 proof
-  let v be Float of b, p, eMin, eMax;
+  let v be Float of beta, p, eMin, eMax;
   assume A1: v is normal;
   then per cases;
   suppose eMin = -infty;
-    hence v in FLOAT_NUMBER(b, p, eMin, eMax) by A1, Def8;
+    hence v in FLOAT_NUMBER(beta, p, eMin, eMax) by A1, Def8;
   end;
   suppose eMin <> -infty & eMax = +infty;
     then ex iMin being negative Integer st iMin = eMin
     & ex x being Real st x = v
-    & b to_power iMin <= |.x.| by A1, Def8;
+    & beta to_power iMin <= |.x.| by A1, Def8;
     then v is real;
-    hence v in FLOAT_NUMBER(b,p,eMin,eMax) by ThRealFloatsAreInFLOATNUMBER;
+    hence v in FLOAT_NUMBER(beta,p,eMin,eMax) by ThRealFloatsAreInFLOATNUMBER;
   end;
   suppose eMin <> -infty & eMax <> +infty;
     then ex iMin being negative Integer st iMin = eMin
     & ex iMax being positive Integer st iMax = eMax
     & ex x being Real st x = v
-    & b to_power iMin <= |.x.|
-    & |.x.| <= (b to_power iMax)*(b - (b to_power (1 - p))) by A1,Def8;
+    & beta to_power iMin <= |.x.|
+    & |.x.| <= (beta to_power iMax)*(beta - (beta to_power (1 - p))) by A1,Def8;
     then v is real;
-    hence v in FLOAT_NUMBER(b,p,eMin,eMax) by ThRealFloatsAreInFLOATNUMBER;
+    hence v in FLOAT_NUMBER(beta,p,eMin,eMax) by ThRealFloatsAreInFLOATNUMBER;
   end;
 end;
 
 registration
-  let b, p, eMin, eMax;
-  cluster normal -> ext-real for Float of b, p, eMin, eMax;
+  let beta, p, eMin, eMax;
+  cluster normal -> ext-real for Float of beta, p, eMin, eMax;
   coherence
   proof
-    let x be Float of b, p, eMin, eMax;
+    let x be Float of beta, p, eMin, eMax;
     assume x is normal;
-    then x in FLOAT_NUMBER(b, p, eMin, eMax) by ThNormalInFloatNumber;
+    then x in FLOAT_NUMBER(beta, p, eMin, eMax) by ThNormalInFloatNumber;
     hence thesis;
   end;
 end;
@@ -1293,28 +1293,28 @@ end;
 theorem ThNormalFloatCriteriaFiniteExp:
   for eMin being negative Integer
   for eMax being positive Integer
-  for v being Float of b, p, eMin, eMax
+  for v being Float of beta, p, eMin, eMax
   holds v is normal iff ex x being Real st x = v
-  & b to_power eMin <= |.x.|
-  & |.x.| <= (b to_power eMax)*(b - (b to_power (1 - p)))
+  & beta to_power eMin <= |.x.|
+  & |.x.| <= (beta to_power eMax)*(beta - (beta to_power (1 - p)))
 proof
   let eMin be negative Integer;
   let eMax be positive Integer;
-  let v be Float of b, p, eMin, eMax;
+  let v be Float of beta, p, eMin, eMax;
   thus v is normal implies ex x being Real st x = v
-  & b to_power eMin <= |.x.|
-  & |.x.| <= (b to_power eMax)*(b - (b to_power (1 - p)))
+  & beta to_power eMin <= |.x.|
+  & |.x.| <= (beta to_power eMax)*(beta - (beta to_power (1 - p)))
   proof
     assume v is normal;
     then ex iMin being negative Integer st iMin = eMin
     & ex iMax being positive Integer st iMax = eMax
     & ex x being Real st x = v
-    & b to_power iMin <= |.x.|
-    & |.x.| <= (b to_power iMax)*(b - (b to_power (1 - p))) by Def8;
+    & beta to_power iMin <= |.x.|
+    & |.x.| <= (beta to_power iMax)*(beta - (beta to_power (1 - p))) by Def8;
     hence thesis;
   end;
   given x being Real such that 
-  A1: x = v & b to_power eMin <= |.x.| & |.x.| <= (b to_power eMax)*(b - (b to_power (1 - p)));
+  A1: x = v & beta to_power eMin <= |.x.| & |.x.| <= (beta to_power eMax)*(beta - (beta to_power (1 - p)));
   thus v is normal by A1, Def8;
 end;
 
@@ -1360,16 +1360,16 @@ proof
 end;
 
 theorem ThNormalFloatInNegInfty:
-  for x being Float of b, p, eMin, eMax
+  for x being Float of beta, p, eMin, eMax
   st x=1 & eMin=-infty
   holds x is normal
 proof
-  let x be Float of b, p, eMin, eMax;
+  let x be Float of beta, p, eMin, eMax;
   assume A1: x=1;
   assume A2: eMin=-infty;
   1 in NAT;
   then x is real by A1, NUMBERS:19;
-  then x in FLOAT_NUMBER(b, p, eMin, eMax) by ThRealFloatsAreInFLOATNUMBER;
+  then x in FLOAT_NUMBER(beta, p, eMin, eMax) by ThRealFloatsAreInFLOATNUMBER;
   hence x is normal by A1,A2,Def8;
 end;
 
@@ -1443,38 +1443,38 @@ registration
 end;
 
 definition
-  let b, p, eMin, eMax;
-  let IT be Float of b, p, eMin, eMax;
+  let beta, p, eMin, eMax;
+  let IT be Float of beta, p, eMin, eMax;
   attr IT is subnormal means :Def9:
   ex x being Real st x = IT &
   ex iMin being negative Integer st iMin = eMin
-  & 0 < |.x.| & |.x.| < b to_power iMin;
+  & 0 < |.x.| & |.x.| < beta to_power iMin;
 end;
 
 registration
-  let b, p, eMin, eMax;
-  cluster subnormal -> real for Float of b, p, eMin, eMax;
+  let beta, p, eMin, eMax;
+  cluster subnormal -> real for Float of beta, p, eMin, eMax;
   coherence;
 end;
 
 theorem ThRealFloatsAreNumbers:
   for x being Real
-  holds x in FLOAT_NUMBER(b, p, eMin, eMax)
-  iff x in FLOAT(b, p, eMin, eMax)
+  holds x in FLOAT_NUMBER(beta, p, eMin, eMax)
+  iff x in FLOAT(beta, p, eMin, eMax)
 proof
   let x be Real;
-  thus x in FLOAT_NUMBER(b, p, eMin, eMax)
-  implies x in FLOAT(b, p, eMin, eMax) by XBOOLE_0:def 3;
-  thus x in FLOAT(b, p, eMin, eMax)
-  implies x in FLOAT_NUMBER(b, p, eMin, eMax)
+  thus x in FLOAT_NUMBER(beta, p, eMin, eMax)
+  implies x in FLOAT(beta, p, eMin, eMax) by XBOOLE_0:def 3;
+  thus x in FLOAT(beta, p, eMin, eMax)
+  implies x in FLOAT_NUMBER(beta, p, eMin, eMax)
   proof
-    assume A1: x in FLOAT(b, p, eMin, eMax);
+    assume A1: x in FLOAT(beta, p, eMin, eMax);
     not -0 in ExtREAL & not NaN in ExtREAL by Th6;
     then {-0, NaN} misses ExtREAL by ZFMISC_1:51;
     then A2: {-0, NaN} /\ REAL = {} by XBOOLE_1:63, NUMBERS:31, XBOOLE_0:def 7;
     x in REAL by XREAL_0:def 1;
     then not x in {-0, NaN} by A2,XBOOLE_0:def 4;
-    hence x in FLOAT_NUMBER(b, p, eMin, eMax) by A1,XBOOLE_0:def 3;
+    hence x in FLOAT_NUMBER(beta, p, eMin, eMax) by A1,XBOOLE_0:def 3;
   end;
 end;
 
@@ -1525,15 +1525,15 @@ proof
 end;
 
 theorem
-  eMin = -infty implies not ex v being Float of b, p, eMin, eMax
+  eMin = -infty implies not ex v being Float of beta, p, eMin, eMax
   st v is subnormal by Def9;
 
 theorem
-  for x being Float of b, p, eMin, eMax
+  for x being Float of beta, p, eMin, eMax
   st x = 0
   holds not x is normal & not x is subnormal
 proof
-  let x be Float of b, p, eMin, eMax;
+  let x be Float of beta, p, eMin, eMax;
   assume A1: x = 0;
   thus not x is normal
   proof
@@ -1547,7 +1547,7 @@ proof
       then ex iMin being negative Integer st
       iMin = eMin
       & ex x0 being Real st x0 = x
-      & b to_power iMin <= |.x0.| by A2, Def8;
+      & beta to_power iMin <= |.x0.| by A2, Def8;
       then 0 < |.0.| by A1, Def1;
       hence contradiction by COMPLEX1:44;
     end;
@@ -1555,8 +1555,8 @@ proof
       then ex iMin being negative Integer st iMin = eMin
       & ex iMax being positive Integer st iMax = eMax
       & ex x0 being Real st x0 = x
-      & b to_power iMin <= |.x0.|
-      & |.x0.| <= (b to_power iMax)*(b - (b to_power (1 - p)))
+      & beta to_power iMin <= |.x0.|
+      & |.x0.| <= (beta to_power iMax)*(beta - (beta to_power (1 - p)))
       by A2, Def8;
       then 0 < |.0.| by A1;
       hence contradiction by COMPLEX1:44;
@@ -1567,7 +1567,7 @@ proof
     assume x is subnormal;
     then ex x0 being Real st x0 = x &
     ex iMin being negative Integer st iMin = eMin
-    & 0 < |.x0.| & |.x0.| < b to_power iMin by Def9;
+    & 0 < |.x0.| & |.x0.| < beta to_power iMin by Def9;
     then 0 < |.0.| by A1;
     hence contradiction by COMPLEX1:44;
   end;
@@ -1649,4 +1649,12 @@ proof
   & v is subnormal
   by A1, ThBabyExistenceSubnormalFloat;
   hence thesis;
+end;
+
+definition
+  mode Binary32Float is Float of 2, 24, -126, 127;
+  mode Binary64Float is Float of 2, 53, -1022, 1023;
+  mode Binary128Float is Float of 2, 113, -16382, 16383;
+  mode Decimal64Float is Float of 10, 16, -383, 384;
+  mode Decimal128Float is Float of 10, 34, -6143, 6144;
 end;

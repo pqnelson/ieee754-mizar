@@ -8,3 +8,8 @@ OFLOAT_NUMBER
 OFLOAT
 V-format_floating-point
 MFloat
+MBinary32Float
+MBinary64Float
+MBinary128Float
+MDecimal64Float
+MDecimal128Float
