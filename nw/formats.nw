@@ -28,9 +28,37 @@ begin :: 3. Floating-point formats
 
 <<Definition: floating-point format as [[FLOAT]]>>
 
-<<Register: [[ext-real]] for element of [[FLOAT]]>>
+<<Definition: attribute $(b,p,e_{\text{min}},e_{\text{max}})$-format floating-point>>
 
-<<Theorem: smallest floating-point number>>
+<<Register: [[(b, p, eMin, eMax)-format_floating-point]] for number>>
+
+<<Definition: [[Float]] for floating-point format Number>>
+
+<<Theorem: Zero is a Float of format $b$, $p$, $e_{\text{min}}$, $e_{\text{max}}$>>
+
+<<Register: [[ext-real]] and [[real]] for [[Float]]>>
+
+<<Register: [[zero]] and [[non zero]] for [[Float]]>>
+
+<<Theorem: $\pm\infty$ is a float of format $b$, $p$, $e_{\text{min}}$, $e_{\text{max}}$>>
+
+<<Definition: [[positive]] and [[negative]] for [[Float]]>>
+
+<<Register: positive and negative Floats are extended-reals>>
+
+<<Register: positive, negative, non-positive, non-negative Floats>>
+
+<<Theorem: negative Floats are less than zero>>
+
+<<Theorem: positive Floats are greater than zero>>
+
+<<Theorem: extended-real [[Float]] are elements of [[FLOAT_NUMBER]]>>
+
+<<Theorem: smallest [positive] Float of format $b$, $p$, $e_{\text{min}}$, $e_{\text{max}}$>>
+
+<<Theorem: positive Floats are either real or $+\infty$>>
+
+<<Theorem: negative Floats are either real or $-\infty$>>
 
 <<Theorem: floating-point numbers are integer multiples of $b^{e_{\text{min}}-p+1}$>>
 
@@ -536,55 +564,335 @@ OFLOAT_NUMBER
 OFLOAT
 @
 
+\begin{definition}
+Let $b$ be a valid radix real number,
+let $p$ be a positive natural number,
+$e_{\text{min}}$ be a negative extended integer,
+$e_{\text{max}}$ be a positive extended integer.
+Let $x$ be an object.
+We say $x$ is a ``$(b,p,e_{\text{min}},e_{\text{max}})$-format floating-point''
+if $x\in\FF(b,p,e_{\text{min}},e_{\text{max}})$.
+\end{definition}
+
+<<Definition: attribute $(b,p,e_{\text{min}},e_{\text{max}})$-format floating-point>>=
+definition
+  let b, p, eMin, eMax;
+  let IT be object;
+  attr IT is (b, p, eMin, eMax)-format_floating-point means :Def8a:
+  IT in FLOAT(b, p, eMin, eMax);
+end;
+@ %def -format_floating-point Def8a
+
+\begin{voc}
+We tell Mizar to add [[-format_floating-point]] as a token for an attribute.
+\end{voc}
+
+<<DICT/float-1.voc>>=
+V-format_floating-point
+@
+
+\begin{registration}
+There exists some [[(b, p, eMin, eMax)-format_floating-point]]
+number.
+\end{registration}
+
+<<Register: [[(b, p, eMin, eMax)-format_floating-point]] for number>>=
+registration
+  let b, p, eMin, eMax;
+  cluster (b, p, eMin, eMax)-format_floating-point for Number;
+  existence
+  proof
+    -0 in {-0, NaN} by TARSKI:def 2;
+    then -0 in FLOAT(b, p, eMin, eMax) by XBOOLE_0:def 3;
+    hence thesis by Def8a;
+  end;
+end;
+@
+
+\begin{definition*}
+We define the type [[Float]] for a floating-point format Number.
+\end{definition*}
+
+<<Definition: [[Float]] for floating-point format Number>>=
+:: Float of format b, p, eMin, eMax
+definition
+  let b, p, eMin, eMax;
+  mode Float of b, p, eMin, eMax is (b, p, eMin, eMax)-format_floating-point Number;
+end;
+@ %def Float
+
+\begin{voc}
+We tell Mizar to add [[Float]] as a token for a mode.
+\end{voc}
+
+<<DICT/float-1.voc>>=
+MFloat
+@
+
+\begin{theorem}
+Zero is a Float of format $b$, $p$, $e_{\text{min}}$, $e_{\text{max}}$.
+\end{theorem}
+
+<<Theorem: Zero is a Float of format $b$, $p$, $e_{\text{min}}$, $e_{\text{max}}$>>=
+theorem ThZeroIsFloat:
+  0 is Float of b, p, eMin, eMax
+proof
+  0 in FLOAT_NUMBER(b, p, eMin, eMax)
+  by ThZeroInFloatNumber;
+  then 0 in FLOAT(b, p, eMin, eMax) by XBOOLE_0:def 3;
+  hence thesis by Def8a;
+end;
+@ %def ThZeroIsFloat
+
 \begin{registration}
 We observe there exists an extended real element of [[FLOAT]].
 \end{registration}
 
-<<Register: [[ext-real]] for element of [[FLOAT]]>>=
+<<Register: [[ext-real]] and [[real]] for [[Float]]>>=
 registration
   let b, p, eMin, eMax;
-  cluster ext-real for Element of FLOAT(b, p, eMin, eMax);
+  cluster ext-real for Float of b, p, eMin, eMax;
   existence
   proof
-    reconsider v=0 as Element of FLOAT_NUMBER(b, p, eMin, eMax)
-    by ThZeroInFloatNumber;
-    v in FLOAT(b, p, eMin, eMax) by XBOOLE_0:def 3;
-    then reconsider v as Element of FLOAT(b, p, eMin, eMax);
+    reconsider v=0 as Float of b,p,eMin,eMax by ThZeroIsFloat;
+    take v;
+    thus thesis;
+  end;
+  cluster real for Float of b, p, eMin, eMax;
+  existence
+  proof
+    reconsider v=0 as Float of b,p,eMin,eMax by ThZeroIsFloat;
     take v;
     thus thesis;
   end;
 end;
+@
+
+\begin{registration}
+We see that there is a zero Float of format $b$, $p$, $e_{\text{min}}$, $e_{\text{max}}$.
+\end{registration}
+
+<<Register: [[zero]] and [[non zero]] for [[Float]]>>=
+registration
+  let b, p, eMin, eMax;
+  cluster zero for Float of b, p, eMin, eMax;
+  existence
+  proof
+    reconsider v=0 as Float of b,p,eMin,eMax by ThZeroIsFloat;
+    take v;
+    thus thesis;
+  end;
+  cluster non zero for Float of b, p, eMin, eMax;
+  existence
+  proof
+    NaN in {-0,NaN} by TARSKI:def 2;
+    then NaN in FLOAT(b,p,eMin,eMax) by XBOOLE_0:def 3;
+    then reconsider v=NaN as Float of b,p,eMin,eMax by Def8a;
+    take v;
+    thus thesis;
+  end;
+end;
+@
+
+\begin{theorem}
+We see that $-\infty$ is a float of format $b$, $p$, $e_{\text{min}}$, $e_{\text{max}}$;
+and $+\infty$ is a float of format $b$, $p$, $e_{\text{min}}$, $e_{\text{max}}$.
+\end{theorem}
+
+<<Theorem: $\pm\infty$ is a float of format $b$, $p$, $e_{\text{min}}$, $e_{\text{max}}$>>=
+theorem St3201:
+  -infty is Float of b,p,eMin,eMax
+  & +infty is Float of b,p,eMin,eMax
+proof
+  -infty in FLOAT_NUMBER(b, p, eMin, eMax) by St3200;
+  then -infty in FLOAT(b, p, eMin, eMax) by XBOOLE_0:def 3;
+  hence -infty is Float of b, p, eMin, eMax by Def8a;
+  +infty in FLOAT_NUMBER(b, p, eMin, eMax) by St3200;
+  then +infty in FLOAT(b, p, eMin, eMax) by XBOOLE_0:def 3;
+  hence +infty is Float of b, p, eMin, eMax by Def8a;
+end;
+@ %def St3201
+
+\begin{definition}
+We can define the attributes \define{positive} and \define{negative} for
+Floats of format $b$, $p$, $e_{\text{min}}$, $e_{\text{max}}$ by the
+criteria that it is equal to a positive (resp., negative) extended real
+number. 
+\end{definition}
+
+<<Definition: [[positive]] and [[negative]] for [[Float]]>>=
+definition
+  let b, p, eMin, eMax;
+  let IT be Float of b, p, eMin, eMax;
+  attr IT is positive means :Def9a:
+  ex x being positive ExtReal st IT = x;
+  attr IT is negative means :Def9b:
+  ex x being negative ExtReal st IT = x;
+end;
+@ %def Def9a Def9b positive negative
+
+\begin{registration}
+We see that positive and negative Floats of format $b$, $p$, $e_{\text{min}}$, $e_{\text{max}}$
+are automatically extended real numbers.
+\end{registration}
+
+<<Register: positive and negative Floats are extended-reals>>=
+registration
+  let b, p, eMin, eMax;
+  cluster positive -> ext-real for Float of b,p,eMin,eMax;
+  coherence by Def9a;
+  cluster negative -> ext-real for Float of b,p,eMin,eMax;
+  coherence by Def9b;
+end;
 @ 
+
+\begin{registration}
+We see there exists positive, negative, non-positive, and non-negative
+Floats of format $b$, $p$, $e_{\text{min}}$, $e_{\text{max}}$.
+\end{registration}
+
+<<Register: positive, negative, non-positive, non-negative Floats>>=
+registration
+  let b, p, eMin, eMax;
+  cluster positive for Float of b,p,eMin,eMax;
+  existence
+  proof
+    reconsider v=+infty as Float of b,p,eMin,eMax by St3201;
+    take v;
+    thus thesis by Def9a;
+  end;
+  cluster negative for Float of b,p,eMin,eMax;
+  existence
+  proof
+    reconsider v=-infty as Float of b,p,eMin,eMax by St3201;
+    take v;
+    thus thesis by Def9b;
+  end;
+  cluster non positive for Float of b,p,eMin,eMax;
+  existence
+  proof
+    reconsider v=-infty as Float of b,p,eMin,eMax by St3201;
+    take v;
+    thus thesis by Def9b;
+  end;
+  cluster non negative for Float of b,p,eMin,eMax;
+  existence
+  proof
+    reconsider v=+infty as Float of b,p,eMin,eMax by St3201;
+    take v;
+    thus thesis by Def9a;
+  end;
+end;
+@
+
+\begin{theorem}
+Let $x$ be a negative float of format $b$, $p$, $e_{\text{min}}$, $e_{\text{max}}$.
+Then $x < 0$ as an extended real number.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+This follows from the registered fact that negative Floats are extended
+real numbers, and the definition of ``negative''.
+\end{proof}
+
+<<Theorem: negative Floats are less than zero>>=
+theorem ThNegativeFloat:
+  for v being negative Float of b,p,eMin,eMax
+  holds v < 0
+proof
+  let v be negative Float of b,p,eMin,eMax;
+  ex x being negative ExtReal st x = v by Def9b;
+  hence v < 0;
+end;
+@ %def ThNegativeFloat
+
+\begin{theorem}
+Let $x$ be a positive float of format $b$, $p$, $e_{\text{min}}$, $e_{\text{max}}$.
+Then $x > 0$ as an extended real number.
+\end{theorem}
+
+<<Theorem: positive Floats are greater than zero>>=
+theorem ThPositiveFloat:
+  for v being positive Float of b,p,eMin,eMax
+  holds v > 0
+proof
+  let v be positive Float of b,p,eMin,eMax;
+  ex x being positive ExtReal st x = v by Def9a;
+  hence v > 0;
+end;
+@ %def ThPositiveFloat
+
+\begin{theorem}
+Let $x$ be any object.
+Then $x$ is an extended-real Float of format $b$, $p$, $e_{\text{min}}$, $e_{\text{max}}$
+if and only if $x$ is an element of the set [[FLOAT_NUMBER]]($b$, $p$, $e_{\text{min}}$, $e_{\text{max}}$).
+\end{theorem}
+
+<<Theorem: extended-real [[Float]] are elements of [[FLOAT_NUMBER]]>>=
+theorem ThRealFloatsAreInFLOATNUMBER:
+  for x being object
+  holds x is ext-real Float of b, p, eMin, eMax
+  iff x in FLOAT_NUMBER(b, p, eMin, eMax)
+proof
+  let x be object;
+  hereby
+    assume A1: x is ext-real Float of b, p, eMin, eMax;
+    then x in FLOAT(b, p, eMin, eMax) by Def8a;
+    then x in FLOAT_NUMBER(b, p, eMin, eMax)
+    or x in {-0, NaN} by XBOOLE_0:def 3;
+    then x in FLOAT_NUMBER(b, p, eMin, eMax)
+    or x=-0 or x=NaN by TARSKI:def 2;
+    hence x in FLOAT_NUMBER(b, p, eMin, eMax) by A1;
+  end;
+  assume A2: x in FLOAT_NUMBER(b, p, eMin, eMax);
+  then x in FLOAT(b, p, eMin, eMax) by XBOOLE_0:def 3;
+  then x is Float of b, p, eMin, eMax by Def8a;
+  hence x is ext-real Float of b, p, eMin, eMax by A2;
+end;
+@ %def ThRealFloatsAreInFLOATNUMBER
 
 \begin{theorem}
 When $e_{\text{min}}\in\ZZ$ is finite, the smallest positive
-floating-point number for 
-$\FF(b,p,e_{\text{min}},e_{\text{max}})$ is $b^{e_{\text{min}}-p+1}$.
+Float of format $b$, $p$, $e_{\text{min}}$, $e_{\text{max}}$
+is $b^{e_{\text{min}}-p+1}$.
 \end{theorem}
+
+\begin{proof}[Proof sketch]
+Let $x$ be any positive Float. We will prove $b^{e_{\text{min}}-p+1}\leq x$
+by cases.
+
+\textsc{Case 1:} $x\in\RR$. Then $x$ is in [[FLOAT_NUMBER]]
+which allows us to write $x=M\cdot b^{e-p+1}$ for some integers $M$, $e$
+where $0<M\leq b^{p-1}$. After some arithmetic, we see the inequality is
+satisfied since $1\leq M$ and $e_{\text{min}}\leq e$.
+
+\textsc{Case 2:} $x=+\infty$. Then the result follows since $b^{e_{\text{min}}-p+1}\in\RR$.
+
+\textsc{Case 3:} $x=-\infty$. This contradicts the premise that $x$ is
+positive, which means we'd never encounter this situation.
+\end{proof}
 
 When we allow $e_{\text{min}}=-\infty$, this theorem fails to hold
 (obviously).
 
-<<Theorem: smallest floating-point number>>=
+<<Theorem: smallest [positive] Float of format $b$, $p$, $e_{\text{min}}$, $e_{\text{max}}$>>=
 theorem St3300:
   for eMin being negative Integer
-  for x being ExtReal
-  st x in FLOAT_NUMBER(b, p, eMin, eMax)
-   & x > 0
-   holds b to_power (eMin - p + 1) <= x
+  for x being positive Float of b, p, eMin, eMax
+  holds b to_power (eMin - p + 1) <= x
 proof
   let eMin be negative Integer;
-  let x be ExtReal;
-  assume A1: x in FLOAT_NUMBER(b, p, eMin, eMax);
-  assume A2: x > 0;
+  let x be positive Float of b, p, eMin, eMax;
   x in REAL \/ {+infty,-infty} by XXREAL_0:def 1,def 4;
   then x in REAL or x in {+infty,-infty} by XBOOLE_0:def 3;
   then per cases by TARSKI:def 2;
-  suppose x in REAL;
-    then reconsider X=x as positive Real by A2;
-    consider M, e being Integer such that
+  suppose A1: x in REAL;
+    then reconsider X=x as positive Real by ThPositiveFloat;
+    x in FLOAT(b, p, eMin, eMax) by Def8a;
+    then x in FLOAT_NUMBER(b, p, eMin, eMax) by A1, ThRealFloatsAreInFLOATNUMBER;
+    then consider M, e being Integer such that
     A3: X = M * (b to_power (e - p + 1)) & 0 < M & M <= b to_power (p-1)
-    & eMin - 1 < e & e <= eMax by A1, Th12;
+    & eMin - 1 < e & e <= eMax by Th12;
     eMin - 1 + 1 <= e by A3, INT_1:7;
     then eMin + (1 - p) <= e + (1 - p) by XREAL_1:6;
     then A4: (b to_power (eMin - p + 1)) <= (b to_power (e - p + 1))
@@ -598,14 +906,48 @@ proof
     hence b to_power (eMin - p + 1) <= x by XREAL_0:def 1, XXREAL_0:9;
   end;
   suppose x=-infty;
-    hence thesis by A2;
+    hence thesis by ThPositiveFloat;
   end;
 end;
-@
+@ %def St3300
+
+\begin{theorem}\label{thm:ThPositiveFloatIsRealOrInfinity}
+Positive floats are either real or $+\infty$.
+\end{theorem}
+
+<<Theorem: positive Floats are either real or $+\infty$>>=
+theorem ThPositiveFloatIsRealOrInfinity:
+  for v being positive Float of b, p, eMin, eMax
+  holds v is real or v = +infty
+proof
+  let v be positive Float of b, p, eMin, eMax;
+  assume not v is real;
+  then A1: not v in REAL;
+  ex x being positive ExtReal st x = v by Def9a;
+  hence v = +infty by A1, XXREAL_0:14;
+end;
+@ %def ThPositiveFloatIsRealOrInfinity
 
 \begin{theorem}
-When $e_{\text{min}}\in\ZZ$ is finite, every floating-point number in
-$\FF(b,p,e_{\text{min}},e_{\text{max}})$ is an integer multiple of
+Negative floats are either real or $+\infty$.
+\end{theorem}
+
+<<Theorem: negative Floats are either real or $-\infty$>>=
+theorem ThNegativeFloatIsRealOrInfinity:
+  for v being negative Float of b, p, eMin, eMax
+  holds v is real or v = -infty
+proof
+  let v be negative Float of b, p, eMin, eMax;
+  assume not v is real;
+  then A1: not v in REAL;
+  ex x being negative ExtReal st x = v by Def9b;
+  hence v = -infty by A1, XXREAL_0:14;
+end;
+@ %def ThNegativeFloatIsRealOrInfinity
+
+\begin{theorem}
+When $e_{\text{min}}\in\ZZ$ is finite, every Float of format $b$, $p$,
+$e_{\text{min}}$, $e_{\text{max}}$ is an integer multiple of
 $b^{e_{\text{min}}-p+1}$.
 \end{theorem}
 
@@ -613,24 +955,24 @@ The standard says this in passing, but doesn't prove it.
 
 <<Theorem: floating-point numbers are integer multiples of $b^{e_{\text{min}}-p+1}$>>=
 theorem St3301:
+  b in INT implies
   for eMin being negative Integer
-  for x being Real
-  st x in FLOAT_NUMBER(b, p, eMin, eMax) & b in INT
+  for x being real Float of b, p, eMin, eMax
   ex n being Integer
   st n*(b to_power (eMin - p + 1)) = x
 proof
-  let eMin be negative Integer;
-  let x be Real;
-  assume A1: x in FLOAT_NUMBER(b, p, eMin, eMax);
   assume b in INT;
-  then A2: b in NAT by INT_1:3;
-  consider M, e being Integer such that
-  A3: x = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
-  & eMin - 1 < e & e <= eMax by A1,Th11;
-  (eMin - 1) + 1 <= e by A3, INT_1:7;
+  then A1: b in NAT by INT_1:3;
+  let eMin be negative Integer;
+  let x be real Float of b, p, eMin, eMax;
+  x in FLOAT_NUMBER(b, p, eMin, eMax) by ThRealFloatsAreInFLOATNUMBER;
+  then consider M, e being Integer such that
+  A2: x = M * (b to_power (e - p + 1)) & |.M.| <= b to_power (p-1)
+  & eMin - 1 < e & e <= eMax by Th11;
+  (eMin - 1) + 1 <= e by A2, INT_1:7;
   then eMin - eMin <= e - eMin by XREAL_1:9;
   then e - eMin in NAT by INT_1:3;
-  then b to_power (e - eMin) in NAT by A2, ThNatPowers;
+  then b to_power (e - eMin) in NAT by A1, ThNatPowers;
   then reconsider n = M * (b to_power (e - eMin)) as Integer;
   take n;
   thus n*(b to_power (eMin - p + 1))
@@ -638,7 +980,7 @@ proof
   .= M * ((b to_power (e - eMin)) * (b to_power (eMin - p + 1)))
   .= M * (b to_power ((e - eMin) + (eMin - p + 1))) by POWER:27
   .= M * (b to_power (e - p + 1))
-  .= x by A3;
+  .= x by A2;
 end;
 @ %def St3301
 
@@ -646,27 +988,46 @@ end;
 The smallest positive floating-point number is $b^{e_{\text{min}}-p+1}$.
 \end{corollary}
 
+\begin{proof}[Proof sketch]
+Let $x$ be a positive Float. Then by Theorem~\ref{thm:ThPositiveFloatIsRealOrInfinity} it must either be real or infinite.
+So we have a proof by cases.
+
+\textsc{Case 1:} when $x$ is real, we see we can write it as an integer
+multiple of $n\cdot b^{e_{\text{min}}-p+1}=x$ by the previous
+Theorem. Since $x$ is positive, this requires
+$n>0$. Then $n\geq1$. The result follows immediately.
+
+\textsc{Case 2:} when $x=+\infty$, the result is obvious.
+\end{proof}
+
 <<Corollary: the smallest positive floating-point number is $b^{e_{\text{min}}-p+1}$>>=
 theorem ThSmallestPositiveFloat:
   for eMin being negative Integer
   for b being valid_radix Nat
-  for x being positive Real
-  st x in FLOAT_NUMBER(b, p, eMin, eMax)
+  for x being positive Float of b, p, eMin, eMax
   holds (b to_power (eMin - p + 1)) <= x
 proof
   let eMin be negative Integer;
   let b be valid_radix Nat;
-  let x be positive Real;
-  assume A1: x in FLOAT_NUMBER(b, p, eMin, eMax);
-  b in NAT by ORDINAL1:def 12;
-  then consider n being Integer such that
-  A2: n*(b to_power (eMin - p + 1)) = x
-  by A1, St3301, NUMBERS:17;
-  n is positive by A2, Def1, POWER:34;
-  then 0 + 1 <= n by INT_1:7;
-  then 1 * (b to_power (eMin - p + 1)) <= n * (b to_power (eMin - p + 1))
-  by XREAL_1:64;
-  hence (b to_power (eMin - p + 1)) <= x by A2;
+  let x be positive Float of b, p, eMin, eMax;
+  A1: x in FLOAT_NUMBER(b, p, eMin, eMax) by ThRealFloatsAreInFLOATNUMBER;
+  per cases by ThPositiveFloatIsRealOrInfinity;
+  suppose A2: x is real;
+    b in NAT by ORDINAL1:def 12;
+    then b in INT by NUMBERS:17;
+    then consider n being Integer such that
+    A3: n*(b to_power (eMin - p + 1)) = x
+    by A2, St3301;
+    x is positive real by A2;
+    then n is positive by A3;
+    then 0 + 1 <= n by INT_1:7;
+    then 1 * (b to_power (eMin - p + 1)) <= n * (b to_power (eMin - p + 1))
+    by XREAL_1:64;
+    hence (b to_power (eMin - p + 1)) <= x by A3;
+  end;
+  suppose x = +infty;
+    hence thesis by XXREAL_0:3;
+  end;
 end;
 @ %def ThSmallestPositiveFloat
 
@@ -679,23 +1040,29 @@ The smallest negative floating-point number is $-b^{e_{\text{min}}-p+1}$.
 theorem ThSmallestNegativeFloat:
   for eMin being negative Integer
   for b being valid_radix Nat
-  for x being negative Real
-  st x in FLOAT_NUMBER(b, p, eMin, eMax)
+  for x being negative Float of b, p, eMin, eMax
   holds x <= -(b to_power (eMin - p + 1))
 proof
   let eMin be negative Integer;
   let b be valid_radix Nat;
-  let x be negative Real;
-  assume A1: x in FLOAT_NUMBER(b, p, eMin, eMax);
-  b in NAT by ORDINAL1:def 12;
-  then consider n being Integer such that
-  A2: n*(b to_power (eMin - p + 1)) = x
-  by A1, St3301, NUMBERS:17;
-  n is negative by A2;
-  then n <= -1 by INT_1:8;
-  then n * (b to_power (eMin - p + 1)) <= (-1) * (b to_power (eMin - p + 1))
-  by XREAL_1:64;
-  hence x <= - (b to_power (eMin - p + 1)) by A2;
+  let x be negative Float of b, p, eMin, eMax;
+  x in FLOAT_NUMBER(b, p, eMin, eMax) by ThRealFloatsAreInFLOATNUMBER;
+  per cases by ThNegativeFloatIsRealOrInfinity;
+  suppose A1: x is real;
+    b in NAT by ORDINAL1:def 12;
+    then consider n being Integer such that
+    A2: n*(b to_power (eMin - p + 1)) = x
+    by A1, St3301, NUMBERS:17;
+    x is negative real by A1;
+    then n is negative by A2;
+    then n <= -1 by INT_1:8;
+    then n * (b to_power (eMin - p + 1)) <= (-1) * (b to_power (eMin - p + 1))
+    by XREAL_1:64;
+    hence x <= - (b to_power (eMin - p + 1)) by A2;
+  end;
+  suppose x = -infty;
+    hence thesis by XXREAL_0:5;
+  end;
 end;
 @ %def ThSmallestNegativeFloat
 
@@ -725,7 +1092,7 @@ it seems unintuitive that $0$ is not normal.
 <<Definition: normal floating-point number>>=
 definition
   let b, p, eMin, eMax;
-  let IT be Element of FLOAT(b,p,eMin,eMax);
+  let IT be Float of b, p, eMin, eMax;
   attr IT is normal means :Def8:
   IT <> 0 & IT in FLOAT_NUMBER(b,p,eMin,eMax) if eMin =-infty,
   ex iMin being negative Integer st iMin = eMin
@@ -746,11 +1113,11 @@ All normal elements of a floating-point format are floating-point numbers.
 
 <<Theorem: All normal elements of a floating-point format are floating-point numbers>>=
 theorem ThNormalInFloatNumber:
-  for v being Element of FLOAT(b, p, eMin, eMax)
+  for v being Float of b, p, eMin, eMax
   st v is normal
   holds v in FLOAT_NUMBER(b, p, eMin, eMax)
 proof
-  let v be Element of FLOAT(b, p, eMin, eMax);
+  let v be Float of b, p, eMin, eMax;
   assume A1: v is normal;
   then per cases;
   suppose eMin = -infty;
@@ -760,10 +1127,8 @@ proof
     then ex iMin being negative Integer st iMin = eMin
     & ex x being Real st x = v
     & b to_power iMin <= |.x.| by A1, Def8;
-    then v in REAL by XREAL_0:def 1;
-    then A2: v <> -0 & v <> NaN by Th6, NUMBERS:31;
-    v in FLOAT_NUMBER(b,p,eMin,eMax) or v in {-0, NaN} by XBOOLE_0:def 3;
-    hence thesis by A2, TARSKI:def 2;
+    then v is real;
+    hence v in FLOAT_NUMBER(b,p,eMin,eMax) by ThRealFloatsAreInFLOATNUMBER;
   end;
   suppose eMin <> -infty & eMax <> +infty;
     then ex iMin being negative Integer st iMin = eMin
@@ -771,10 +1136,8 @@ proof
     & ex x being Real st x = v
     & b to_power iMin <= |.x.|
     & |.x.| <= (b to_power iMax)*(b - (b to_power (1 - p))) by A1,Def8;
-    then v in REAL by XREAL_0:def 1;
-    then A2: v <> -0 & v <> NaN by Th6, NUMBERS:31;
-    v in FLOAT_NUMBER(b,p,eMin,eMax) or v in {-0, NaN} by XBOOLE_0:def 3;
-    hence thesis by A2, TARSKI:def 2;
+    then v is real;
+    hence v in FLOAT_NUMBER(b,p,eMin,eMax) by ThRealFloatsAreInFLOATNUMBER;
   end;
 end;
 @ %def ThNormalInFloatNumber
@@ -786,10 +1149,10 @@ All normal floating-point data are extended reals.
 <<Register: All normal floating-point data are extended reals>>=
 registration
   let b, p, eMin, eMax;
-  cluster normal -> ext-real for Element of FLOAT(b,p,eMin,eMax);
+  cluster normal -> ext-real for Float of b, p, eMin, eMax;
   coherence
   proof
-    let x be Element of FLOAT(b, p, eMin, eMax);
+    let x be Float of b, p, eMin, eMax;
     assume x is normal;
     then x in FLOAT_NUMBER(b, p, eMin, eMax) by ThNormalInFloatNumber;
     hence thesis;
@@ -807,14 +1170,14 @@ there exists a $x\in\RR$ such that $x=v$ and $b^{e_{\text{min}}}\leq x\leq b^{e_
 theorem ThNormalFloatCriteriaFiniteExp:
   for eMin being negative Integer
   for eMax being positive Integer
-  for v being Element of FLOAT(b, p, eMin, eMax)
+  for v being Float of b, p, eMin, eMax
   holds v is normal iff ex x being Real st x = v
   & b to_power eMin <= |.x.|
   & |.x.| <= (b to_power eMax)*(b - (b to_power (1 - p)))
 proof
   let eMin be negative Integer;
   let eMax be positive Integer;
-  let v be Element of FLOAT(b, p, eMin, eMax);
+  let v be Float of b, p, eMin, eMax;
   thus v is normal implies ex x being Real st x = v
   & b to_power eMin <= |.x.|
   & |.x.| <= (b to_power eMax)*(b - (b to_power (1 - p)))
@@ -978,18 +1341,16 @@ If $1\in\FF(b,p,-\infty,e_{\text{max}})$, then 1 is normal.
 
 <<Theorem: If $1\in\FF(b,p,-\infty,e_{\text{max}})$, then 1 is normal>>=
 theorem ThNormalFloatInNegInfty:
-  for x being Element of FLOAT(b, p, eMin, eMax)
+  for x being Float of b, p, eMin, eMax
   st x=1 & eMin=-infty
   holds x is normal
 proof
-  let x be Element of FLOAT(b, p, eMin, eMax);
+  let x be Float of b, p, eMin, eMax;
   assume A1: x=1;
   assume A2: eMin=-infty;
   1 in NAT;
-  then x in REAL by A1, NUMBERS:19;
-  then x <> -0 & x <> NaN by Th6, NUMBERS:31;
-  then not x in {-0, NaN} by TARSKI:def 2;
-  then x in FLOAT_NUMBER(b, p, eMin, eMax) by XBOOLE_0:def 3;
+  then x is real by A1, NUMBERS:19;
+  then x in FLOAT_NUMBER(b, p, eMin, eMax) by ThRealFloatsAreInFLOATNUMBER;
   hence x is normal by A1,A2,Def8;
 end;
 @ %def ThNormalFloatInNegInfty
@@ -1000,11 +1361,11 @@ If $1\in\FF(b,p,e_{\text{min}},+\infty)$, then 1 is normal.
 
 <<Theorem: If $1\in\FF(b,p,e_{\text{min}},+\infty)$, then 1 is normal>>=
 theorem ThNormalFloatInPosInfty:
-  for x being Element of FLOAT(b, p, eMin, eMax)
+  for x being Float of b, p, eMin, eMax
   st x=1 & eMax=+infty
   holds x is normal
 proof
-  let x be Element of FLOAT(b, p, eMin, eMax);
+  let x be Float of b, p, eMin, eMax;
   assume A1: x=1;
   assume A2: eMax=+infty;
   per cases;
@@ -1028,12 +1389,13 @@ If $b\in\NN$, then there exists a normal element of $\FF(b,p,e_{\text{min}},e_{\
 <<Theorem: If $b\in\NN$, then there exists a normal floating-point number>>=
 theorem ThExistenceNormalFloat:
   for b being valid_radix Nat
-  ex x being Element of FLOAT(b, p, eMin, eMax)
+  ex x being Float of b, p, eMin, eMax
   st x is normal
 proof
   let b be valid_radix Nat;
   1 in FLOAT_NUMBER(b, p, eMin, eMax) by Th17; then
-  A1: 1 in FLOAT(b, p, eMin, eMax) by XBOOLE_0:def 3;
+  1 in FLOAT(b, p, eMin, eMax) by XBOOLE_0:def 3; then
+  A1: 1 is Float of b, p, eMin, eMax by Def8a;
   per cases;
   suppose eMin=-infty;
     hence thesis by A1, ThNormalFloatInNegInfty;
@@ -1044,7 +1406,7 @@ proof
   suppose A2: eMin <> -infty & eMax <> +infty;
     then reconsider iMin=eMin as negative Integer by ThNegExtInt;
     reconsider iMax=eMax as positive Integer by A2, ThPosExtInt;
-    reconsider x0 = 1 as Element of FLOAT(b, p, eMin, eMax) by A1;
+    reconsider x0 = 1 as Float of b, p, eMin, eMax by A1;
     take x0;
     ex x being Real st x = x0
     & b to_power iMin <= |.x.|
@@ -1075,7 +1437,7 @@ Observe there exists a normal floating-point datum (take $b^{e_{\text{min}}}$).
 <<Register: normal floating-point datum>>=
 registration
   let b be valid_radix Nat, p, eMin, eMax;
-  cluster normal for Element of FLOAT(b,p,eMin,eMax);
+  cluster normal for Float of b, p, eMin, eMax;
   existence by ThExistenceNormalFloat;
 end;
 @ 
@@ -1095,7 +1457,7 @@ In particular, this means that subnormal numbers must be finite.
 <<Definition: subnormal floating-point datum>>=
 definition
   let b, p, eMin, eMax;
-  let IT be Element of FLOAT(b,p,eMin,eMax);
+  let IT be Float of b, p, eMin, eMax;
   attr IT is subnormal means :Def9:
   ex x being Real st x = IT &
   ex iMin being negative Integer st iMin = eMin
@@ -1110,7 +1472,7 @@ Every subnormal floating-point number is real.
 <<Register: every subnormal floating-point number is real>>=
 registration
   let b, p, eMin, eMax;
-  cluster subnormal -> real for Element of FLOAT(b, p, eMin, eMax);
+  cluster subnormal -> real for Float of b, p, eMin, eMax;
   coherence;
 end;
 @
@@ -1159,7 +1521,7 @@ theorem
   p = 1 implies
   for b being valid_radix Nat
   for eMin being negative Integer
-  holds not ex v being Element of FLOAT(b, p, eMin, eMax)
+  holds not ex v being Float of b, p, eMin, eMax
   st v is subnormal
 proof
   assume A1: p = 1;
@@ -1170,27 +1532,30 @@ proof
   then x > 0 by POWER:34;
   then reconsider x as positive Real;
   A2: x = b to_power eMin by A1;
-  then for v being positive Real st v in FLOAT_NUMBER(b, p, eMin, eMax)
+  then for v being positive Float of b, p, eMin, eMax
   holds x <= v by ThSmallestPositiveFloat;
 
-  for v being Element of FLOAT(b, p, eMin, eMax)
+  for v being Float of b, p, eMin, eMax
   holds not v is subnormal
   proof
-    let v be Element of FLOAT(b, p, eMin, eMax);
+    let v be Float of b, p, eMin, eMax;
     assume v is subnormal;
     then consider x0 being Real such that
     A3: x0 = v & 0 < |.x0.| & |.x0.| < b to_power eMin
     by Def9;
     A4: |.x0.| < x by A2,A3;
     A5: x0 in FLOAT_NUMBER(b, p, eMin, eMax)
-    by A3, ThRealFloatsAreNumbers, XREAL_0:def 1;
+    & x0 is Float of b, p, eMin, eMax
+    by A3, ThRealFloatsAreInFLOATNUMBER;
     0 < -x0 or 0 < x0 by A3, COMPLEX1:71;
     then per cases;
     suppose x0 is positive;
-      then (b to_power (eMin - p + 1)) <= x0 by A5,ThSmallestPositiveFloat;
-      hence contradiction by A1, A2, A4, COMPLEX1:43;
+      then x0 is positive Float of b, p, eMin, eMax by A5, Def9a;
+      then (b to_power (eMin - p + 1)) <= x0 by ThSmallestPositiveFloat;
+      hence contradiction by A4, COMPLEX1:43;
     end;
     suppose A6: x0 is negative;
+      then x0 is negative Float of b, p, eMin, eMax by A5, Def9b;
       then -(- x) <= -x0 by A5, ThSmallestNegativeFloat, XREAL_1:24;
       hence contradiction by A4, A6, COMPLEX1:70;
     end;
@@ -1205,7 +1570,7 @@ There is no subnormal element of $\FF(b,p,-\infty,e_{\text{max}})$.
 
 <<Theorem: there is no subnormal element of $\FF(b,p,-\infty,e_{\text{max}})$>>=
 theorem
-  eMin = -infty implies not ex v being Element of FLOAT(b,p,eMin,eMax)
+  eMin = -infty implies not ex v being Float of b, p, eMin, eMax
   st v is subnormal by Def9;
 @ 
 
@@ -1223,11 +1588,11 @@ impossible.
 
 <<Theorem: 0 is neither normal nor subnormal>>=
 theorem
-  for x being Element of FLOAT(b, p, eMin, eMax)
+  for x being Float of b, p, eMin, eMax
   st x = 0
   holds not x is normal & not x is subnormal
 proof
-  let x be Element of FLOAT(b, p, eMin, eMax);
+  let x be Float of b, p, eMin, eMax;
   assume A1: x = 0;
   thus not x is normal
   <<Proof: 0 is not normal>>
@@ -1287,14 +1652,14 @@ theorem ThBabyExistenceSubnormalFloat:
   p > 1 implies
   for b being valid_radix Nat
   for eMin being negative Integer
-  ex v being Element of FLOAT(b, p, eMin, eMax)
+  ex v being Float of b, p, eMin, eMax
   st v = (b to_power (1 - p))*(b to_power eMin)
   & v is subnormal
 proof
   assume A1: p > 1;
   let b be valid_radix Nat;
   let eMin be negative Integer;
-  ex v being Element of FLOAT(b, p, eMin, eMax)
+  ex v being Float of b, p, eMin, eMax
   st v = (b to_power (1 - p))*(b to_power eMin)
   proof
     set M = 1, e = eMin;
@@ -1308,20 +1673,20 @@ proof
     & 0 < M & M <= b to_power (p - 1)
     & eMin - 1 < e & e <= eMax  by Lm19, XXREAL_0:2;
     then x in FLOAT_NUMBER(b,p,eMin,eMax) by Th12;
-    then reconsider v=x as Element of FLOAT(b,p,eMin,eMax) by XBOOLE_0:def 3;
+    then reconsider v=x as Float of b, p, eMin, eMax by ThRealFloatsAreInFLOATNUMBER;
     take v;
     x = b to_power ((1 - p) + e)
      .= (b to_power (1 - p)) * (b to_power e) by POWER:27;
     hence thesis;
   end;
-  then consider v being Element of FLOAT(b, p, eMin, eMax) such that
+  then consider v being Float of b, p, eMin, eMax such that
   A2: v = (b to_power (1 - p))*(b to_power eMin);
   take v;
   thus v = (b to_power (1 - p))*(b to_power eMin) by A2;
   ex x being Real st x = v & 0 < |.x.| & |.x.| < b to_power eMin
   proof
     reconsider x = (b to_power (1 - p))*(b to_power eMin) as Real;
-    B1: v in FLOAT(b, p, eMin, eMax) & x = v by A2;
+    B1: v in FLOAT(b, p, eMin, eMax) & x = v by A2, Def8a;
     take x;
     thus x = v by B1;
     B2: b > 1 by Def1;
@@ -1355,13 +1720,13 @@ theorem ThExistenceSubnormalFloat:
   p > 1 implies
   for b being valid_radix Nat
   for eMin being negative Integer
-  ex v being Element of FLOAT(b, p, eMin, eMax)
+  ex v being Float of b, p, eMin, eMax
   st v is subnormal
 proof
   assume A1: p > 1;
   let b be valid_radix Nat;
   let eMin be negative Integer;
-  ex v being Element of FLOAT(b, p, eMin, eMax) st
+  ex v being Float of b, p, eMin, eMax st
   v = (b to_power (1 - p))*(b to_power eMin)
   & v is subnormal
   by A1, ThBabyExistenceSubnormalFloat;

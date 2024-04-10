@@ -6,3 +6,5 @@ O-0
 ONaN
 OFLOAT_NUMBER
 OFLOAT
+V-format_floating-point
+MFloat
