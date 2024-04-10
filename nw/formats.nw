@@ -170,7 +170,7 @@ $\{x\in\RR \mid \exists M,e\in\ZZ, x=M\cdot \beta^{e-p+1}\land
 |M|\leq \beta^{p}-1\land e_{\text{min}}-1<e\leq e_{\text{max}}\}\cup\{\pm\infty\}$.
 \end{definition}
 
-\begin{remark}
+\begin{def-remark}
 We should really have the set be
 $\{x\in\RR \mid \exists M,e\in\ZZ, x=M\cdot \beta^{e-p+1}\land
 |M|\leq\beta^{p}-1\land e_{\text{min}}\leq e\leq e_{\text{max}}\}\cup\{\pm\infty\}$
@@ -179,7 +179,7 @@ is logically equivalent to the definition offered. The reason why we use
 $e_{\text{min}}-1<e\leq e_{\text{max}}$ instead of
 $e_{\text{min}}\leq e\leq e_{\text{max}}$ is for the case when
 $e_{\text{min}}=-\infty$ we run into difficulties.
-\end{remark}
+\end{def-remark}
 
 We're allowing the exponents to possible be infinite because other users
 of our formalization may wish to prove results using, e.g., Trefethan
@@ -295,12 +295,12 @@ Infinity is a floating-point number.
 This is explicitly part of the standard, in \S3.2, that $+\infty$ and
 $-\infty$ are floating-point numbers.
 
-\begin{remark}
+\begin{thm-remark}
 We will adopt the naming convention that theorems which appear in the
 Standard will be labeled ``$\mathtt{St}cs\mbox{\ss} xx$'' where $c$ is the
 clause, $s$ the subclause, {\ss} the sub-subclause, and $x$ is a
 unique number (possibly zero-padded).
-\end{remark}
+\end{thm-remark}
 
 <<Theorem: infinity is a float-poing number>>=
 theorem St3200:
@@ -1085,11 +1085,11 @@ We say $x$ is \define{Normal} if
 \end{enumerate}
 \end{definition}
 
-\begin{remark}
+\begin{def-remark}
 The Standard really specifies only case (3), since they have exponents
 be integers. We generalize to cases (1) and (2) in a manner to make sure
 non-normal numbers [zero] remain non-normal.
-\end{remark}
+\end{def-remark}
 
 This definition gives us a peculiar situation: zero is not a normal
 floating-point number. Neither is it a subnormal number (which are
@@ -1462,13 +1462,13 @@ We say $x$ is \define{Subnormal} if its magnitude lies between
 $0<|x|<\beta^{e_{\text{min}}}$.
 \end{definition}
 
-\begin{remark}
+\begin{def-remark}
 The Standard says that ``floating-point numbers for a format with magnitude less than $b^{e_{\text{min}}}$ are called subnormal because their
 magnitudes lie between zero and the smallest normal magnitude.''
 In particular, this means that subnormal numbers must be finite.
 We are being a bit more general than the Standard, allowing $\beta>0$
 rather than $b\in\{2,10\}$.
-\end{remark}
+\end{def-remark}
 
 <<Definition: subnormal floating-point datum>>=
 definition

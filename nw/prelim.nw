@@ -41,6 +41,19 @@ Let $\beta\in\RR$. We define the attribute $\beta$ is a \define{Valid Radix}
 if $\beta>1$.
 \end{definition}
 
+\begin{def-remark}
+It might be worth exploring the idea that a non-zero non-unit (see
+[[ANPROJ10:def 1]] for [[unit]]) natural number is automatically a valid
+radix. Right now, I am avoiding ``forcing'' floating-point numbers to
+use a valid radix so I can define the basic float formats without
+complications.
+
+At the moment, using [[unit]] might be necessary for a completely
+different reason. We cannot convince Mizar of the existence of
+subnormal floating-point numbers for nonzero non-unit precisions, which
+would prevent us from using [[subnormal]] as an adjective.
+\end{def-remark}
+
 <<Definition: valid radix>>=
 definition
   let IT be Real;
