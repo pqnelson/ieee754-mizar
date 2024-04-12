@@ -24,6 +24,22 @@ begin :: Preliminaries
 
 <<Theorem: $1\leq x b^{-\lfloor\log_{b}(x)\rfloor}<b$>>
 
+<<Theorem: existence of canonical $b$-expansion of $x$>>
+
+<<Theorem: for each $\varepsilon>0$ there exists an $N\in\NN$ such that $b^{-N}<\varepsilon$>>
+
+<<Theorem: convergence and limit of $b$-expansion>>
+
+<<Definition: $b$-expansion of $x$>>
+
+<<Theorem: $b$-expansion of $x$ produces sequence of natural numbers not greater than $b$>>
+
+<<Theorem: $b$-expansion vanishes after $r_{k}=0$>>
+
+<<Theorem: $b$-expansion of $0$>>
+
+<<Theorem: $b$-expansion of 1>>
+
 <<Subsection: Defining the extended integers>>
 @
 
@@ -396,6 +412,719 @@ proof
   end;
 end;
 @ %def Th2
+
+\begin{theorem}
+Let $x\in\RR$ be a real number, let $b$ be a valid radix real number.
+There exists two sequences of real numbers $\{d_{j}\}_{j=0}$ and $\{r_{j}\}_{j=0}$
+such that $d_{0}=\lfloor x/b^{\lfloor\log_{b}(x)\rfloor}\rfloor$
+and $r_{0}=(x/b^{\lfloor\log_{b}(x)\rfloor})-d_{0}$, and for each $j\in\NN$
+we have $d_{j+1}=\lfloor br_{j}\rfloor$ and $r_{j+1}=\beta r_{j}-\lfloor br_{j}\rfloor$.
+\end{theorem}
+
+<<Theorem: existence of canonical $b$-expansion of $x$>>=
+theorem ThBetaExpansionExistence:
+  for x being Real
+  ex d, r being Real_Sequence
+  st d.0 = [\ x * (b to_power (-[\ log(b, x) /])) /]
+  & r.0 = (x * (b to_power (-[\ log(b, x) /]))) - [\ (x * (b to_power (-[\ log(b, x) /])))/]
+  & for j being Nat
+  holds d.(j+1) = [\ b*(r.j) /]
+  & r.(j+1) = b*(r.j) - [\ b*(r.j) /]
+proof
+  let x be Real;
+  <<Proof step: construct $r_{j}$>>
+  <<Proof step: construct $d_{j}$>>
+
+  take d, r;
+  <<Proof step: conclude $d_{j}$ and $r_{j}$ satisfy the desired properties>>
+end;
+@ %def ThBetaExpansionExistence
+
+\begin{proof}[Proof step (construct $r_{j}$)]
+We observe that $r_{0} = xb^{-\lfloor\log_{b}(x)\rfloor} - \lfloor xb^{-\lfloor\log_{b}(x)\rfloor}\rfloor$
+is a real number, and we can write $r_{n+1}$ in terms of $r_{n}$ using
+the ``scheme'' [theorem parametrized by terms and/or predicates] from
+the article formalizing sequences. This is because
+$r_{n+1}=br_{n}-\lfloor br_{n}\rfloor=\mathcal{R}[r_{n}]$ generates the
+rest of the sequence.
+\end{proof}
+
+<<Proof step: construct $r_{j}$>>=
+reconsider d0 = [\ x * (b to_power (-[\ log(b, x) /])) /]
+as Element of REAL by XREAL_0:def 1;
+reconsider r0 = x*(b to_power (-[\ log(b,x) /])) - d0
+as Element of REAL by XREAL_0:def 1;
+deffunc R0() = r0;
+deffunc Rrec(Nat, Real) = In(b*$2 - [\ b*$2 /], REAL);
+
+consider r being sequence of REAL such that
+A1: r.0 = R0() & for n being Nat holds r.(n + 1) = Rrec(n, r.n)
+from NAT_1:sch 12;
+reconsider r as Real_Sequence;
+@
+
+\begin{proof}[Proof step (construct $d_{j}$)]
+We have constructed $r_{j}$ as a real sequence, now we can construct
+$d_{j}$ using the exact same strategy. However, $\lfloor br_{n}\rfloor$
+is not automatically interpreted as a real number, so we need to tell
+Mizar that \emph{it really is real}. This is handled by writing
+[[In(..., REAL)]] to cast it as an element of $\RR$.
+\end{proof}
+
+<<Proof step: construct $d_{j}$>>=
+deffunc D0() = d0;
+deffunc Drec(Nat, Real) = In([\ b*(r.$1) /], REAL);
+consider d being sequence of REAL such that
+A2: d.0 = D0() & for n being Nat holds d.(n + 1) = Drec(n, d.n)
+from NAT_1:sch 12;
+@
+
+\begin{proof}[Proof step (conclude $d_{j}$ and $r_{j}$ satisfy the desired properties)]
+This amounts to looking at the construction of $r_{j}$ and $d_{j}$ and
+saying, ``Look, they really do satisfy the desired properties''.
+\end{proof}
+
+<<Proof step: conclude $d_{j}$ and $r_{j}$ satisfy the desired properties>>=
+thus d.0 = [\ x * (b to_power (-[\ log(b, x) /])) /] by A2;
+thus r.0 = (x * (b to_power (-[\ log(b, x) /]))) - [\ (x * (b to_power (-[\ log(b, x) /])))/]
+by A1;
+thus for j being Nat
+holds d.(j+1) = [\ b*(r.j) /]
+& r.(j+1) = b*(r.j) - [\ b*(r.j) /]
+proof
+  let j be Nat;
+  thus d.(j + 1) = In([\ b*(r.j) /], REAL) by A2
+                .= [\ b*(r.j) /];
+  thus r.(j + 1) = Rrec(j, r.j) by A1
+                .= b*(r.j) - [\ b*(r.j) /];
+end;
+@ 
+
+\begin{theorem}
+For each $\varepsilon>0$, there exists a $N\in\NN$ such that $b^{-N}<\varepsilon$.
+\end{theorem}
+
+This is necessary for proving the beta-expansion of a number converges.
+
+\begin{proof}[Proof sketch]
+There are two possible cases:
+\begin{enumerate}
+\item $\varepsilon\geq1$: We have $b^{-1}<1$. Hence $b^{-N}<1<\varepsilon$.
+\item $0<\varepsilon<1$: We see $\log_{b}(\varepsilon)<0$, so
+  $-\log_{b}(\varepsilon)>0$. Taking $N=1+\lceil-\log_{b}(\varepsilon)\rceil$
+  yields $N>-\log_{b}(\varepsilon)$, so $-N<\log_{b}(\varepsilon)$ and
+  in particular $b^{-N}<\varepsilon$ by the law of logarithms.
+\end{enumerate}
+Thus concludes the proof.
+\end{proof}
+
+<<Theorem: for each $\varepsilon>0$ there exists an $N\in\NN$ such that $b^{-N}<\varepsilon$>>=
+theorem ThExistenceOfN:
+  for epsilon being Real
+  st epsilon > 0
+  ex N being Nat
+  st b to_power -N < epsilon
+proof
+  let epsilon be Real;
+  assume A1: epsilon > 0;
+  per cases;
+  suppose A2: epsilon >= 1;
+    take N=1;
+    -1 < 0 & b > 1 by Def1;
+    then b to_power -N < b to_power 0 by POWER:39;
+    then b to_power -N < 1 by POWER:24;
+    hence thesis by A2, XXREAL_0:2;
+  end;
+  suppose A2: epsilon < 1;
+    A4: 0 < -log(b, epsilon)
+    proof
+      A3: 0 < epsilon & epsilon < 1 & b > 1 by A1, A2, Def1;
+      then log(b,1) > log(b,epsilon) by POWER:57;
+      then 0 > log(b, epsilon) by A3, POWER:51;
+      hence thesis;
+    end;
+    consider r being Real such that
+    A5: r > -log(b, epsilon)
+    by XREAL_1:1;
+    [/r\]+1 in NAT
+    proof
+      [/r\] >= 0 by A4, A5, INT_1:def 7;
+      hence [/r\]+1 in NAT by INT_1:3;
+    end;
+    then reconsider N = [/r\]+1 as Nat;
+    take N;
+    A6: b > 1 by Def1; then
+    A7: b to_power (log(b,epsilon)) = epsilon by A1, POWER:def 3;
+    [/r\] >= r by INT_1:def 7;
+    then [/r\] > -log(b,epsilon) by A5, XXREAL_0:2;
+    then [/r\] + 1 > -log(b,epsilon) by XREAL_1:145;
+    then -N < -(-log(b,epsilon)) by XREAL_1:24;
+    hence b to_power -N < epsilon by A6,A7,POWER:39;
+  end;
+end;
+@ %def ThExistenceOfN
+
+\begin{theorem}
+Let $x$ be a real number.
+Using the sequence $d_{j}$, $r_{j}$ from the previous theorem,
+we see the series
+\[\sum^{\infty}_{n=0}d_{n}b^{-n}\]
+converges to $x/b^{\lfloor\log_{b}(x)\rfloor}$.
+\end{theorem}
+
+\begin{proof}[Proof outline]
+The proof is not hard, just tedious. The heart of the proof is the
+recognition that:
+\begin{itemize}
+\item[$(A_{6})$] $s_{n}+r_{n}b^{-n}=xb^{-\lfloor\log_{b}(x)\rfloor}$ by
+induction;
+\item[$(A_{7})$] for $k\in\NN$ we have $0<r_{k}<1$ since $r_{0}$ is the
+  fractional part of $x/b^{\lfloor\log_{b}(x)\rfloor}$ and $r_{k+1}$ is the fractional
+  part of $br_{k}$;
+\item[$(A_{8})$] the sequence of partial sums $s_{m}$ converges to $x/b^{\lfloor\log_{b}(x)\rfloor}$.
+\end{itemize}
+Everything else is just straightforward.
+\end{proof}
+
+<<Theorem: convergence and limit of $b$-expansion>>=
+theorem ThBetaExpansionLimit:
+  for x being Real
+  for d, r being Real_Sequence
+  st d.0 = [\ x * (b to_power (-[\ log(b, x) /])) /]
+  & r.0 = (x * (b to_power (-[\ log(b, x) /]))) - [\ (x * (b to_power (-[\ log(b, x) /])))/]
+  & (for j being Nat
+  holds d.(j+1) = [\ b*(r.j) /]
+  & r.(j+1) = b*(r.j) - [\ b*(r.j) /])
+  ex s being Real_Sequence
+  st s.0 = d.0
+  & (for j being Nat holds s.(j + 1) = (s.j) + ((d.(j + 1)) * (b to_power (-j-1))))
+  & s is convergent
+  & lim s = x * (b to_power (-[\ log(b, x) /]))
+proof
+  let x be Real;
+  let d, r be Real_Sequence;
+  assume A1: d.0 = [\ x * (b to_power (-[\ log(b, x) /])) /];
+  assume A2: r.0 = (x * (b to_power (-[\ log(b, x) /]))) - [\ (x * (b to_power (-[\ log(b, x) /])))/];
+  assume A3: for j being Nat
+  holds d.(j+1) = [\ b*(r.j) /]
+  & r.(j+1) = b*(r.j) - [\ b*(r.j) /];
+
+  reconsider d0 = [\ x * (b to_power (-[\ log(b, x) /])) /]
+  as Element of REAL by XREAL_0:def 1;
+  reconsider r0 = x*(b to_power (-[\ log(b,x) /])) - d0
+  as Element of REAL by XREAL_0:def 1;
+  deffunc S0() = d.0;
+  deffunc Srec(Nat, Real) = In($2 + ((d.($1 + 1)) * (b to_power (-$1 - 1))),
+  REAL);
+
+  consider s being sequence of REAL such that
+  A4: s.0 = S0() & for n being Nat holds s.(n + 1) = Srec(n, s.n)
+  from NAT_1:sch 12;
+  reconsider s as Real_Sequence;
+
+  take s;
+  thus s.0 = d.0 by A4;
+  thus for j being Nat
+  holds s.(j + 1) = (s.j) + ((d.(j + 1)) * (b to_power (-j-1)))
+  proof
+    let j be Nat;
+    thus s.(j + 1) = In((s.j) + ((d.(j + 1)) * (b to_power (-j-1))), REAL) by A4
+                  .= (s.j) + ((d.(j + 1)) * (b to_power (-j-1)));
+  end;
+
+  A5: for k being Nat
+  holds d.(k + 1) + r.(k + 1) = b * (r.k) 
+  proof
+    let k be Nat;
+    thus d.(k + 1) + r.(k + 1) = [\ b*(r.k) /] + r.(k + 1) by A3
+                              .= [\ b*(r.k) /] + (b*(r.k)-[\ b*(r.k) /]) by A3
+                              .= b * (r.k);
+  end;
+
+  A6: for n being Nat
+  holds s.n + (r.n) * (b to_power -n) = x * (b to_power (-[\ log(b, x) /]))
+  <<Proof: $s_{n}+r_{n}b^{-n}=xb^{-\lfloor\log_{b}(x)\rfloor}$>>
+
+  A7: for k being Nat
+  holds 0 <= r.k & r.k < 1
+  <<Proof: for $k\in\NN$ we have $0<r_{k}<1$>>
+
+  A8: for epsilon being Real st 0 < epsilon
+  ex N being Nat st
+  for m being Nat st N <= m
+  holds |.((s.m) - x * (b to_power (-[\ log(b, x) /]))).| < epsilon
+  <<Proof: $\forall\varepsilon>0,\exists N\in\NN,\forall m\in\NN,m\geq N\implies|s_{m}-xb^{-\lfloor\log_{b}(x)\rfloor}|<\varepsilon$>>
+
+  hence s is convergent by SEQ_2:def 6;
+  hence lim s = x * (b to_power (-[\ log(b, x) /])) by A8, SEQ_2:def 7;
+end;
+@ %def ThBetaExpansionExistence
+
+\begin{proof}[Proof sketch ($s_{n}+r_{n}b^{-n}=xb^{-\lfloor\log_{b}(x)\rfloor}$)]
+  This is a proof by induction.
+
+  The base case ($n=0$):
+  $s_{0}+r_{0}b^{-0}=xb^{-\lfloor\log_{b}(x)\rfloor}$
+  by definition of the sequences $r_{0}$, $d_{0}$, and $s_{0}$.
+
+  The inductive case ($n\to n+1$): assume this is true for arbitrary $n$.
+  Then we see that $d_{n+1}+r_{n+1}=br_{n}$, and
+  $s_{n+1}+r_{n+1}b^{-(n+1)}=s_{n}+b^{-(n+1)}(d_{n+1}+r_{n+1})=s_{n}+b^{-n}r_{n}$
+  which is precisely the inductive hypothesis.
+\end{proof}
+
+<<Proof: $s_{n}+r_{n}b^{-n}=xb^{-\lfloor\log_{b}(x)\rfloor}$>>=
+proof
+  defpred P[Nat] means
+  s.$1 + (r.$1) * (b to_power (- $1)) = x * (b to_power (-[\ log(b, x) /]));
+
+  s.0 + (r.0) * (b to_power (- 0))
+  = s.0 + (r.0) * 1 by POWER:24
+  .= x * (b to_power (-[\ log(b, x) /])) by A1,A2,A4;
+  then B1: P[0];
+
+  B2: for k being Nat st P[k] holds P[k + 1]
+  proof
+    let k be Nat;
+    assume B3: P[k];
+      
+    s.(k + 1) = In(s.k + (d.(k + 1)) * (b to_power (-k - 1)),REAL) by A4; then
+    s.(k + 1) + (r.(k + 1)) * (b to_power (- (k + 1)))
+    = s.k + (d.(k + 1) + r.(k + 1)) * (b to_power (-k - 1))
+    .= s.k + (b * (r.k)) * (b to_power (-k - 1)) by A5
+    .= s.k + (r.k) * (b * (b to_power (-k - 1)))
+    .= s.k + (r.k) * ((b to_power 1) * (b to_power (-k - 1))) by POWER:25
+    .= s.k + (r.k) * (b to_power (-k - 1 + 1)) by POWER:27
+    .= s.k + (r.k) * (b to_power -k);
+    hence P[k + 1] by B3;
+  end;
+  
+  thus for k being Nat holds P[k] from NAT_1:sch 2(B1, B2);
+end;
+@ 
+
+\begin{proof}[Proof sketch ($0<r_{k}<1$)]
+We see when $k=0$ that $r_{0}$ is the fractional part of
+$xb^{-\lfloor\log_{b}(x)\rfloor}$, which is between zero and one.
+For $k>0$, we see that $r_{k}$ is the fractional part of $br_{k-1}$
+which is between zero and one.
+\end{proof}
+
+<<Proof: for $k\in\NN$ we have $0<r_{k}<1$>>=
+proof
+  let k be Nat;
+  per cases;
+  suppose k=0;
+    then r.k = frac (x * (b to_power (-[\ log(b, x) /]))) by A2, INT_1:def 8;
+    hence thesis by INT_1:43;
+  end;
+  suppose k > 0;
+    then k >= 0 + 1 by INT_1:7;
+    then consider j being Nat such that
+    B1: k = 1 + j by NAT_1:10;
+    r.k = b*(r.j) - [\ b*(r.j) /] by A3,B1
+       .= frac (b*(r.j)) by INT_1:def 8;
+    hence thesis by INT_1:43;
+  end;
+end;
+@ 
+
+\begin{proof}[Proof sketch (Convergence of $s_{m}$)]
+We see that there exists an $N\in\NN$ such that $b^{-N}<\varepsilon$.
+We see that $s_{m}-xb^{-\lfloor\log_{b}(x)\rfloor}=-r_{m}b^{-m}$ and $0<r_{m}<1$,
+so $|s_{m}-xb^{-\lfloor\log_{b}(x)\rfloor}|<b^{-m}$. Then by
+transitivity of inequalities, the result follows.
+\end{proof}
+
+<<Proof: $\forall\varepsilon>0,\exists N\in\NN,\forall m\in\NN,m\geq N\implies|s_{m}-xb^{-\lfloor\log_{b}(x)\rfloor}|<\varepsilon$>>=
+proof
+  let epsilon be Real;
+  assume B1: 0 < epsilon;
+  then consider N being Nat such that
+  B2: b to_power -N < epsilon by ThExistenceOfN;
+  take N;
+  let m be Nat;
+  assume B3: N <= m;
+  
+  B4: |.((s.m) - x * (b to_power (-[\ log(b, x) /]))).| < (b to_power -m)
+  proof
+    s.m + (r.m)*(b to_power -m) - x * (b to_power (-[\ log(b, x) /]))
+    = x*(b to_power (-[\log(b, x)/])) - x*(b to_power (-[\log(b,x)/])) by A6
+    .= 0;
+    then B5: s.m - x * (b to_power (-[\ log(b, x) /]))
+    = - (r.m)*(b to_power -m);
+    r.m >= 0 & (b to_power -m) >= 0 by A7; then
+    ((r.m)*(b to_power -m)) = |.((r.m)*(b to_power -m)).| by COMPLEX1:43
+    .= |.-(r.m) * (b to_power -m).|
+    by COMPLEX1:52;
+    then B6: |.((s.m) - x * (b to_power (-[\ log(b, x) /]))).| = (r.m)*(b to_power -m)
+    by B5;
+    0 < (b to_power -m) & r.m < 1 by A7;
+    then (r.m)*(b to_power -m) < 1*(b to_power -m) by XREAL_1:68;
+    hence |.((s.m) - x * (b to_power (-[\ log(b, x) /]))).| < (b to_power -m)
+    by B6;
+  end;
+  -m <= -N & b > 1 by B3,Def1,XREAL_1:24;
+  then b to_power -m <= b to_power -N by Th1;
+  then b to_power -m < epsilon by B2, XXREAL_0:2;
+  hence |.((s.m) - x * (b to_power (-[\ log(b, x) /]))).| < epsilon
+  by B2,B4,XXREAL_0:2;
+end;
+@ 
+
+\begin{definition}
+Let $b>1$ be real, let $x$ be a real number.
+We define the \define{$b$-Expansion of $x$} to be the sequence $d_{j}$
+satisfying: there exists a sequence $r_{j}$ such that
+$d_{0}=\lfloor x/b^{\lfloor\log_{b}(x)\rfloor}\rfloor$ and $r_{0}=xb^{\lfloor\log_{b}(x)\rfloor}-d_{0}$,
+and for all $j\in\NN$ we have $d_{j+1}=\lfloor br_{j}\rfloor$ and $r_{j+1}=br_{j}-d_{j+1}$.
+\end{definition}
+
+Since we're defining a new logical term [``functor'' in Mizar's
+  parlance\footnote{This is a term borrowed from Polish logicians before
+  category theory became a field.}], we need to prove it is
+well-defined. This requires proving its existence and
+uniqueness. Luckily, we have already proven existence, we just need to
+prove uniqueness.
+
+<<Definition: $b$-expansion of $x$>>=
+:: Digits in base b for x*(b to_power (-[\log(b,x)/])), which is x in
+:: scientific notation
+definition
+  let b;
+  let x be Real;
+  func b-expansion x -> Real_Sequence means :Def2b:
+  ex r being Real_Sequence
+  st it.0 = [\ x * (b to_power (-[\ log(b, x) /])) /]
+  & r.0 = (x * (b to_power (-[\ log(b, x) /]))) - [\ (x * (b to_power (-[\ log(b, x) /])))/]
+  & for j being Nat
+  holds it.(j+1) = [\ b*(r.j) /]
+  & r.(j+1) = b*(r.j) - [\ b*(r.j) /];
+  existence by ThBetaExpansionExistence;
+  uniqueness
+  <<Proof: uniqueness of $b$-expansion of $x$>>
+end;
+@
+
+\begin{proof}[Proof sketch (uniqueness of $b$-expansion)]
+Let $d^{(1)}$, $d^{(2)}$ be two possible $b$-expansions of $x$.
+We prove by complete induction that for any natural number $k$ if
+for all $n<k$ we have $d^{(1)}_{n}=d^{(2)}_{n}$, then $d^{(1)}_{k}=d^{(2)}_{k}$.
+This implies the two possible candidates for the definition are the same
+term. 
+\end{proof}
+
+<<Proof: uniqueness of $b$-expansion of $x$>>=
+proof
+  let d1 be Real_Sequence;
+  let d2 be Real_Sequence;
+  assume ex r1 being Real_Sequence
+  st d1.0 = [\ x * (b to_power (-[\ log(b, x) /])) /]
+  & r1.0 = (x * (b to_power (-[\ log(b, x) /]))) - [\ (x * (b to_power (-[\ log(b, x) /])))/]
+  & for j being Nat
+  holds d1.(j+1) = [\ b*(r1.j) /]
+  & r1.(j+1) = b*(r1.j) - [\ b*(r1.j) /];
+  then consider r1 being Real_Sequence such that
+  A1: d1.0 = [\ x * (b to_power (-[\ log(b, x) /])) /]
+  & r1.0 = (x * (b to_power (-[\ log(b, x) /]))) - [\ (x * (b to_power (-[\ log(b, x) /])))/]
+  & for j being Nat
+  holds d1.(j+1) = [\ b*(r1.j) /]
+  & r1.(j+1) = b*(r1.j) - [\ b*(r1.j) /];
+  
+  assume ex r2 being Real_Sequence
+  st d2.0 = [\ x * (b to_power (-[\ log(b, x) /])) /]
+  & r2.0 = (x * (b to_power (-[\ log(b, x) /]))) - [\ (x * (b to_power (-[\ log(b, x) /])))/]
+  & for j being Nat
+  holds d2.(j+1) = [\ b*(r2.j) /]
+  & r2.(j+1) = b*(r2.j) - [\ b*(r2.j) /];
+  then consider r2 being Real_Sequence such that
+  A2: d2.0 = [\ x * (b to_power (-[\ log(b, x) /])) /]
+  & r2.0 = (x*(b to_power (-[\log(b, x)/]))) - [\(x*(b to_power (-[\log(b, x)/])))/]
+  & for j being Nat
+  holds d2.(j+1) = [\ b*(r2.j) /]
+  & r2.(j+1) = b*(r2.j) - [\ b*(r2.j) /];
+  
+  defpred P[Nat] means d1.$1 = d2.$1 & r1.$1 = r2.$1;
+  
+  A3: for k being Nat st (for n being Nat st n < k holds P[n]) holds P[k]
+  proof
+    let k be Nat;
+    assume A4: for n being Nat st n < k holds P[n];
+    per cases;
+    suppose k = 0;
+      hence P[k] by A1,A2;
+    end;
+    suppose k > 0;
+      then consider j being Nat such that
+      A5: k = j+1 by NAT_1:6;
+      j < k by A5, XREAL_1:145;
+      then A6: b*(r1.j) = b*(r2.j) by A4;
+      then A7: d1.(j+1) = [\b*(r2.j)/] by A1
+                       .= d2.(j+1) by A2
+                       .= d2.k by A5;
+      r1.k = r1.(j + 1) by A5
+          .= b*(r1.j) - [\ b*(r1.j) /] by A1
+          .= b*(r1.j) - [\ b*(r2.j) /] by A6
+          .= b*(r2.j) - [\ b*(r2.j) /] by A6
+          .= r2.(j + 1) by A2
+          .= r2.k by A5;
+      hence P[k] by A5, A7;
+    end;
+  end;
+  for k being Nat holds P[k] from NAT_1:sch 4(A3);
+  then for k being Element of NAT holds d1.k = d2.k;
+  hence d1 = d2 by FUNCT_2:def 8;
+end;
+@ 
+
+\begin{voc}
+We need to add [[-expansion]] as a term to our vocabulary file.
+\end{voc}
+
+<<DICT/float-1.voc>>=
+O-expansion
+@
+
+\begin{theorem}
+Let $x$ be a \emph{positive} real number.
+The $b$-expansion of $x$ produces a sequence of digits $\{d_{j}\}$ such
+that for each $n\in\NN$ we have $0\leq d_{n}<b$ and $d_{n}\in\NN$.
+\end{theorem}
+
+Note that since IEEE floating-point specifically works with non-negative
+mantissas, this theorem describes how we produce the digits for the
+non-zero floating-point mantissas.
+
+\begin{proof}[Proof sketch]
+The key insight is that for each $j\in\NN$ we see that $0\leq r_{j}<1$,
+so $0\leq br_{j}<b$ which immediately gives the result for $d_{j+1}$.
+The remaining case $d_{0}$ follows immediately by definition.
+\end{proof}
+
+<<Theorem: $b$-expansion of $x$ produces sequence of natural numbers not greater than $b$>>=
+theorem
+  for x being positive Real
+  for n being Nat
+  holds 0 <= (b-expansion x).n & (b-expansion x).n < b
+  & (b-expansion x).n in NAT
+proof
+  let x be positive Real;
+  let n be Nat;
+  set d = b-expansion x;
+  consider r being Real_Sequence such that
+  A1: d.0 = [\ x * (b to_power (-[\ log(b, x) /])) /]
+  & r.0 = (x * (b to_power (-[\ log(b, x) /]))) - [\ (x * (b to_power (-[\ log(b, x) /])))/]
+  & for j being Nat
+  holds d.(j+1) = [\ b*(r.j) /]
+  & r.(j+1) = b*(r.j) - [\ b*(r.j) /]
+  by Def2b;
+  
+  A2: for j being Nat holds 0 <= r.j & r.j < 1
+  proof
+    let j be Nat;
+    per cases;
+    suppose j = 0;
+      then r.j = frac (x * (b to_power (-[\ log(b, x) /]))) by A1, INT_1:def 8;
+      hence thesis by INT_1:43;
+    end;
+    suppose j > 0;
+      then consider k being Nat such that
+      B1: j = k + 1 by NAT_1:6;
+      r.j = r.(k + 1) by B1
+         .= b*(r.k) - [\ b*(r.k) /] by A1
+         .= frac (b * (r.k)) by INT_1:def 8;
+      hence thesis by INT_1:43;
+    end;
+  end;
+  
+  thus 0 <= (b-expansion x).n & (b-expansion x).n < b & (b-expansion x).n in NAT
+  proof
+    per cases;
+    suppose A3: n = 0;
+      [\x * (b to_power (-[\ log(b, x) /]))/] <= x * (b to_power (-[\ log(b, x) /]))
+      & x * (b to_power (-[\ log(b, x) /])) < b by Th2, INT_1:def 6;
+      hence thesis by A1, A3, INT_1:3,54, XXREAL_0:2;
+    end;
+    suppose n > 0;
+      then consider j being Nat such that
+      A4: n = j+1 by NAT_1:6;
+      b > 1 & 0 <= r.j & r.j < 1 by A2,Def1; then
+      A5: 0 <= b*(r.j) & b*(r.j) < b*1 by XREAL_1:68;
+      d.(j + 1) = [\b*(r.j)/] by A1;
+      then C1: 0 <= d.(j + 1) by A5, INT_1:54;
+      [\b*(r.j)/] <= b*(r.j) & b*(r.j) < b by A5, INT_1:def 6;
+      then d.(j + 1) <= b*(r.j) & b*(r.j) < b by A1;
+      then C2: d.n < b by A4, XXREAL_0:2;
+      d.n = [\b*(r.j)/] by A1,A4;
+      hence thesis by A4, C1, C2, INT_1:3;
+    end;
+  end;
+end;
+@
+
+\begin{theorem}
+If during the $b$-expansion of $x$ we have the residual sequence
+eventually hit zero --- i.e., there is some $k\in\NN$ [$k$ for
+  ``kritical''] such that $r_{k}=0$ --- then for all $n>k$ we see the
+digits of the $b$-expansion vanish $d_{n}=0$.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+The key insight is that once $r_{k}=0$, then for all $j\in\NN$ we see
+$r_{k+j}=0$. This forces $d_{k+j+1}=0$ for all $j\in\NN$.
+\end{proof}
+
+<<Theorem: $b$-expansion vanishes after $r_{k}=0$>>=
+theorem ThBetaExpansionHitsZero:
+  for x being Real
+  for r being Real_Sequence st
+  ((b-expansion x).0 = [\ x * (b to_power (-[\ log(b, x) /])) /]
+  & r.0 = (x * (b to_power (-[\ log(b, x) /]))) - [\ (x * (b to_power (-[\ log(b, x) /])))/]
+  & for j being Nat
+  holds (b-expansion x).(j+1) = [\ b*(r.j) /]
+  & r.(j+1) = b*(r.j) - [\ b*(r.j) /])
+  for j being Nat st r.j = 0
+  for k being Nat st k > j
+  holds (b-expansion x).k = 0
+proof
+  let x be Real;
+  let r be Real_Sequence;
+  assume A1: (b-expansion x).0 = [\ x * (b to_power (-[\ log(b, x) /])) /];
+  assume A2: r.0 = (x * (b to_power (-[\ log(b, x) /]))) - [\ (x * (b to_power (-[\ log(b, x) /])))/];
+  assume A3: for j being Nat
+  holds (b-expansion x).(j+1) = [\ b*(r.j) /]
+      & r.(j+1) = b*(r.j) - [\ b*(r.j) /];
+  let j be Nat;
+  assume A4: r.j = 0;
+
+  defpred P[Nat] means r.(j + $1) = 0;
+  A5: for n being Nat st (for m being Nat st m < n holds P[m])
+  holds P[n]
+  <<Proof: if every $m<n$ has $r_{j+m}=0$, then $r_{j+n}=0$>>
+
+  for n being Nat holds P[n] from NAT_1:sch 4(A5);
+  then A6: for n being Nat holds r.(j + n) = 0;
+  
+  let k be Nat;
+  assume k > j;
+  then k >= j + 1 by INT_1:7;
+  then consider ell being Nat such that
+  A7: k = j + 1 + ell by NAT_1:10;
+  A8: r.(j + ell) = 0 by A6;
+  thus (b-expansion x).k = (b-expansion x).(j + ell + 1) by A7
+                        .= [\ b*0 /] by A3, A8
+                        .= 0;
+end;
+@ %def ThBetaExpansionHitsZero
+
+\begin{proof}[Proof sketch ($\forall m<n, r_{j+m}=0\implies r_{j+n}=0$)]
+We do this by cases. When $n=0$, the result is immediate.
+When $n>0$, we can write $n=m'+1$, and then by the inductive hypothesis
+$r_{m'}=0$. This means $br_{m'}=0$ and so its fractional part vanishes,
+which means $r_{n}=0$.
+\end{proof}
+
+<<Proof: if every $m<n$ has $r_{j+m}=0$, then $r_{j+n}=0$>>=
+proof
+  let n be Nat;
+  assume B1: for m being Nat st m < n holds P[m];
+  per cases;
+  suppose n = 0;
+    hence P[n] by A4;
+  end;
+  suppose n > 0;
+    then consider m being Nat such that
+    B2: n = m+1 by NAT_1:6;
+    m < m + 1 by XREAL_1:145;
+    then m < n by B2;
+    then P[m] by B1;
+    then B3: r.(j + m) = 0;
+    r.(j + n) = r.((j + m) + 1) by B2
+             .= b*(r.(j + m)) - [\ b*(r.(j + m)) /] by A3
+             .= 0 by B3;
+    hence P[n];
+  end;
+end;
+@ 
+
+\begin{corollary}
+The $b$-expansion of $0$ is just the zero sequence.
+\end{corollary}
+
+\begin{proof}[Proof sketch]
+We see that $d_{0}=0$ and $r_{0}=0$. But by the previous theorem, this
+means that $r_{j}=0$ for all $j$. This forces $d_{j+1}=0$ for all
+$j\in\NN$. Taken together, this forces every digit in the $b$-expansion
+of zero to vanish.
+\end{proof}
+
+<<Theorem: $b$-expansion of $0$>>=
+theorem
+  for x being zero Real
+  for n being Nat
+  holds 0 = (b-expansion x).n
+proof
+  let x be zero Real;
+  let n be Nat;
+  set d = b-expansion x;
+  consider r being Real_Sequence such that
+  A1: d.0 = [\ x * (b to_power (-[\ log(b, x) /])) /]
+  & r.0 = (x * (b to_power (-[\ log(b, x) /]))) - [\ (x * (b to_power (-[\ log(b, x) /])))/]
+  & for j being Nat
+  holds d.(j+1) = [\ b*(r.j) /]
+  & r.(j+1) = b*(r.j) - [\ b*(r.j) /] by Def2b;
+
+  per cases;
+  suppose n = 0;
+    hence (b-expansion x).n = (b-expansion x).0
+                           .= [\ 0 * (b to_power (-[\ log(b, x) /])) /] by A1
+                           .= 0;
+  end;
+  suppose A2: n > 0;
+    r.0 = (x * (b to_power (-[\ log(b, x) /]))) - [\ (x * (b to_power (-[\ log(b, x) /])))/] by A1
+       .= 0 - [\0/]
+       .= 0;
+    then A3: for j being Nat st j > 0 holds (b-expansion x).j = 0
+    by A1, ThBetaExpansionHitsZero;
+    hence thesis by A2;
+  end;
+end;
+@
+
+\begin{corollary}
+The $b$-expansion of $1$ is $d_{0}=1$ and $d_{j}=0$ for all $j>0$.
+\end{corollary}
+
+\begin{proof}[Proof sketch]
+We see that $d_{0}=\lfloor 1b^{\log_{b}(1)}\rfloor=1$ immediately since
+$\log_{b}(1)=0$ and $b^{0}=1$.
+We also see that $r_{0}=0$. Therefore by the previous theorem spawning
+all these corollaries,
+for all $j>0$ we must have $d_{j}=0$.
+\end{proof}
+
+<<Theorem: $b$-expansion of 1>>=
+theorem
+  (b-expansion 1).0 = 1
+  & for j being Nat st j > 0 holds (b-expansion 1).j = 0
+proof
+  set d = b-expansion 1;
+  consider r being Real_Sequence such that
+  A1: d.0 = [\ 1 * (b to_power (-[\ log(b, 1) /])) /]
+  & r.0 = (1 * (b to_power (-[\ log(b, 1) /]))) - [\ (1 * (b to_power (-[\ log(b, 1) /])))/]
+  & for j being Nat
+    holds d.(j+1) = [\ b*(r.j) /]
+        & r.(j+1) = b*(r.j) - [\ b*(r.j) /] by Def2b;
+  A2: b > 0 & b <> 1 by Def1;
+  A3: 1 * (b to_power (-[\ log(b, 1) /])) 
+   = b to_power (-[\ 0 /]) by A2, POWER:51 
+  .= 1 by POWER:24;
+  thus d.0 = 1 by A1, A3;
+  let j be Nat;
+  assume j > 0;
+  hence (b-expansion 1).j = 0 by A1, A3, ThBetaExpansionHitsZero;
+end;
+@ 
 
 \subsection{Extended Integers}
 We will need to define the extended integers for usage as exponents in
