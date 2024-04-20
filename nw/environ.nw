@@ -47,7 +47,7 @@ We need [[NUMERAL1]] for discussion of [[digits]] and [[values]].
 
 We will also be defining functions by cases, e.g.,
 \begin{equation*}
-f(x)=\begin{cases}a & \mbox{if }x=x_{0}
+f(x)=\begin{cases}a & \mbox{if }x=x_{0}\\
 b & \mbox{otherwise}.
 \end{cases}
 \end{equation*}
