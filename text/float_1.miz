@@ -20,12 +20,12 @@ environ
  notations TARSKI, XBOOLE_0, ZFMISC_1, SUBSET_1, ORDINAL1, ARYTM_2, ARYTM_3,
    FINSEQ_1, RELSET_1, FUNCOP_1, AFINSQ_1, AFINSQ_2,
    XXREAL_2, XXREAL_3, NUMBERS, XCMPLX_0, XXREAL_0, XXREAL_1, XREAL_0, NEWTON, FUNCT_1,
-   NAT_1, INT_1, COUNTERS, COMPLEX1, FINSET_1, SEQ_1, MEMBERED, SEQ_2, SEQ_4,
+   FUNCT_2, NAT_1, INT_1, COUNTERS, COMPLEX1, FINSET_1, SEQ_1, MEMBERED, SEQ_2, SEQ_4,
    SERIES_1, NUMERAL1, VALUED_0,
    PREPOWER, POWER;
  constructors FINSEQ_1, FUNCOP_1, BINOP_2, ARYTM_2, ARYTM_3,
    NUMBERS, XCMPLX_0, XXREAL_0, XXREAL_1, XXREAL_2, XXREAL_3,
-   XREAL_0, RELSET_1, FUNCT_1, NAT_1, INT_1,
+   XREAL_0, RELSET_1, FUNCT_1, FUNCT_2, NAT_1, INT_1,
    COMPLEX1, NEWTON, FINSET_1, COUNTERS, PREPOWER, POWER, SEQ_1,
    SERIES_1, MEMBERED, NUMERAL1,
    COMSEQ_2, SEQ_2, SEQ_4, AFINSQ_1, AFINSQ_2, VALUED_0, RECDEF_1;
@@ -511,7 +511,7 @@ definition
   end;
 end;
 
-theorem
+theorem Th8:
   for x being positive Real
   for n being Nat
   holds 0 <= (b-expansion x).n & (b-expansion x).n < b
@@ -1076,8 +1076,33 @@ proof
   hence thesis by A3, A4, FUNCT_1:2;
 end;
 
+theorem Th16:
+  for x being Real
+  for d1 being Real_Sequence
+  st (for j being Nat holds d1.j = ((b-expansion x).j)*(b to_power -j))
+  holds Partial_Sums d1 is convergent & d1 is summable
+  & lim Partial_Sums d1 = x * (b to_power (-[\ log(b, x) /]))
+proof
+  let x be Real;
+  let d1 be Real_Sequence;
+  assume A1: for j being Nat holds d1.j = ((b-expansion x).j)*(b to_power -j);
+  consider d being Real_Sequence such that
+  A2: (for j being Nat holds d.j = ((b-expansion x).j)*(b to_power -j)) and
+  A3: Partial_Sums d is convergent
+  & lim Partial_Sums d = x * (b to_power (-[\ log(b, x) /])) by Th15;
+ 
+  for j being Element of NAT holds d.j = d1.j
+  proof
+    let j be Element of NAT;
+    thus d.j = ((b-expansion x).j)*(b to_power -j) by A2
+            .= d1.j by A1;
+  end;
+  then d = d1 by FUNCT_2:def 8;
+  hence thesis by A3, SERIES_1:def 2;
+end;
+
 definition
-  let b be Real;
+  let b be positive Real;
   func b-radix_NAT -> Subset of REAL equals :Def5:
   { x where x is Element of REAL : x = 0 or ex d being XFinSequence of NAT
     st d.((len d)-1) <> 0

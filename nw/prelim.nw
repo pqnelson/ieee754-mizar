@@ -52,6 +52,8 @@ begin :: Preliminaries
 
 <<Theorem: $\sum_{j=0}^{\infty}d_{j}b^{-j}$ converges to $xb^{-\lfloor\log_{b}(x)\rfloor}$>>
 
+<<Theorem: Uniqueness of partial sums of $\beta$-expansion of $x$>>
+
 <<Definition: $b$ [[-radix_NAT]]>>
 
 <<Theorem: criterion for nonzero elements of $b$-radix $\NN$>>
@@ -922,7 +924,7 @@ The remaining case $d_{0}$ follows immediately by definition.
 \end{proof}
 
 <<Theorem: $b$-expansion of $x$ produces sequence of natural numbers not greater than $b$>>=
-theorem
+theorem Th8:
   for x being positive Real
   for n being Nat
   holds 0 <= (b-expansion x).n & (b-expansion x).n < b
@@ -980,7 +982,7 @@ proof
     end;
   end;
 end;
-@
+@ %def Th8
 
 \begin{theorem}
 If during the $b$-expansion of $x$ we have the residual sequence
@@ -1835,6 +1837,68 @@ end;
 for n being Nat holds P[n] from NAT_1:sch 4(A5);
 @ 
 
+\begin{theorem}[Uniqueness]
+Let $x$ be real. Let $c_{j}$ be the $b$-expansion of $x$.
+For any sequence $d$ such that for all natural numbers
+$j$ we have $d_{j}=c_{j}b^{-j}$, we see $\sum d_{j}$ is convergent and
+$\sum c_{j}=x b^{-\lfloor\log_{b}(x)\rfloor}$.
+\end{theorem}
+
+This is a ``helper theorem'' which removes a lot of ``boiler plate''
+steps in future proofs.
+
+<<Theorem: Uniqueness of partial sums of $\beta$-expansion of $x$>>=
+theorem Th16:
+  for x being Real
+  for d1 being Real_Sequence
+  st (for j being Nat holds d1.j = ((b-expansion x).j)*(b to_power -j))
+  holds Partial_Sums d1 is convergent & d1 is summable
+  & lim Partial_Sums d1 = x * (b to_power (-[\ log(b, x) /]))
+proof
+  let x be Real;
+  let d1 be Real_Sequence;
+  assume A1: for j being Nat holds d1.j = ((b-expansion x).j)*(b to_power -j);
+  consider d being Real_Sequence such that
+  A2: (for j being Nat holds d.j = ((b-expansion x).j)*(b to_power -j)) and
+  A3: Partial_Sums d is convergent
+  & lim Partial_Sums d = x * (b to_power (-[\ log(b, x) /])) by Th15;
+ 
+  for j being Element of NAT holds d.j = d1.j
+  proof
+    let j be Element of NAT;
+    thus d.j = ((b-expansion x).j)*(b to_power -j) by A2
+            .= d1.j by A1;
+  end;
+  then d = d1 by FUNCT_2:def 8;
+  hence thesis by A3, SERIES_1:def 2;
+end;
+@ %def Th16
+
+\begin{theorem}
+Let $x$ be a real number, let $b$ be a valid radix real.
+Let $c_{j}$ be the $b$-expansion of $x$, and $d_{j}=c_{j}b^{-j}$.
+Then for any $n\in\NN$, we have:
+\begin{equation*}
+\sum^{n}_{j=0}d_{j}\leq xb^{-\lfloor\log_{b}(x)\rfloor}\leq1+\sum^{n}_{j=0}d_{j}.
+\end{equation*}
+\end{theorem}
+
+\begin{thm-remark}
+This is a critical result for proving there exists a pair of
+floating-point numbers ``bracketing'' $x$, which will then be crucial
+when proving rounding results in \S4.
+\end{thm-remark}
+
+<<Theorem: if $c_{j}$ is $b$-expansion of $x$ and $d_{j}=c_{j}b^{-j}$, then $\sum^{n}_{j=0}d_{j}\leq xb^{-\lfloor\log_{b}(x)\rfloor}\leq1+\sum^{n}_{j=0}d_{j}$>>=
+theorem
+  for x being Real
+  for n being Nat
+  for d1 being Real_Sequence
+  st (for j being Nat holds d1.j = ((b-expansion x).j)*(b to_power -j))
+  holds (Partial_Sums d1).n <= x * (b to_power (-[\ log(b, x) /]))
+  & x * (b to_power (-[\ log(b, x) /])) <= 1 + (Partial_Sums d1).n;
+@ 
+
 \begin{definition}
 We define the set $\beta$-radix $\NN$ to be the subset of $\RR$
 consisting of real numbers $x$ such that there exists a finite sequence
@@ -1848,9 +1912,14 @@ Since $r$ was arbitrary, this establishes that the set $\beta$-radix $\NN$
 really is a subset of the reals.
 \end{proof}
 
+\begin{def-remark}
+This is going to be used when defining floating-point numbers, since the
+significand is going to be an element of $b$-radix $\NN$.
+\end{def-remark}
+
 <<Definition: $b$ [[-radix_NAT]]>>=
 definition
-  let b be Real;
+  let b be positive Real;
   func b-radix_NAT -> Subset of REAL equals :Def5:
   { x where x is Element of REAL : x = 0 or ex d being XFinSequence of NAT
     st d.((len d)-1) <> 0
