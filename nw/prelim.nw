@@ -50,6 +50,8 @@ begin :: Preliminaries
 
 <<Register: identify [[beta_integer_value(d,b)]] with [[value(d,b)]] when $b\in\NN$>>
 
+<<Theorem: $\sum_{j=0}^{\infty}d_{j}b^{-j}$ converges to $xb^{-\lfloor\log_{b}(x)\rfloor}$>>
+
 <<Definition: $b$ [[-radix_NAT]]>>
 
 <<Theorem: criterion for nonzero elements of $b$-radix $\NN$>>
