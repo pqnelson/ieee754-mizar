@@ -34,6 +34,8 @@ begin :: 3. Floating-point formats
 
 <<Definition: [[Float]] for floating-point format Number>>
 
+<<Register: sethood of [[Float]]>>
+
 <<Theorem: Zero is a Float of format $\beta$, $p$, $e_{\text{min}}$, $e_{\text{max}}$>>
 
 <<Register: [[ext-real]] and [[real]] for [[Float]]>>
@@ -108,8 +110,6 @@ begin :: 3. Floating-point formats
 @ 
 
 \subsection{Overview}
-
-\subsubsection{Formats}
 The basic idea is that we have a ``floating-point format'', which
 ``represent'' a finite subset of the extended reals adjoined with a
 special [[NaN]] symbol. The standard explicitly states that ``Formats
@@ -138,6 +138,8 @@ rounding functions parametrize the elementary arithmetic operators
 $\star_{R}\colon F\times F\to F$ where
 $\star\in\{+,-,\times,\div,\sqrt{\enspace}\}$. But we are getting ahead
 of ourselves.
+
+\subsection{Specification Levels}
 
 \begin{reserve}
 We will reserve $\beta$ for some positive real number [to work in
@@ -633,6 +635,21 @@ We tell Mizar to add [[Float]] as a token for a mode.
 MFloat
 @
 
+\begin{registration}
+We should tell Mizar that we can treat [[Float]] as a set.
+\end{registration}
+
+<<Register: sethood of [[Float]]>>=
+registration
+  let beta, p, eMin, eMax;
+  sethood of Float of beta, p, eMin, eMax
+  proof
+    take FLOAT(beta, p, eMin, eMax);
+    thus thesis by Def8a;
+  end;
+end;
+@ 
+
 \begin{theorem}
 Zero is a Float of format $\beta$, $p$, $e_{\text{min}}$, $e_{\text{max}}$.
 \end{theorem}
@@ -1072,6 +1089,8 @@ proof
   end;
 end;
 @ %def ThSmallestNegativeFloat
+
+\subsection{Sets of floating-point data}
 
 \begin{definition}
 Let $x$ be a floating-point datum belonging to the format $\FF(\beta,p,e_{\text{min}},e_{\text{max}})$.

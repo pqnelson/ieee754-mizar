@@ -1898,6 +1898,15 @@ definition
   mode Float of beta, p, eMin, eMax is (beta, p, eMin, eMax)-format_floating-point Number;
 end;
 
+registration
+  let beta, p, eMin, eMax;
+  sethood of Float of beta, p, eMin, eMax
+  proof
+    take FLOAT(beta, p, eMin, eMax);
+    thus thesis by Def8a;
+  end;
+end;
+
 theorem ThZeroIsFloat:
   0 is Float of beta, p, eMin, eMax
 proof
