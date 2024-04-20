@@ -40,6 +40,24 @@ begin :: Preliminaries
 
 <<Theorem: $b$-expansion of 1>>
 
+<<Theorem: $b$-expansion of $b^{n}$>>
+
+<<Theorem: [[digits(b |^ n,b).n=1]] and for $j<n$ [[digits(b |^ n,b).j=0]]>>
+
+<<Definition: $\beta$-radix integer value>>
+
+<<Redefine: [[beta_integer_value]] is [[Nat]] when [[b]] is [[Nat]]>>
+
+<<Register: identify [[beta_integer_value(d,b)]] with [[value(d,b)]] when $b\in\NN$>>
+
+<<Definition: $b$ [[-radix_NAT]]>>
+
+<<Theorem: criterion for nonzero elements of $b$-radix $\NN$>>
+
+<<Theorem: 0 is in $\beta$-radix $\NN$>>
+
+<<Theorem: identify $b$-radix $\NN$ with $\NN$ when $b\in\NN$ is greater than one>>
+
 <<Subsection: Defining the extended integers>>
 @
 
@@ -76,7 +94,7 @@ definition
   attr IT is valid_radix means :Def1:
   IT > 1;
 end;
-@ %def valid_radix
+@ %def valid_radix Def1
 
 \begin{voc}
 We need to add [[valid_radix]] as an attribute to our vocabulary file.
@@ -804,7 +822,7 @@ definition
   uniqueness
   <<Proof: uniqueness of $b$-expansion of $x$>>
 end;
-@
+@ %def -expansion Def2b
 
 \begin{proof}[Proof sketch (uniqueness of $b$-expansion)]
 Let $d^{(1)}$, $d^{(2)}$ be two possible $b$-expansions of $x$.
@@ -1104,7 +1122,7 @@ for all $j>0$ we must have $d_{j}=0$.
 \end{proof}
 
 <<Theorem: $b$-expansion of 1>>=
-theorem
+theorem ThBExpansionOfOne:
   (b-expansion 1).0 = 1
   & for j being Nat st j > 0 holds (b-expansion 1).j = 0
 proof
@@ -1124,6 +1142,985 @@ proof
   assume j > 0;
   hence (b-expansion 1).j = 0 by A1, A3, ThBetaExpansionHitsZero;
 end;
+@ %def ThBExpansionOfOne
+
+\begin{theorem}
+Let $b$ be a valid radix real number, let $n$ be any integer.
+Then the $b$-expansion of $b^{n}$ is the sequence $d_{0}=1$ and $d_{j}=0$
+for all $j>0$.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+We see that $d_{0}=b^{n}\cdot b^{-\lfloor\log_{b}(b^{n})\rfloor}=b^{n}b^{-n}=1$,
+and then we see that $r_{0}=0$ and therefore $d_{j}=0$ for $j>0$.
+\end{proof}
+
+<<Theorem: $b$-expansion of $b^{n}$>>=
+theorem ThBExpansionOfPowerOfB:
+  for n being Integer
+  holds (b-expansion (b to_power n)).0 = 1
+  & for j being Nat st j > 0 holds (b-expansion (b to_power n)).j = 0
+proof
+  let n be Integer;
+  set d = b-expansion (b to_power n);
+  consider r being Real_Sequence such that
+  A1: d.0 = [\ (b to_power n) * (b to_power (-[\log(b,(b to_power n))/]))/]
+  & r.0 = ((b to_power n) * (b to_power (-[\ log(b, (b to_power n)) /])))
+        - [\ ((b to_power n) * (b to_power (-[\ log(b, (b to_power n)) /])))/]
+  & for j being Nat
+    holds d.(j+1) = [\ b*(r.j) /]
+        & r.(j+1) = b*(r.j) - [\ b*(r.j) /] by Def2b;
+  b > 0 & b <> 1 by Def1; then
+  A2: (b to_power n) * (b to_power (-[\log(b,b to_power n)/]))
+   = (b to_power n) * (b to_power (-[\ n /])) by POWER:def 3
+  .= (b to_power n)*(b to_power -n)
+  .= b to_power (n + (-n)) by POWER:27
+  .= 1 by POWER:24;
+  hence (b-expansion (b to_power n)).0 = 1 by A1;
+  thus thesis by A1, A2, ThBetaExpansionHitsZero;
+end;
+@ %def ThBExpansionOfPowerOfB
+
+\begin{theorem}
+Let $b$, $n$ be natural numbers. Let $d$ be the digits of $b^{n}$ in
+base $b$. If $b>1$ and $n\neq0$, then the length of the sequence $d$ is
+equal to $1+n$ and $d_{n}=1$ and for natural numbers $j<n$ 
+we have $d_{j}=0$.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+We will construct the sequence $d$ of natural numbers such that $d_{n}=1$
+such that for natural numbers $j<n$ we have $d_{j}=0$. Then we will
+prove that this sequence really is the digit expansion of $b^{n}$ in
+base $b$. This requires proving:
+\begin{enumerate}
+\item the value of $d$ in base $b$ is $b^{n}$;
+\item $d_{\text{len}(d)-1}\neq0$
+\item for all natural numbers $j$ such that $j\in\dom(d)$ we have $0\leq d_{j}<b$.
+\end{enumerate}
+Then we can infer $d$ is the digits of $b^{n}$ in base $b$ by Definition
+[[NUMERAL1:def 2]], and that the length of $d$ is $1+n$. The bulk of
+this proof requires proving $d$ really is the sequence of digits for
+$b^{n}$ in base $b$.
+\end{proof}
+
+<<Theorem: [[digits(b |^ n,b).n=1]] and for $j<n$ [[digits(b |^ n,b).j=0]]>>=
+theorem Th13:
+  for b being Nat st b > 1
+  for n being Nat st n <> 0
+  holds digits(b |^ n, b).n = 1
+  & (for j being Nat st j < n holds digits(b |^ n, b).j = 0)
+  & len digits(b |^ n, b) = 1 + n
+proof
+  let b be Nat;
+  assume A1: b > 1;
+  let n be Nat;
+  assume A2: n <> 0;
+  <<Construct the finite sequence $d$ of natural numbers>>
+
+  <<Proof: value of $d$ in base $b$ is $b^{n}$>>
+  then A4: value(d,b) = b |^ n by NUMERAL1:def 1;
+  A5: b to_power n > 0 by A1;
+  d.((len d) - 1) <> 0
+  & (for i being Nat st i in dom d holds (0 <= d.i & d.i < b))
+  <<Proof: $d_{\text{len}(d)-1}\neq0$ and for $i\in\dom(d)$ we have $0\leq d_{i}<b$>>
+  then A6: digits(b |^ n, b) = d & len d = 1 + n
+  by A1, A3, A4, A5, NUMERAL1:def 2;
+
+  thus digits(b |^ n, b).n = 1
+  proof
+    n in Segm (n + 1) by NAT_1:45;
+    then n in (n + 1) by ORDINAL1:def 17;
+    then d.n = F(n) by A3
+            .= 1 by FUNCOP_1:def 8;
+    hence thesis by A6;
+  end;
+
+  thus for j being Nat st j < n holds digits(b |^ n, b).j = 0
+  proof
+    let j be Nat;
+    assume B1: j < n;
+    then j < n + 1 by NAT_1:16, XXREAL_0:2;
+    then j in Segm (n + 1) by NAT_1:44;
+    then j in (n + 1) by ORDINAL1:def 17;
+    hence digits(b |^ n, b).j = F(j) by A3,A6
+                             .= 0 by B1, FUNCOP_1:def 8;
+  end;
+
+  thus len digits(b |^ n, b) = 1 + n by A6;
+end;
+@ %def Th13
+
+\begin{proof}[Proof sketch (value of $d$ in base $b$ is $b^{n}$)]
+We need to construct a sequence $d'$ such that $\dom(d')=\dom(d)$,
+for all natural numbers $j$ such that $j\in\dom(d')$ we have $d'_{j}=d_{j}b^{j}$,
+and that $b^{n}=\sum_{j}d'_{j}$.
+\end{proof}
+
+<<Proof: value of $d$ in base $b$ is $b^{n}$>>=
+ex d9 being XFinSequence of NAT
+st (dom d9 = dom d & (for i being Nat st i in dom d9 holds
+   d9.i = (d.i) * (b |^ i)) & b |^ n = Sum d9 )
+proof
+  <<Construct the sequence $d^{\prime}$>>
+  take d9;
+  
+  thus dom d9 = dom d by A3,B1; 
+  
+  thus (for i being Nat st i in dom d9 holds d9.i = (d.i) * (b |^ i))
+  by B1;
+
+  reconsider dd9 = n --> 0 as XFinSequence of NAT by AFINSQ_1:63;
+  b |^ n is Element of NAT by ORDINAL1:def 12; then
+  reconsider ff9 = <% (b |^ n) %> as XFinSequence of NAT;
+  
+  len d9 = len (dd9 ^ ff9)
+  & for k being Nat st k < len d9 holds d9.k = (dd9 ^ ff9).k
+  proof
+    thus len (dd9 ^ ff9) = (len dd9) + 1 by AFINSQ_1:75
+                        .= len d9 by B1, FUNCOP_1:13;
+    let k be Nat;
+    assume Z1: k < len d9;
+    Z2: len dd9 = n by FUNCOP_1:13;
+    per cases;
+    suppose Z3: k = n;
+      n in Segm (n + 1) by NAT_1:45;
+      then Z4: n in (n + 1) by ORDINAL1:def 17;
+      thus d9.k = F2(n) by Z1,Z3,B1,AFINSQ_1:86
+               .= F(n)*(b |^ n) by Z4,A3
+               .= 1*(b |^ n) by FUNCOP_1:def 8
+               .= (dd9 ^ ff9).k by Z2,Z3,AFINSQ_1:36;
+    end;
+    suppose Z5: k <> n;
+      then k in Segm n by Z1,B1,NAT_1:22,NAT_1:44;
+      then Z6: k in n by ORDINAL1:def 17;
+      then LHS: (dd9 ^ ff9).k = dd9.k by Z2, AFINSQ_1:def 3
+                             .= 0 by Z6, FUNCOP_1:7;
+      k in Segm (n + 1) by B1,Z1,NAT_1:44;
+      then Z7: k in n+1 by ORDINAL1:def 17;
+      hence d9.k = F2(k) by B1
+                .= IFEQ(k,n,1,0)*(b |^ k) by A3,Z7 
+                .= 0*(b |^ k) by Z5,FUNCOP_1:def 8
+                .= (dd9 ^ ff9).k by LHS;
+    end;
+  end;
+  then d9 = dd9 ^ ff9 by AFINSQ_1:9;
+  hence Sum d9 = (Sum dd9) + (Sum ff9) by AFINSQ_2:55
+              .= (Sum dd9) + (b |^ n) by AFINSQ_2:53
+              .= 0*n + (b |^ n) by AFINSQ_2:58
+              .= b |^ n;
+end;
+@ 
+
+\begin{proof}[Proof sketch (constructing $d^{\prime}$)]
+This is straightforward, we just construct a sequence of length $n+1$
+defined componentwise by $d'_{j}=d_{j}b^{j}$ for each $j<n+1$.
+\end{proof}
+
+<<Construct the sequence $d^{\prime}$>>=
+deffunc F1() = n + 1;
+deffunc F2(Nat) = (d.$1)*(b |^ $1);
+consider p being XFinSequence such that
+B1: len p = F1() & (for k being Nat st k in F1() holds p.k = F2(k))
+from AFINSQ_1:sch 2;
+for y being object st y in rng p holds y in NAT
+proof
+  let y be object;
+  assume y in rng p;
+  then consider i being object such that
+  Z1: i in dom p & y = p.i by FUNCT_1:def 3;
+  reconsider i as Element of NAT by Z1;
+  y = (d.i) * (b |^ i) by Z1,B1;
+  
+  hence y in NAT by ORDINAL1:def 12;
+end;
+then reconsider d9=p as XFinSequence of NAT
+by TARSKI:def 3, RELAT_1:def 19;
+@ 
+
+\begin{proof}[Proof step (construct the sequence $d$)]
+Let us define the term
+\begin{equation}
+\mathcal{F}(j)=\begin{cases}1 &\mbox{if }n=j\\
+0 & \mbox{otherwise}.
+\end{cases}
+\end{equation}
+Then we can construct the finite sequence $d$ of length $n+1$ such that
+for all natural numbers $k$ such that $k<n+1$ we have $d_{k}=\mathcal{F}(k)$.
+\end{proof}
+
+<<Construct the finite sequence $d$ of natural numbers>>=
+deffunc F(Nat) = IFEQ($1,n,1,0);
+deffunc F1() = n + 1;
+consider d being XFinSequence such that
+A3: len d = F1() & for k being Nat st k in F1() holds d.k = F(k)
+from AFINSQ_1:sch 2;
+for y being object st y in rng d holds y in NAT
+proof
+  let y be object;
+  assume y in rng d;
+  then consider i being object such that
+  B1: i in dom d & y = d.i
+  by FUNCT_1:def 3;
+  reconsider i as Element of NAT by B1;
+  per cases;
+  suppose B2: i = n;
+    y = F(i) by A3,B1
+     .= 1 by B2, FUNCOP_1:def 8;
+    hence thesis;
+  end;
+  suppose B3: i <> n;
+    y = F(i) by A3,B1
+     .= 0 by B3,FUNCOP_1:def 8;
+    hence thesis;
+  end;
+end;
+then reconsider d as XFinSequence of NAT by TARSKI:def 3, RELAT_1:def 19;
+@ 
+
+\begin{proof}[Proof sketch ($i\in\dom$ implies $0\leq d_{i}<b$)]
+The claim $d_{\text{len}(d)-1}\neq0$ follows by construction of $d$.
+\end{proof}
+
+<<Proof: $d_{\text{len}(d)-1}\neq0$ and for $i\in\dom(d)$ we have $0\leq d_{i}<b$>>=
+proof
+  n < n + 1 by NAT_1:16;
+  then n in dom d by A3, AFINSQ_1:86; then
+  d.((len d) - 1) = F(n) by A3
+                 .= 1 by FUNCOP_1:def 8;
+  hence d.((len d) - 1) <> 0;
+  let i be Nat;
+  assume Z2: i in dom d;
+  thus 0 <= d.i;
+  per cases;
+  suppose i = n;
+    then d.i = F(n) by Z2,A3
+            .= 1 by FUNCOP_1:def 8;
+    hence d.i < b by A1;
+  end;
+  suppose Z3: i <> n;
+    d.i = F(i) by Z2,A3
+       .= 0 by Z3, FUNCOP_1:def 8;
+    hence d.i < b by A1;
+  end;
+end;
+@ 
+
+\begin{corollary}
+Let $b$, $n$ be natural numbers. If $b>1$, then the length of digits for
+$b^{n}$ in base $b$ is $1+n$.
+\end{corollary}
+
+<<Corollary: length of digit string for $b^{n}$ is $1+n$>>=
+theorem
+  for b being Nat st b > 1
+  for n being Nat
+  holds len (digits(b |^ n,b)) = 1 + n
+proof
+  let b be Nat;
+  assume A1: b > 1;
+  let n be Nat;
+  per cases;
+  suppose A2: n = 0;
+    then b |^ n = 1 by NEWTON:4;
+    then digits(b |^ 0, b) = <% 1 %> by A1,A2,ThDigitsOfOne;
+    hence thesis by A2, AFINSQ_1:34;
+  end;
+  suppose n <> 0;
+    hence thesis by A1,Th13;
+  end;
+end;
+@
+
+\begin{definition}
+Let $b$ be a positive real.
+Let $d$ be a finite sequence of natural numbers.
+We define the \define{$\beta$-radix integer value} of $d$ to be the real
+number equal to $\sum^{N}_{j=0}d_{j}b^{N-j}$.
+\end{definition}
+
+We are going to explicitly follow [[NUMERAL1:def 1]] in our notation and
+write this as [[beta_integer_value(d,b)]]. Furthermore, when $b$ is a
+[[Nat]], we will identify [[beta_integer_value(d,b)]] as [[value(d,b)]].
+
+<<Definition: $\beta$-radix integer value>>=
+definition
+  let d be XFinSequence of NAT;
+  let b be real Number;
+  func beta_integer_value(d,b) -> Real means :Def3a:
+  ex d9 being XFinSequence of REAL
+  st dom d9 = dom d
+  & (for i being Nat st i in dom d9 holds d9.i = (d.i)*(b |^ i))
+  & it = Sum d9;
+  existence
+  <<Proof: existence of $\beta$ integer value>>
+  uniqueness
+  <<Proof: uniqueness of $\beta$ integer value>>
+end;
+@ %def beta_integer_value Def3a
+
+\begin{proof}[Proof sketch ($\beta$ integer value)]
+We need to prove there exists a real number $r$ and a finite sequence
+$d'$ of real numbers such that for $i$ being a natural number such that
+$i\in\dom(d')$ we have $d'_{i}=d_{i}b^{N-i}$ where $N$ is the length of
+the sequence, and $r=\sum d'$.
+
+We can construct the sequence $d'$ directly from $d$. The tricky bit is
+to prove that every entry in $d'$ is real, so we can reconsider its type
+to be a finite sequence of real numbers. This permits us to consider
+$\sum d'$.
+\end{proof}
+
+<<Proof: existence of $\beta$ integer value>>=
+proof
+  deffunc F(Nat)=(d.$1)*(b |^ $1);
+  consider d9 being XFinSequence such that
+  A1: len d9 = len d & for i being Nat st i in len d holds d9.i = F(i)
+  from AFINSQ_1:sch 2;
+  for a being object st a in rng d9 holds a in REAL
+  proof
+    let a be object;
+    assume a in rng d9;
+    then consider i being object such that
+    A2: i in dom d9 & d9.i = a by FUNCT_1:def 3;
+    reconsider i as Element of NAT by A2;
+    a=F(i) by A1,A2;
+    hence thesis by XREAL_0:def 1;
+  end;
+  then rng d9 c= REAL by TARSKI:def 3;
+  then reconsider d9 as XFinSequence of REAL by RELAT_1:def 19;
+  take r=Sum d9;
+  thus thesis by A1;
+end;
+@
+
+\begin{proof}[Proof sketch (Uniqueness of $\beta$ integer value)]
+Let $K$, $L$ be two real numbers. Suppose we have two finite sequences
+of real numbers $k$ and $\ell$ which satisfy the definition and $K=\sum k$,
+$L = \sum\ell$. Then for
+each natural number $i$, we see $k_{i}=\ell_{i}$, and therefore their
+sums must be equal.
+\end{proof}
+
+<<Proof: uniqueness of $\beta$ integer value>>=
+proof
+  let k, l be Real;
+  given k9 being XFinSequence of REAL such that
+  A1: dom k9 = dom d
+  & (for i being Nat st i in dom k9 holds k9.i = (d.i)*(b |^ i))
+  & k = Sum k9;
+  given l9 being XFinSequence of REAL such that
+  A2: dom l9 = dom d
+  & (for i being Nat st i in dom l9 holds l9.i = (d.i)*(b |^ i))
+  & l = Sum l9;
+  for i being Nat st i in dom d holds k9.i = l9.i
+  proof
+    let i be Nat;
+    assume i in dom d;
+    then A3: i in dom k9 & i in dom l9 by A1,A2;
+    hence k9.i = (d.i)*(b |^ i) by A1,A2
+              .= l9.i by A1,A2,A3;
+  end;
+  hence thesis by A1,A2,AFINSQ_1:8;
+end;
+@ 
+
+\begin{voc}
+We need to add [[beta_integer_value]] as a term to our vocabulary file.
+\end{voc}
+
+<<DICT/float-1.voc>>=
+Obeta_integer_value
+@
+
+\begin{definition}
+We note that when $b\in\NN$, the $\beta$-integer value of $d$ relative
+to $b$ is a natural number.
+\end{definition}
+
+This requires a \emph{redefinition} to specialize the type of the term
+\emph{and} to specialize the defining criterion for the term. We need to
+prove to Mizar that
+\begin{enumerate}
+\item the new criterion is \textbf{compatible} with the old
+one, i.e., for any natural number $a$ we have $a$ satisfies the new definition
+if and only if $a$ satisfies the old definition; and
+\item the new type is \textbf{coherent}, i.e., that the expression
+  really has the specified type.
+\end{enumerate}
+These are straightforward but tedious to prove.
+
+<<Redefine: [[beta_integer_value]] is [[Nat]] when [[b]] is [[Nat]]>>=
+definition
+  let d be XFinSequence of NAT;
+  let b be natural Number;
+  redefine func beta_integer_value(d,b) -> Nat means :Def3b:
+  ex d9 being XFinSequence of NAT
+  st dom d9 = dom d
+  & (for i being Nat st i in dom d9 holds d9.i = (d.i)*(b |^ i))
+  & it = Sum d9;
+  compatibility
+  <<Proof: compatibility of redefinition of [[beta_integer_value]]>>
+  coherence
+  <<Proof: coherence of redefinition of [[beta_integer_value]]>>
+end;
+@ %def Def3b
+
+\begin{proof}[Proof sketch (Compatibility)]
+We need to prove the claim ``For all $a$ being natural numbers, we have
+$a$ satisfy the new definition if and only if $a =$ [[beta_integer_value(d,b)]].''
+More explicitly, 
+Since this is an ``iff'' statement, we have two subproofs. One is
+fortunately obvious. Proving that the old definition implies the new one
+is the nontrivial task, requiring us to observe that the sequence
+$d'_{i}=d_{i}b^{i}$ is a sequence of natural numbers, therefore the sum
+must be a natural number.
+\end{proof}
+
+%% thus for a being Nat holds a = beta_integer_value(d,b)
+%%   iff (ex d9 being XFinSequence of NAT
+%%   st dom d9 = dom d
+%%   & (for i being Nat st i in dom d9 holds d9.i = (d.i)*(b |^ i))
+%%   & a = Sum d9))
+
+<<Proof: compatibility of redefinition of [[beta_integer_value]]>>=
+proof
+  let a be Nat;
+  thus ((a = beta_integer_value(d,b))
+  implies (ex d9 being XFinSequence of NAT
+  st dom d9 = dom d
+  & (for i being Nat st i in dom d9 holds d9.i = (d.i)*(b |^ i))
+  & a = Sum d9))
+  proof 
+    assume a = beta_integer_value(d,b);
+    then consider d9 being XFinSequence of REAL such that
+    A1: dom d9 = dom d
+    & (for i being Nat st i in dom d9 holds d9.i = (d.i)*(b |^ i))
+    & a = Sum d9 by Def3a;
+    for y being object st y in rng d9 holds y in NAT
+    <<Subproof: $\forall y,y\in\rng(d^{\prime})\implies y\in\NN$>>
+    then rng d9 c= NAT by TARSKI:def 3;
+    then reconsider k9=d9 as XFinSequence of NAT by RELAT_1:def 19;
+    take k9;
+    thus dom k9 = dom d by A1;
+    thus (for i being Nat st i in dom k9 holds k9.i = (d.i)*(b |^ i))
+    by A1;
+    hence thesis by A1,AFINSQ_2:def 9;
+  end;
+  thus (ex d9 being XFinSequence of NAT
+  st dom d9 = dom d
+  & (for i being Nat st i in dom d9 holds d9.i = (d.i)*(b |^ i))
+  & a = Sum d9) implies (a = beta_integer_value(d,b)) by Def3a;
+end;
+@
+
+\begin{proof}[{Subproof (range of sequence is in natural numbers)}]
+Let $y$ be any object, assuming $y\in\rng(d')$. That is to say, there is
+some $i$ such that $d'_{i}=y$. Then $y=d_{i}b^{i}$, which means $y$ is
+the product of two natural numbers, therefore $y$ must be a natural number.
+\end{proof}
+
+<<Subproof: $\forall y,y\in\rng(d^{\prime})\implies y\in\NN$>>=
+proof
+  let y be object;
+  assume y in rng d9;
+  then consider i being object such that
+  A2: i in dom d9 & d9.i = y by FUNCT_1:def 3;
+  reconsider i as Element of NAT by A2;
+  y = (d.i)*(b |^ i) by A1,A2;
+  hence y in NAT by ORDINAL1:def 12;
+end;    
+@ 
+
+\begin{proof}[Proof sketch (Coherence)]
+This amounts to observing that the sequence [[d9]] consists of natural
+numbers, then the result follows.
+\end{proof}
+
+<<Proof: coherence of redefinition of [[beta_integer_value]]>>=
+proof
+  consider d9 being XFinSequence of REAL such that
+  A1: dom d9 = dom d
+  & (for i being Nat st i in dom d9 holds d9.i = (d.i)*(b |^ i))
+  & beta_integer_value(d,b) = Sum d9 by Def3a;
+  for y being object st y in rng d9 holds y in NAT
+  <<Subproof: $\forall y,y\in\rng(d^{\prime})\implies y\in\NN$>>
+  then rng d9 c= NAT by TARSKI:def 3;
+  then reconsider d9 as XFinSequence of NAT by RELAT_1:def 19;
+  d9 is natural-valued;
+  hence beta_integer_value(d,b) is Nat by A1, AFINSQ_2:51;
+end;
+@
+
+\begin{registration}
+Let $d$ be a sequence of natural numbers, let $b$ be a natural number.
+We can identify the term [[beta_integer_value(d,b)]] with [[value(d,b)]]
+from [[NUMERAL1]] as identical.
+\end{registration}
+
+<<Register: identify [[beta_integer_value(d,b)]] with [[value(d,b)]] when $b\in\NN$>>=
+registration
+  let d be XFinSequence of NAT;
+  let b be Nat;
+  identify beta_integer_value(d,b) with value(d,b);
+  compatibility
+  proof
+    consider d9 being XFinSequence of NAT such that
+    A1: dom d9 = dom d
+    & (for i being Nat st i in dom d9 holds d9.i = (d.i)*(b |^ i))
+    & beta_integer_value(d,b) = Sum d9 by Def3b;
+    consider k9 being XFinSequence of NAT such that
+    A2: dom k9 = dom d
+    & (for i being Nat st i in dom k9 holds k9.i = (d.i)*(b |^ i))
+    & value(d,b) = Sum k9 by NUMERAL1:def 1;
+    for i being Nat st i in dom d holds k9.i = d9.i
+    proof
+      let i be Nat;
+      assume A3: i in dom d;
+      hence k9.i = (d.i)*(b |^ i) by A2
+                .= d9.i by A1,A3;
+    end;
+    hence thesis by A1,A2,AFINSQ_1:8;
+  end;
+end;
+@
+
+\begin{road-map}
+OK, now, we want to constructively describe the ``bracketing''
+floating-point numbers $v_{1}$ and $v_{2}$ for $x\in\RR$, i.e., where
+$v_{1}\leq x\leq v_{2}$. This is done by considering the
+$b$-expansion of $x$, truncating it to $p$ digits, and this is the
+mantissa for $v_{1}$. Then we obtain $v_{2}$ by adding $1$ to the
+resulting $b$-value of the mantissa.
+
+This requires proving the order of real numbers translates to the
+lexicographic order of the $b$-expansion of real numbers.
+\end{road-map}
+
+\begin{theorem}
+Let $x$ be a real number, let $d_{j}$ be the $b$-expansion of $x$. Then 
+\begin{equation}
+\sum_{j=0}^{\infty}d_{j}b^{-j}=xb^{-\lfloor\log_{b}(x)\rfloor}
+\end{equation}
+is a convergent series.
+\end{theorem}
+
+<<Theorem: $\sum_{j=0}^{\infty}d_{j}b^{-j}$ converges to $xb^{-\lfloor\log_{b}(x)\rfloor}$>>=
+theorem
+  for x being Real
+  ex d1 being Real_Sequence
+  st (for j being Nat holds d1.j = ((b-expansion x).j)*(b to_power -j))
+  & Partial_Sums d1 is convergent
+  & lim Partial_Sums d1 = x * (b to_power (-[\ log(b, x) /]))
+proof
+  let x be Real;
+  deffunc F1(Nat) = ((b-expansion x).$1)*(b to_power (- $1));
+  consider d1 being Real_Sequence such that
+  A1: for n being Nat holds d1.n = F1(n) from SEQ_1:sch 1;
+  take d1;
+  thus for j being Nat holds d1.j = ((b-expansion x).j)*(b to_power -j)
+  by A1;
+  set d = b-expansion x;
+  consider r being Real_Sequence such that
+  A2: d.0 = [\ x * (b to_power (-[\log(b,x)/]))/] &
+  r.0 = (x * (b to_power (-[\log(b,x)/]))) - [\x * (b to_power (-[\log(b,x)/]))/]
+  & for j being Nat holds d.(j + 1) = [\b*(r.j)/]
+  & r.(j+1) = b*(r.j) - [\ b*(r.j) /]
+  by Def2b;
+  consider s being Real_Sequence such that
+  A3: s.0 = (b-expansion x).0
+  & (for j being Nat holds s.(j + 1) = (s.j) + ((d.(j + 1)) * (b to_power (-j-1))))
+  & s is convergent
+  & lim s = x * (b to_power (-[\ log(b, x) /]))
+  by A2, ThBetaExpansionLimit;
+
+  set S = (Partial_Sums d1);
+
+  A4: dom S = NAT by SEQ_1:1
+           .= dom s by SEQ_1:1;
+
+  defpred P[Nat] means S.$1 = s.$1;
+  A5: for n being Nat st (for k being Nat st k < n holds P[k])
+  holds P[n]
+  proof
+    let n be Nat;
+    assume B1: for k being Nat st k < n holds P[k];
+    per cases;
+    suppose B2: n = 0;
+      then S.0 = d1.0 by SERIES_1:def 1
+              .= ((b-expansion x).0) * (b to_power (- 0)) by A1
+              .= ((b-expansion x).0) * 1 by POWER:24
+              .= s.0 by A3;
+      hence thesis by B2;
+    end;
+    suppose B3: n <> 0;
+      then consider m being Nat such that
+      B4: n = m + 1 by NAT_1:6;
+      B5: m < n by B4, NAT_1:13;
+      S.(m + 1) = (S.m) + (d1.(m + 1)) by SERIES_1:def 1
+      .= (s.m) + (d1.(m + 1)) by B1,B5
+      .= (s.m) + (((b-expansion x).(m + 1)) * (b to_power (- (m + 1)))) by A1
+      .= (s.m) + (((b-expansion x).(m + 1)) * (b to_power (- m - 1)))
+      .= s.(m + 1) by A3;
+      hence P[n] by B4;
+    end;
+  end;
+
+  for n being Nat holds P[n] from NAT_1:sch 4(A5);
+  then for n being object st n in NAT holds S.n = s.n;
+  then for n being object st n in dom S holds S.n = s.n by SEQ_1:1;
+  then Partial_Sums d1 = s by A4, FUNCT_1:2;
+  hence thesis by A1,A2,A3;
+end;
+@
+
+\begin{definition}
+We define the set $\beta$-radix $\NN$ to be the subset of $\RR$
+consisting of real numbers $x$ such that there exists a finite sequence
+$c_{j}$ of natural numbers such that $c_{\|c\|-1}\neq0$ and for all $j$
+we have $0\leq c_{j}<\beta$ and $x=\sum_{j}c_{j}\beta^{j}$.
+\end{definition}
+
+\begin{proof}[Proof sketch (coherence)]
+We see for any object $r$, if $r$ is in $\beta$-radix $\NN$, then $r\in\RR$.
+Since $r$ was arbitrary, this establishes that the set $\beta$-radix $\NN$
+really is a subset of the reals.
+\end{proof}
+
+<<Definition: $b$ [[-radix_NAT]]>>=
+definition
+  let b be Real;
+  func b-radix_NAT -> Subset of REAL equals :Def5:
+  { x where x is Element of REAL : x = 0 or ex d being XFinSequence of NAT
+    st d.((len d)-1) <> 0
+    & (for j being Nat st j in dom d holds 0 <= d.j & d.j < b)
+    & x = beta_integer_value(d,b) };
+  coherence
+  proof
+    set IT = { x where x is Element of REAL : x = 0 or
+    ex d being XFinSequence of NAT
+    st d.((len d)-1) <> 0
+    & (for j being Nat st j in dom d holds 0 <= d.j & d.j < b)
+    & x = beta_integer_value(d,b) };
+    for r being object st r in IT holds r in REAL
+    proof
+      let r be object;
+      assume r in IT;
+      then consider x being Element of REAL such that
+      A1: x=r & (x = 0 or
+      ex d being XFinSequence of NAT
+      st d.((len d)-1) <> 0
+      & (for j being Nat st j in dom d holds 0 <= d.j & d.j < b)
+      & x = beta_integer_value(d,b));
+      thus thesis by A1;
+    end;
+    hence thesis by TARSKI:def 3;
+  end;
+end;
+@ %def -radix_NAT
+
+\begin{voc}
+We need to add [[-radix_NAT]] as a functor (``term'') to our vocabulary file.
+\end{voc}
+
+<<DICT/float-1.voc>>=
+O-radix_NAT
+@ 
+
+\begin{theorem}
+Let $x\neq0$ and $b$ be arbitrary reals.
+Then $x$ is in $b$-radix $\NN$ if and only if there exists a finite
+sequence of natural numbers $d$ such that $d_{\|d\|-1}\neq0$ and for all
+$j\in\NN$ where defined $0\leq d_{j}<b$ and $x$ is the $b$-integer value
+of $d$.
+\end{theorem}
+
+\begin{proof}
+The forward direction involves unfolding the definitions, and massaging
+the Fraenkel terms a bit to assuage Mizar. The backwards direction is obvious.
+\end{proof}
+
+<<Theorem: criterion for nonzero elements of $b$-radix $\NN$>>=
+theorem ThBetaNATCriterion:
+  for b,x being Real st x <> 0
+  holds x in b-radix_NAT iff ex d being XFinSequence of NAT
+    st d.((len d)-1) <> 0
+    & (for j being Nat st j in dom d holds 0 <= d.j & d.j < b)
+    & x = beta_integer_value(d,b)
+proof
+  let b,x be Real;
+  assume A1: x <> 0;
+  thus x in b-radix_NAT implies ex d being XFinSequence of NAT
+    st d.((len d)-1) <> 0
+    & (for j being Nat st j in dom d holds 0 <= d.j & d.j < b)
+    & x = beta_integer_value(d,b)
+  proof
+    assume x in b-radix_NAT;
+    then ex r being Element of REAL st r=x & (r = 0 or
+    ex d being XFinSequence of NAT
+    st d.((len d)-1) <> 0
+    & (for j being Nat st j in dom d holds 0 <= d.j & d.j < b)
+    & r = beta_integer_value(d,b));
+    hence thesis by A1;
+  end;
+  given d being XFinSequence of NAT such that
+  A2: d.((len d)-1) <> 0
+    & (for j being Nat st j in dom d holds 0 <= d.j & d.j < b)
+    & x = beta_integer_value(d,b);
+  ex r being Element of REAL st r=x & (r = 0 or
+  ex d1 being XFinSequence of NAT
+  st d1.((len d1)-1) <> 0
+  & (for j being Nat st j in dom d1 holds 0 <= d1.j & d1.j < b)
+  & r = beta_integer_value(d1,b))
+  proof
+    reconsider r=x as Element of REAL by XREAL_0:def 1;
+    take r;
+    thus thesis by A2;
+  end;
+  hence x in b-radix_NAT;
+end;
+@ %def ThBetaNATCriterion
+
+\begin{theorem}
+Let $\beta$ be real. Then $0$ is an element of $\beta$-radix $\NN$.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+This is because 0 is real, and then we just unfold definitions.
+\end{proof}
+
+<<Theorem: 0 is in $\beta$-radix $\NN$>>=
+theorem ThZeroInBetaNAT:
+  for beta being Real holds 0 in beta-radix_NAT
+proof
+  let beta be Real;
+  0 is Element of REAL by XREAL_0:def 1;
+  hence thesis;
+end;
+@ %def ThZeroInBetaNAT
+
+\begin{theorem}
+Let $b>1$ be a natural number. Then the set of $b$-radix $\NN$ is just
+the usual set $\NN$.
+\end{theorem}
+
+\begin{proof}
+We see that $b$-radix $\NN$ is a subset of $\NN$. Let $y$ be an element
+of $b$-radix $\NN$. Then either $y=0$ (hence in $\NN$) or $y\neq0$,
+which means there is a decimal expansion and the resulting value belongs
+to $\NN$. Either way, $y\in\NN$. Since $y$ is arbitrary, this
+establishes the first claim.
+
+The second claim is that $\NN$ is a subset of $b$-radix $\NN$. Let $y$
+be an arbitrary element of $\NN$. Then either $y=0$ (hence an element of
+$b$-radix $\NN$ by a previous theorem) or $y\neq0$. In the latter case,
+we can take its decimal expansion, and its value belongs to the set
+$b$-radix $\NN$. But its value is just $y$. Hence we establish every
+element $\NN$ is an element of $b$-radix $\NN$.
+
+Since we have established each set is a subset of the other, this
+establishes the set equality we sought.
+\end{proof}
+
+<<Theorem: identify $b$-radix $\NN$ with $\NN$ when $b\in\NN$ is greater than one>>=
+theorem ThBetaRadixNatCompatibility:
+  for b being Nat st b > 1 holds b-radix_NAT = NAT
+proof
+  let b be Nat;
+  assume A1: b > 1;
+  for y being object st y in b-radix_NAT holds y in NAT
+  proof
+    let y be object;
+    assume y in b-radix_NAT;
+    then consider x being Element of REAL such that
+    B1: y = x and
+    B2: x = 0 or (ex d being XFinSequence of NAT
+    st d.((len d)-1) <> 0
+    & (for j being Nat st j in dom d holds 0 <= d.j & d.j < b)
+    & x = beta_integer_value(d,b));
+    per cases by B2;
+    suppose x = 0;
+      hence thesis by B1;
+    end;
+    suppose ex d being XFinSequence of NAT
+      st d.((len d)-1) <> 0
+      & (for j being Nat st j in dom d holds 0 <= d.j & d.j < b)
+      & x = beta_integer_value(d,b);
+      then consider d being XFinSequence of NAT such that
+      B3: d.((len d)-1) <> 0
+      & (for j being Nat st j in dom d holds 0 <= d.j & d.j < b)
+      & x = beta_integer_value(d,b);
+      thus y in NAT by B1, B3, ORDINAL1:def 12;
+    end;
+  end;
+
+  then A2: b-radix_NAT c= NAT by TARSKI:def 3;
+  for x being object st x in NAT holds x in b-radix_NAT
+  proof
+    let x be object;
+    assume B1: x in NAT;
+    then reconsider n=x as Nat;
+    per cases;
+    suppose n = 0;
+      hence thesis by ThZeroInBetaNAT;
+    end;
+    suppose B2: n <> 0;
+      ex d being XFinSequence of NAT
+      st d.((len d)-1) <> 0
+      & (for j being Nat st j in dom d holds 0 <= d.j & d.j < b)
+      & n = beta_integer_value(d,b)
+      proof
+        take d = digits(n,b);
+        thus thesis by A1, B2, NUMERAL1:def 2;
+      end;
+      hence x in b-radix_NAT by B2,ThBetaNATCriterion;
+    end;
+  end;
+  then NAT c= b-radix_NAT by TARSKI:def 3;
+  hence b-radix_NAT = NAT by A2, XBOOLE_0:def 10;
+end;
+@ %def ThBetaRadixNatCompatibility
+
+\begin{theorem}
+Let $c_{j}$ and $d_{j}$ be sequences of real numbers such that for each
+$j\in\NN$ we have $0\leq c_{j}<b$ and $d_{j}=c_{j}b^{-j}$. Then 
+$d_{j}$ is summable and moreover
+\begin{equation}
+\sum_{j=n+1}^{\infty}d_{j} < \frac{b^{1-n}}{1-b^{-1}}.
+\end{equation}
+\end{theorem}
+
+We see that by direct calculation
+\begin{align*}
+\sum_{j=n+1}^{\infty}d_{j}
+&=\sum_{j=n+1}c_{j}b^{-j}\\
+&=\sum_{j=0}c_{j+n+1}b^{-j-n-1}\\
+&=b^{-n-1}\sum_{j=0}c_{j+n+1}b^{-j}\\
+&<b^{-n-1}\sum_{j=0}b\cdot b^{-j}=\frac{b^{-n-1}\cdot b}{1-b^{-1}}.
+\end{align*}
+The result follows immediately. We know, just by looking at it, that
+$b^{-n}/(1-b)<1$, but Mizar will want a proof.
+
+Since $b>1$ we have $1>b^{-1}>0$, so $1>1-b^{-1}$. Then $1/(1-b^{-1})>1$
+and multiplying both sides by $b^{-n}$ yields
+\begin{equation}
+\frac{b^{-n}}{1-b^{-1}}>b^{-n}.
+\end{equation}
+I think this is the opposite of what we wanted, since we want to show
+that
+\begin{equation}
+\sum^{n}_{j=0}d_{j}\leq x<\left(\sum^{n}_{j=0}d_{j}\right)+b^{1-n}
+\end{equation}
+We can see that
+\begin{equation}
+\frac{b^{-n}}{1-b^{-1}}=b^{-n+1}\left(\frac{b^{-1}-1+1}{1-b^{-1}}\right)=b^{-n+1}\left(\frac{1}{1-b^{-1}}-1\right).
+\end{equation}
+
+\begin{theorem}
+Let $x$ be a real number, let $n$ and $N$ be natural numbers.
+If $b^{n}\leq x<b^{n+1}$, then there exists a finite sequence $c_{j}$ of
+length $N+1$ such that $c_{j}=d_{j}b^{-j}$ where $d_{j}$ is the
+$b$-expansion of $x$, and $b^{n}\sum c_{j}\leq x<b^{n}(b^{-N}+\sum c_{j})$.
+\end{theorem}
+
+\begin{theorem}
+Let $n$ be a natural number, let $x$ and $y$ be real numbers.
+Suppose $b^{n}\leq x<b^{n+1}$ and $b^{n}\leq y<b^{n+1}$.
+Let $c_{j}$ be the $b$-expansion of $x$, and $d_{j}$ be the
+$b$-expansion of $y$.
+Then $x < y$ if and only if there exists a natural number $N$ such that
+for all $j<N$ we have $c_{j}=d_{j}$ and $c_{N}<d_{N}$.
+\end{theorem}
+
+<<Theorem: order of reals equivalent to lexicographic order of $b$-expansion>>=
+theorem
+  for n being Nat
+  for x being Real st b to_power n <= x & x < b to_power (n + 1)
+  for y being Real st b to_power n <= y & y < b to_power (n + 1)
+  holds x < y
+  iff ex N being Nat
+      st (for j being Nat st j < N
+          holds (b-expansion x).j = (b-expansion y).j)
+      & (b-expansion x).N < (b-expansion x).N;
+
+@ 
+
+
+\begin{theorem}
+Let $b$ be a valid radix natural number, let $x\in\NN$.
+The $\beta$-expansion of $x$ in base $b$ is the same as the digits of
+$x$ in base $b$, modulo re-indexing, and the $\beta$ integer value is
+the same as the value of these digits in base $b$. 
+\end{theorem}
+
+\begin{proof}[Proof outline]
+We take $N=\lfloor\log_{b}(x)\rfloor+1$. We need to prove the length of
+the digit sequence $\|d\|=N$, and that the sequence of digits $d$ in
+base $b$ is just a reindexing of the $b$-expansion of $x$. Proving the
+$\beta$-integer value of the digits is $x$ is trivial thanks to our
+previous registration identifying it with the numeral value relative to
+a base-$b$ value of the digit expansion of $x$.
+\end{proof}
+
+<<Theorem: consistency check of $\beta$-expansion and digits>>=
+theorem
+  for b being valid_radix Nat
+  for x being Nat st x <> 0
+  ex N being Nat, d being XFinSequence of NAT
+  st N = [\log(b,x)/] + 1 & len d = N &
+  (for i being Nat st i in dom d holds d.(N - i) = (b-expansion x).i)
+  & beta_integer_value(d,b) = x
+proof
+  let b be valid_radix Nat;
+  let x be Nat;
+  assume A1: x <> 0;
+  [\log(b,x)/] in NAT
+  <<Subproof: $\lfloor\log_{b}(x)\rfloor\in\NN$>>
+  then reconsider N = [\log(b,x)/] + 1 as Nat by ORDINAL1:def 12;
+  take N;
+  take d = digits(x,b);
+  thus N = [\log(b,x)/] + 1;
+  thus len d = N;
+::>            *4
+  thus (for i being Nat st i in dom d holds d.(N - i) = (b-expansion x).i)
+  proof 
+    let i be Nat;
+    assume Z2: i in dom d;
+    thus d.(N - i) = (b-expansion x).i;
+::>                                  *4
+  end;
+  thus beta_integer_value(d,b) = value(d,b)
+                              .= x by Def1,NUMERAL1:5;
+end;
+@
+
+\begin{proof}[Subproof ($\lfloor\log_{b}(x)\rfloor\in\NN$)]
+This can be checked by cases, since $x > 1$ or $x=0$ or $x=1$.
+These are all straightforward since $b>1$.
+\end{proof}
+
+<<Subproof: $\lfloor\log_{b}(x)\rfloor\in\NN$>>=
+proof
+  A2: b > 1 & b > 0 & b <> 1 by Def1;
+  per cases by NAT_1:25;
+  suppose x > 1;
+    then b > 1 & x > 1 & 1 > 0 by Def1;
+    then log(b,x) > log(b,1) by Def1,POWER:57;
+    then log(b,x) > 0 by A2,POWER:51;
+    then [\log(b,x)/] >= 0 & [\log(b,x)/] is Element of NAT by INT_1:53;
+    hence thesis;
+  end;
+  suppose x = 0;
+    hence thesis by A1;
+  end;
+  suppose x = 1;
+    then log(b,x) = log(b,1)
+                 .= 0 by A2,POWER:51;
+    then [\log(b,x)/] = [\0/]
+                     .= 0;
+    hence thesis;
+  end;
+end;  
 @ 
 
 \subsection{Extended Integers}
