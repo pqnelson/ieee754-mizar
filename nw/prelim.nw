@@ -1707,8 +1707,27 @@ Let $x$ be a real number, let $d_{j}$ be the $b$-expansion of $x$. Then
 is a convergent series.
 \end{theorem}
 
+\begin{proof}[Proof outline]
+We construct the sequence $s_{k}$ we used when proving convergence of
+the sums of the $\beta$-expansion of $x$, then prove by complete
+induction that $s_{k}$ are indeed the partial sums of the
+$\beta$-expansion of $x$.
+\end{proof}
+
+\begin{thm-remark}
+It might be odd, why prove this particular version of the theorem when
+we have a perfectly happy theorem with logically equivalent results?
+Well, we want to take advantage of Theorem [[SERIES_1:15]] which states
+if $b_{k}$ is a summable sequence, then
+\begin{equation*}
+\sum^{\infty}_{k=0}b_{k}=\sum^{n}_{k=0}b_{k}+\sum^{\infty}_{k=n+1}b_{k}.
+\end{equation*}
+This is because the first-term on the right-hand side $\sum^{n}_{k=0}b_{k}$
+is the significand of a floating-point number when $n=p-1$.
+\end{thm-remark}
+
 <<Theorem: $\sum_{j=0}^{\infty}d_{j}b^{-j}$ converges to $xb^{-\lfloor\log_{b}(x)\rfloor}$>>=
-theorem
+theorem Th15:
   for x being Real
   ex d1 being Real_Sequence
   st (for j being Nat holds d1.j = ((b-expansion x).j)*(b to_power -j))
@@ -1716,12 +1735,11 @@ theorem
   & lim Partial_Sums d1 = x * (b to_power (-[\ log(b, x) /]))
 proof
   let x be Real;
-  deffunc F1(Nat) = ((b-expansion x).$1)*(b to_power (- $1));
-  consider d1 being Real_Sequence such that
-  A1: for n being Nat holds d1.n = F1(n) from SEQ_1:sch 1;
+  <<Proof step: construct sequence $d_{1}$>>
   take d1;
   thus for j being Nat holds d1.j = ((b-expansion x).j)*(b to_power -j)
   by A1;
+  
   set d = b-expansion x;
   consider r being Real_Sequence such that
   A2: d.0 = [\ x * (b to_power (-[\log(b,x)/]))/] &
@@ -1729,52 +1747,93 @@ proof
   & for j being Nat holds d.(j + 1) = [\b*(r.j)/]
   & r.(j+1) = b*(r.j) - [\ b*(r.j) /]
   by Def2b;
-  consider s being Real_Sequence such that
-  A3: s.0 = (b-expansion x).0
-  & (for j being Nat holds s.(j + 1) = (s.j) + ((d.(j + 1)) * (b to_power (-j-1))))
-  & s is convergent
-  & lim s = x * (b to_power (-[\ log(b, x) /]))
-  by A2, ThBetaExpansionLimit;
-
+  
+  <<Construct the sequence $s_{k}$>>
+  
   set S = (Partial_Sums d1);
 
   A4: dom S = NAT by SEQ_1:1
            .= dom s by SEQ_1:1;
 
-  defpred P[Nat] means S.$1 = s.$1;
-  A5: for n being Nat st (for k being Nat st k < n holds P[k])
-  holds P[n]
-  proof
-    let n be Nat;
-    assume B1: for k being Nat st k < n holds P[k];
-    per cases;
-    suppose B2: n = 0;
-      then S.0 = d1.0 by SERIES_1:def 1
-              .= ((b-expansion x).0) * (b to_power (- 0)) by A1
-              .= ((b-expansion x).0) * 1 by POWER:24
-              .= s.0 by A3;
-      hence thesis by B2;
-    end;
-    suppose B3: n <> 0;
-      then consider m being Nat such that
-      B4: n = m + 1 by NAT_1:6;
-      B5: m < n by B4, NAT_1:13;
-      S.(m + 1) = (S.m) + (d1.(m + 1)) by SERIES_1:def 1
-      .= (s.m) + (d1.(m + 1)) by B1,B5
-      .= (s.m) + (((b-expansion x).(m + 1)) * (b to_power (- (m + 1)))) by A1
-      .= (s.m) + (((b-expansion x).(m + 1)) * (b to_power (- m - 1)))
-      .= s.(m + 1) by A3;
-      hence P[n] by B4;
-    end;
-  end;
-
-  for n being Nat holds P[n] from NAT_1:sch 4(A5);
-  then for n being object st n in NAT holds S.n = s.n;
-  then for n being object st n in dom S holds S.n = s.n by SEQ_1:1;
-  then Partial_Sums d1 = s by A4, FUNCT_1:2;
-  hence thesis by A1,A2,A3;
+  <<Proof: $S=s$ by complete induction>>
+  then for n being object st n in dom S holds S.n = s.n;
+  hence thesis by A3, A4, FUNCT_1:2;
 end;
+@ %def Th15
+
+\begin{proof}[Proof step (construct $d_{1}$)]
+This follows using the scheme constructing real sequences from a term
+$\mathcal{F}(n)$. 
+\end{proof}
+
+<<Proof step: construct sequence $d_{1}$>>=
+deffunc F1(Nat) = ((b-expansion x).$1)*(b to_power (- $1));
+consider d1 being Real_Sequence such that
+A1: for n being Nat holds d1.n = F1(n) from SEQ_1:sch 1;
+@ 
+
+\begin{proof}[Proof sketch (Construct $s_{k}$)]
+This follows from our previous theorem concerning the limit of the
+$\beta$-expansion of $x$.
+\end{proof}
+
+<<Construct the sequence $s_{k}$>>=
+consider s being Real_Sequence such that
+A3: s.0 = (b-expansion x).0
+& (for j being Nat holds s.(j + 1) = (s.j) + ((d.(j + 1)) * (b to_power (-j-1))))
+& s is convergent
+& lim s = x * (b to_power (-[\ log(b, x) /]))
+by A2, ThBetaExpansionLimit;
 @
+
+\begin{proof}[Proof sketch ($S=s$)]
+This is done by complete induction, i.e., proving that for each natural
+number $n$ if every $k<n$ has $S_{k}=s_{k}$, then $S_{n}=s_{n}$. Then
+complete induction tells us that $S=s$.
+
+Proving that $S_{n}=s_{n}$ boils down to two cases:
+\begin{enumerate}
+\item $n=0$, which means that $S_{0}=d'_{0}=s_{0}$;
+\item $n>0$, which means there is a $m\in\NN$ such that $n=m+1$; in this
+  case, $S_{n}=S_{m+1}=S_{m}+d'_{m+1}$, then using the
+  inductive hypothesis that $S_{m}=s_{m}$, we find
+  $S_{m+1}=s_{m}+d'_{m+1}$. But the right-hand side of this (i.e.,
+  $s_{m}+d'_{m+1}$) is precisely the definition of
+  $s_{m+1}$, which proves the claim.
+\end{enumerate}
+Thus we get the result.
+\end{proof}
+
+<<Proof: $S=s$ by complete induction>>=
+defpred P[Nat] means S.$1 = s.$1;
+A5: for n being Nat st (for k being Nat st k < n holds P[k])
+holds P[n]
+proof
+  let n be Nat;
+  assume B1: for k being Nat st k < n holds P[k];
+  per cases;
+  suppose B2: n = 0;
+    S.0 = d1.0 by SERIES_1:def 1
+       .= ((b-expansion x).0) * (b to_power (- 0)) by A1
+       .= ((b-expansion x).0) * 1 by POWER:24
+       .= s.0 by A3;
+    hence thesis by B2;
+  end;
+  suppose n <> 0;
+    then consider m being Nat such that
+    B3: n = m + 1 by NAT_1:6;
+    B4: m < n by B3, NAT_1:13;
+    S.(m + 1) = (S.m) + (d1.(m + 1)) by SERIES_1:def 1
+    .= (s.m) + (d1.(m + 1)) by B1,B4
+    .= (s.m) + (((b-expansion x).(m + 1)) * (b to_power (- (m + 1)))) by A1
+    .= (s.m) + (((b-expansion x).(m + 1)) * (b to_power (- m - 1)))
+    .= s.(m + 1) by A3;
+    hence P[n] by B3;
+  end;
+end;
+
+for n being Nat holds P[n] from NAT_1:sch 4(A5);
+@ 
 
 \begin{definition}
 We define the set $\beta$-radix $\NN$ to be the subset of $\RR$

@@ -1009,7 +1009,7 @@ registration
   end;
 end;
 
-theorem
+theorem Th15:
   for x being Real
   ex d1 being Real_Sequence
   st (for j being Nat holds d1.j = ((b-expansion x).j)*(b to_power -j))
@@ -1023,6 +1023,7 @@ proof
   take d1;
   thus for j being Nat holds d1.j = ((b-expansion x).j)*(b to_power -j)
   by A1;
+  
   set d = b-expansion x;
   consider r being Real_Sequence such that
   A2: d.0 = [\ x * (b to_power (-[\log(b,x)/]))/] &
@@ -1030,13 +1031,14 @@ proof
   & for j being Nat holds d.(j + 1) = [\b*(r.j)/]
   & r.(j+1) = b*(r.j) - [\ b*(r.j) /]
   by Def2b;
+  
   consider s being Real_Sequence such that
   A3: s.0 = (b-expansion x).0
   & (for j being Nat holds s.(j + 1) = (s.j) + ((d.(j + 1)) * (b to_power (-j-1))))
   & s is convergent
   & lim s = x * (b to_power (-[\ log(b, x) /]))
   by A2, ThBetaExpansionLimit;
-
+  
   set S = (Partial_Sums d1);
 
   A4: dom S = NAT by SEQ_1:1
@@ -1050,30 +1052,28 @@ proof
     assume B1: for k being Nat st k < n holds P[k];
     per cases;
     suppose B2: n = 0;
-      then S.0 = d1.0 by SERIES_1:def 1
-              .= ((b-expansion x).0) * (b to_power (- 0)) by A1
-              .= ((b-expansion x).0) * 1 by POWER:24
-              .= s.0 by A3;
+      S.0 = d1.0 by SERIES_1:def 1
+         .= ((b-expansion x).0) * (b to_power (- 0)) by A1
+         .= ((b-expansion x).0) * 1 by POWER:24
+         .= s.0 by A3;
       hence thesis by B2;
     end;
-    suppose B3: n <> 0;
+    suppose n <> 0;
       then consider m being Nat such that
-      B4: n = m + 1 by NAT_1:6;
-      B5: m < n by B4, NAT_1:13;
+      B3: n = m + 1 by NAT_1:6;
+      B4: m < n by B3, NAT_1:13;
       S.(m + 1) = (S.m) + (d1.(m + 1)) by SERIES_1:def 1
-      .= (s.m) + (d1.(m + 1)) by B1,B5
+      .= (s.m) + (d1.(m + 1)) by B1,B4
       .= (s.m) + (((b-expansion x).(m + 1)) * (b to_power (- (m + 1)))) by A1
       .= (s.m) + (((b-expansion x).(m + 1)) * (b to_power (- m - 1)))
       .= s.(m + 1) by A3;
-      hence P[n] by B4;
+      hence P[n] by B3;
     end;
   end;
 
   for n being Nat holds P[n] from NAT_1:sch 4(A5);
-  then for n being object st n in NAT holds S.n = s.n;
-  then for n being object st n in dom S holds S.n = s.n by SEQ_1:1;
-  then Partial_Sums d1 = s by A4, FUNCT_1:2;
-  hence thesis by A1,A2,A3;
+  then for n being object st n in dom S holds S.n = s.n;
+  hence thesis by A3, A4, FUNCT_1:2;
 end;
 
 definition
