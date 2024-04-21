@@ -54,6 +54,8 @@ begin :: Preliminaries
 
 <<Theorem: Uniqueness of partial sums of $\beta$-expansion of $x$>>
 
+<<Theorem: if $c_{j}$ is $b$-expansion of $x$ and $d_{j}=c_{j}b^{-j}$, then $\sum^{n}_{j=0}d_{j}\leq xb^{-\lfloor\log_{b}(x)\rfloor}\leq\frac{\lceil{b}\rceil-1}{b-1}b^{-n}+\sum^{n}_{j=0}d_{j}$>>
+
 <<Definition: $b$ [[-radix_NAT]]>>
 
 <<Theorem: criterion for nonzero elements of $b$-radix $\NN$>>
@@ -1879,7 +1881,7 @@ Let $x$ be a real number, let $b$ be a valid radix real.
 Let $c_{j}$ be the $b$-expansion of $x$, and $d_{j}=c_{j}b^{-j}$.
 Then for any $n\in\NN$, we have:
 \begin{equation*}
-\sum^{n}_{j=0}d_{j}\leq xb^{-\lfloor\log_{b}(x)\rfloor}\leq1+\sum^{n}_{j=0}d_{j}.
+\sum^{n}_{j=0}d_{j}\leq xb^{-\lfloor\log_{b}(x)\rfloor}\leq\frac{\lceil{b}\rceil-1}{b-1}b^{-n}+\sum^{n}_{j=0}d_{j}.
 \end{equation*}
 \end{theorem}
 
@@ -1889,14 +1891,177 @@ floating-point numbers ``bracketing'' $x$, which will then be crucial
 when proving rounding results in \S4.
 \end{thm-remark}
 
-<<Theorem: if $c_{j}$ is $b$-expansion of $x$ and $d_{j}=c_{j}b^{-j}$, then $\sum^{n}_{j=0}d_{j}\leq xb^{-\lfloor\log_{b}(x)\rfloor}\leq1+\sum^{n}_{j=0}d_{j}$>>=
-theorem
-  for x being Real
+\begin{proof}[Proof sketch]
+Let $x_{*}=xb^{-\lfloor\log_{b}(x)\rfloor}$, let $\rho=\sum_{j=n+1}^{\infty}d_{j}$
+be the remainder for the $n^{\text{th}}$ partial sum. There are two
+claims being made here:
+\begin{enumerate}
+\item $\sum^{n}_{j=0}d_{j}\leq x_{*}$, and
+\item $\displaystyle x_{star}\leq\frac{\lceil{b}\rceil-1}{b-1}b^{-n}+\sum^{n}_{j=0}d_{j}$.
+\end{enumerate}
+The first claim can be proven in a straightforward manner, the second
+claim requires facts concerning the geometric series.
+\end{proof}
+
+<<Theorem: if $c_{j}$ is $b$-expansion of $x$ and $d_{j}=c_{j}b^{-j}$, then $\sum^{n}_{j=0}d_{j}\leq xb^{-\lfloor\log_{b}(x)\rfloor}\leq\frac{\lceil{b}\rceil-1}{b-1}b^{-n}+\sum^{n}_{j=0}d_{j}$>>=
+theorem Th17:
+  for x being positive Real
   for n being Nat
   for d1 being Real_Sequence
   st (for j being Nat holds d1.j = ((b-expansion x).j)*(b to_power -j))
   holds (Partial_Sums d1).n <= x * (b to_power (-[\ log(b, x) /]))
-  & x * (b to_power (-[\ log(b, x) /])) <= 1 + (Partial_Sums d1).n;
+  & x * (b to_power (-[\ log(b, x) /])) <= ((([/b\] - 1)/(b - 1))*(b to_power -n)) + (Partial_Sums d1).n
+proof
+  let x be positive Real;
+  let n be Nat;
+  let d1 be Real_Sequence;
+  assume A1: for j being Nat holds d1.j = ((b-expansion x).j)*(b to_power -j);
+  <<Subproof: $\sum^{n}_{j=0}d_{j}\leq x_{*}$>>
+  <<Subproof: $x_{*}\leq\frac{\lceil{b}\rceil-1}{b-1}b^{-n}+\sum^{n}_{j=0}d_{j}$>>
+end;
+@ %def Th17
+
+\begin{proof}[Subproof ($\sum^{n}_{j=0}d_{j}\leq x_{*}$)]
+The first half of the proof is relatively straightforward, since it
+requires proving the $0\leq\rho$ (which follows from claim $A_{4}$)
+and $\rho+\sum^{n}_{j=0}d_{j}=x_{*}$
+implies $\sum^{n}_{j=0}d_{j}=x_{*}-\rho\leq x_{*}$.
+\end{proof}
+
+<<Subproof: $\sum^{n}_{j=0}d_{j}\leq x_{*}$>>=
+A2: for j being Nat holds 0 <= d1.j & d1.j < b to_power (1 - j)
+proof
+  let j be Nat;
+  (b-expansion x).j >= 0 by Th8;
+  then ((b-expansion x).j)*(b to_power -j) >= 0;
+  hence 0 <= d1.j by A1;
+
+  B1: ((b-expansion x).j)*(b to_power -j) < b*(b to_power -j)
+  by Th8, XREAL_1:68;
+  b*(b to_power -j) = (b to_power 1)*(b to_power -j)
+                   .= b to_power (1 + (-j)) by POWER:27
+                   .= b to_power (1 - j);
+  hence d1.j < b to_power (1 - j) by A1, B1;
+end;
+A3: Partial_Sums d1 is convergent & d1 is summable
+& lim Partial_Sums d1 = x * (b to_power (-[\ log(b, x) /])) by A1, Th16;
+
+A4: 0 <= (Sum (d1 ^\ (n + 1)))
+proof
+  B1: (d1 ^\ (n + 1)) is summable by A3, SERIES_1:12;
+  for j being Nat holds 0 <= (d1 ^\ (n + 1)).j
+  proof
+    let j be Nat;
+    (d1 ^\ (n + 1)).j = d1.((n + 1) + j) by NAT_1:def 3;
+    hence 0 <= (d1 ^\ (n + 1)).j by A2;
+  end;
+  hence thesis by B1, SERIES_1:18;
+end;
+set alpha = x * (b to_power (-[\ log(b, x) /]));
+set remainder = (Sum (d1 ^\ (n + 1)));
+alpha = Sum d1 by A3, SERIES_1:def 3
+     .= ((Partial_Sums d1).n) + (Sum (d1 ^\ (n + 1))) by A3,SERIES_1:15;
+then (((Partial_Sums d1).n) + remainder) - remainder <= alpha
+by A4,XREAL_1:43;
+hence (Partial_Sums d1).n <= x * (b to_power (-[\ log(b, x) /]));
+@ 
+
+\begin{proof}[Proof sketch ($x_{*}\leq\frac{\lceil{b}\rceil-1}{b-1}b^{-n}+\sum^{n}_{j=0}d_{j}$)]
+Let $\kappa_{0}=(\lceil b\rceil-1)b^{-n-1}$ for brevity.
+The argument is that: 
+\begin{itemize}
+\item[$(A_{5})$] $\sum_{j=0}^{\infty}b^{-j}=1/(1-b^{-1})$ and for any
+  $c\in\RR$ we see $\sum_{j} c\cdot b^{-j}=c/(1 - b^{-1})$;
+\item[$(A_{6})$] $\rho=\sum^{\infty}_{j=n+1}d_{j}\leq \sum_{j=0}^{\infty}\kappa_{0}b^{-j}$;
+\item[$(A_{7})$] $\rho + \sum^{n}_{j=0}d_{j}=x_{*}$
+\end{itemize}
+Therefore by adding $\sum^{n}_{j=0}d_{j}$ to both sides of $(A_{6})$, we
+obtain the desired result thanks to $(A_{7})$.
+\end{proof}
+
+<<Subproof: $x_{*}\leq\frac{\lceil{b}\rceil-1}{b-1}b^{-n}+\sum^{n}_{j=0}d_{j}$>>=
+set k0 = ([/b\] - 1)*(b to_power (- n -1));
+
+A5: (b" GeoSeq) is summable & (k0 (#) (b" GeoSeq)) is summable
+& Sum (b" GeoSeq) = 1/(1 - (b "))
+proof
+  0 < b" & b" < 1" by Def1, XREAL_1:88;
+  then |. b" .| < 1 by COMPLEX1:43;
+  then (b" GeoSeq) is summable & Sum (b" GeoSeq) = 1/(1 - (b "))
+  by SERIES_1:24;
+  hence thesis by SERIES_1:10;
+end;
+for j being Nat
+holds 0 <= (d1 ^\ (n + 1)).j
+& (d1 ^\ (n + 1)).j <= (k0 (#) ((b") GeoSeq)).j
+<<Proof: $0\leq d_{(n+1)+j}\leq\kappa_{0}b^{-j}$>>
+then A6: Sum (d1 ^\ (n + 1)) <= Sum (k0 (#) ((b") GeoSeq))
+by A5, SERIES_1:20;
+A7: (Partial_Sums d1).n + Sum (d1 ^\ (n + 1)) = Sum d1 by A3, SERIES_1:15
+.= x * (b to_power (-[\log(b,x)/])) by A3, SERIES_1:def 3;
+Sum (k0 (#) ((b ") GeoSeq)) = (([/b\] - 1)/(b - 1))*(b to_power -n)
+proof
+  (([/b\] - 1)*(b to_power (- n -1))) * (1 / (1 - (b ")))
+   = (b to_power (- n -1)) * (([/b\] - 1) * (1 / (1 - (b "))))
+  .= (b to_power (- n -1)) * ((([/b\] - 1) * 1)/(1 - (b "))) by XCMPLX_1:74
+  .= ((b to_power -n)/(b to_power 1)) * (([/b\] - 1)/(1 - (b "))) by POWER:29
+  .= ((b to_power -n) * ([/b\] - 1)) / (b *(1 - (b " ))) by XCMPLX_1:76 
+  .= ((b to_power -n) * ([/b\] - 1)) / (b - (b * (b ")))
+  .= ((b to_power -n) * ([/b\] - 1)) / (b - 1) by XCMPLX_0:def 7
+  .= (([/b\] - 1)/(b - 1))*(b to_power -n) by XCMPLX_1:74;
+  hence thesis by A5, SERIES_1:10;
+end;
+then Sum (k0 (#) ((b") GeoSeq)) <= (([/b\] - 1)/(b - 1))*(b to_power -n);
+then Sum (d1 ^\ (n + 1)) <= (([/b\] - 1)/(b - 1))*(b to_power -n)
+by A6, XXREAL_0:2;
+then (Partial_Sums d1).n + Sum (d1 ^\ (n + 1))
+<= (Partial_Sums d1).n + (([/b\] - 1)/(b - 1))*(b to_power -n) by XREAL_1:6;
+hence thesis by A7;
+@ 
+
+\begin{proof}[Proof sketch ($0\leq d_{j+n+1}\leq \kappa_{0}b^{-j}$)]
+The first half of the inequality follows quite straightforwardly from
+earlier results, since $b>0$.
+
+The second half, that $d_{j+n+1}\leq\kappa_{0}b^{-j}$ is harder, because
+we need to prove a helper lemma that $d_{i}\leq(\lceil b\rceil-1)b^{-i}$
+for all $i\in\NN$. Once we have that established, most of the remainder
+of the proof consists in algebraic manipulations like $1/b=b^{-1}$, $b^{-((n+1)+j)}=b^{-n-1}b^{-j}$,
+and so on.
+\end{proof}
+
+<<Proof: $0\leq d_{(n+1)+j}\leq\kappa_{0}b^{-j}$>>=
+proof
+  let j be Nat;
+  B1: (d1 ^\ (n + 1)).j = d1.((n + 1) + j) by NAT_1:def 3;
+  hence 0 <= (d1 ^\ (n + 1)).j by A2;
+  
+  B2: for i being Nat
+  holds d1.i <= ([/b\] - 1)*(b to_power -i)
+  proof
+    let i be Nat;
+    (b-expansion x).i in NAT by Th8;
+    then reconsider bxi=(b-expansion x).i as Nat;
+    b <= [/b\] by INT_1:30,31;
+    then bxi < [/b\] by Th8, XXREAL_0:2;
+    then (b-expansion x).i <= [/b\] - 1 by INT_1:52;
+    then ((b-expansion x).i)*(b to_power -i) <= ([/b\] - 1)*(b to_power -i)
+    by XREAL_1:64;
+    hence d1.i <= ([/b\] - 1)*(b to_power -i) by A1;
+  end;
+  
+  (b to_power -((n + 1) + j))
+  = b to_power ((-(n + 1)) + (-j))
+  .= (b to_power (-n -1)) * (b to_power -j) by POWER:27;
+  then B3: ([/b\] - 1)*(b to_power -((n + 1) + j))
+  = k0 * (b to_power -j)
+  .= k0 * ((1 / b) to_power j) by POWER:32
+  .= k0 * ((b ") to_power j) by XCMPLX_1:215
+  .= k0 * (((b ") GeoSeq).j) by PREPOWER:def 1;
+  (d1 ^\ (n + 1)).j <= ([/b\] - 1)*(b to_power -((n + 1) + j)) by B1,B2;
+  then (d1 ^\ (n + 1)).j <= k0 * (((b ") GeoSeq).j) by B3;
+  hence thesis by VALUED_1:6;
+end;
 @ 
 
 \begin{definition}
@@ -1919,7 +2084,7 @@ significand is going to be an element of $b$-radix $\NN$.
 
 <<Definition: $b$ [[-radix_NAT]]>>=
 definition
-  let b be positive Real;
+  let b be Real;
   func b-radix_NAT -> Subset of REAL equals :Def5:
   { x where x is Element of REAL : x = 0 or ex d being XFinSequence of NAT
     st d.((len d)-1) <> 0
