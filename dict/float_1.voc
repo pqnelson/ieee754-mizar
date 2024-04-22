@@ -2,6 +2,7 @@ Vvalid_radix
 O-expansion
 Obeta_integer_value
 O-radix_NAT
+O-radix_INT
 OExtINT
 Vext-integer
 MExtInt

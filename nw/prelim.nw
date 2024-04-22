@@ -62,7 +62,21 @@ begin :: Preliminaries
 
 <<Theorem: 0 is in $\beta$-radix $\NN$>>
 
+<<Register: $b$-radix $\NN$ is nonempty>>
+
 <<Theorem: identify $b$-radix $\NN$ with $\NN$ when $b\in\NN$ is greater than one>>
+
+<<Theorem: $\beta$-radix $\NN$ is non-negative>>
+
+<<Register: elements of $\beta$-radix $\NN$ are non negative>>
+
+<<Definition: $\beta$-radix integers>>
+
+<<Theorem: $\NN_{\beta}\subset\ZZ_{\beta}$>>
+
+<<Theorem: $0\in\ZZ_{\beta}$>>
+
+<<Register: $\ZZ_{\beta}$ is nonempty, and contains a zero element>>
 
 <<Subsection: Defining the extended integers>>
 @
@@ -2194,6 +2208,34 @@ proof
 end;
 @ %def ThZeroInBetaNAT
 
+\begin{registration}
+We see that $b$-radix $\NN$ is nonempty, since it contains 0.
+Further, there is a non-negative element of that set (namely, 0) and
+there exists a zero element (namely, zero).
+\end{registration}
+
+<<Register: $b$-radix $\NN$ is nonempty>>=
+registration
+  let beta be Real;
+  cluster beta-radix_NAT -> non empty;
+  correctness by ThZeroInBetaNAT;
+  cluster non negative for Element of beta-radix_NAT;
+  existence
+  proof
+    reconsider x=0 as Element of beta-radix_NAT by ThZeroInBetaNAT;
+    take x;
+    thus thesis;
+  end;
+  cluster zero for Element of beta-radix_NAT;
+  existence
+  proof
+    reconsider x=0 as Element of beta-radix_NAT by ThZeroInBetaNAT;
+    take x;
+    thus thesis;
+  end;
+end;
+@ 
+
 \begin{theorem}
 Let $b>1$ be a natural number. Then the set of $b$-radix $\NN$ is just
 the usual set $\NN$.
@@ -2275,6 +2317,200 @@ proof
   hence b-radix_NAT = NAT by A2, XBOOLE_0:def 10;
 end;
 @ %def ThBetaRadixNatCompatibility
+
+\begin{theorem}
+Let $\beta$ be a positive real.
+Let $x$ be an element of $\beta$-radix $\NN$.
+Then $x\geq0$.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+This boils down to two cases:
+\begin{enumerate}
+\item $x=0$, in which case we're done.
+\item $x\neq0$, in which case there's a digit-expansion for $x$, and
+  this gives us $x$ as the sum of non-negative values, which means $x$
+  must be non-negative.
+\end{enumerate}
+Either way, we're forced to conclude $x\geq0$.
+\end{proof}
+
+<<Theorem: $\beta$-radix $\NN$ is non-negative>>=
+theorem ThBetaRadixNATAreNonNegative:
+  for beta being positive Real
+  for x being Element of beta-radix_NAT
+  holds x >= 0
+proof
+  let beta be positive Real;
+  let x be Element of beta-radix_NAT;
+  per cases;
+  suppose x = 0;
+    hence thesis by XXREAL_0:1;
+  end;
+  suppose x <> 0;
+    then consider d being XFinSequence of NAT such that
+    A1: d.((len d) - 1) <> 0
+    & (for j being Nat st j in dom d holds 0 <= d.j & d.j < beta)
+    & x = beta_integer_value(d,beta) by ThBetaNATCriterion;
+    consider d9 being XFinSequence of REAL such that
+    A2: dom d9 = dom d
+    & (for j being Nat st j in dom d9 holds d9.j = (d.j)*(beta |^ j))
+    & beta_integer_value(d,beta) = Sum d9
+    by A1, Def3a;
+    for j being Nat st j in dom d9 holds d9.j >= 0
+    proof
+      let j be Nat;
+      assume A3: j in dom d9;
+      beta > 0;
+      then beta to_power j > 0 by POWER:34;
+      then A4: beta |^ j > 0 by POWER:41;
+      d.j >= 0 by A1,A2,A3;
+      then (d.j) * (beta |^ j) >= 0 by A4, XREAL_1:127;
+      hence thesis by A2,A3;
+    end;
+    then Sum d9 >= (len d9)*0 by AFINSQ_2:60;
+    hence x >= 0 by A1,A2;
+  end;
+end;
+@ %def ThBetaRadixNATAreNonNegative
+
+\begin{registration}
+Let $\beta$ be a positive real number.
+Then elements of $\beta$-radix $\NN$ are non-negative.
+\end{registration}
+
+<<Register: elements of $\beta$-radix $\NN$ are non negative>>=
+registration
+  let beta be positive Real;
+  cluster -> non negative for Element of beta-radix_NAT;
+  correctness by ThBetaRadixNATAreNonNegative;
+end;
+@ 
+
+\begin{definition}
+We define the set of $\beta$-radix integers $\ZZ_{\beta}$ to be the
+subset of real numbers $x$ such that either $x\in\NN_{\beta}$ or $-x\in\NN_{\beta}$.
+\end{definition}
+
+<<Definition: $\beta$-radix integers>>=
+definition
+  let beta be Real;
+  func beta-radix_INT -> Subset of REAL means :Def6:
+  for x being Real
+  holds x in it iff |.x.| in beta-radix_NAT;
+  existence
+  proof
+    set IT = {x where x is Element of REAL : |.x.| in beta-radix_NAT };
+    for y being object st y in IT holds y in REAL
+    proof
+      let y be object;
+      assume y in IT;
+      then ex x being Element of REAL st x=y & |.x.| in beta-radix_NAT;
+      hence y in REAL;
+    end;
+    then reconsider IT as Subset of REAL by TARSKI:def 3;
+    take IT;
+    for x being Real holds x in IT iff |.x.| in beta-radix_NAT
+    proof
+      let x be Real;
+      hereby 
+        assume x in IT;
+        then ex y being Element of REAL st y=x & |.y.| in beta-radix_NAT;
+        hence |.x.| in beta-radix_NAT;
+      end;
+      assume |.x.| in beta-radix_NAT;
+      then x in REAL & |.x.| in beta-radix_NAT by XREAL_0:def 1;
+      hence x in IT;
+    end;
+    hence thesis;
+  end;
+  uniqueness
+  proof
+    let X,Y be Subset of REAL such that
+    A1: for x being Real holds x in X iff |.x.| in beta-radix_NAT and
+    A2: for x being Real holds x in Y iff |.x.| in beta-radix_NAT;
+    for x being Element of REAL holds x in X iff x in Y
+    proof
+      let x be Element of REAL;
+      hereby 
+        assume x in X;
+        then |.x.| in beta-radix_NAT by A1;
+        hence x in Y by A2;
+      end;
+      assume x in Y;
+      then |.x.| in beta-radix_NAT by A2;
+      hence x in X by A1;
+    end;
+    hence X = Y by SUBSET_1:3;
+  end;
+end;
+@ %def -radix_INT Def6
+
+\begin{voc}
+We need to add [[-radix_INT]] as a functor (``term'') to our vocabulary file.
+\end{voc}
+
+<<DICT/float-1.voc>>=
+O-radix_INT
+@ 
+
+\begin{theorem}
+Let $\beta>0$ be a real number.
+Then $\NN_{\beta}\subset\ZZ_{\beta}$.
+\end{theorem}
+
+<<Theorem: $\NN_{\beta}\subset\ZZ_{\beta}$>>=
+theorem Th20:
+  for beta being positive Real
+  holds beta-radix_NAT c= beta-radix_INT
+proof
+  let beta be positive Real;
+  for x being Element of REAL st x in beta-radix_NAT
+  holds x in beta-radix_INT
+  proof
+    let x be Element of REAL;
+    assume Z1: x in beta-radix_NAT;
+    then x >= 0;
+    then |.x.| = x by COMPLEX1:43;
+    hence x in beta-radix_INT by Z1, Def6;
+  end;
+  hence beta-radix_NAT c= beta-radix_INT by SUBSET_1:2;
+end;
+@ 
+
+\begin{theorem}
+Let $\beta$ be a real number. Zero is an element of $\ZZ_{\beta}$.
+\end{theorem}
+
+<<Theorem: $0\in\ZZ_{\beta}$>>=
+theorem ThZeroInBetaINT:
+  for beta being Real holds 0 in beta-radix_INT
+proof
+  let beta be Real;
+  0 in beta-radix_NAT by ThZeroInBetaNAT;
+  hence thesis by Def6, COMPLEX1:44;
+end;
+@ %def ThZeroInBetaINT
+
+\begin{registration}
+Let $\beta$ be real. Then $\ZZ_{\beta}$ is nonempty, and there exists a
+zero element of $\ZZ_{\beta}$.
+\end{registration}
+
+<<Register: $\ZZ_{\beta}$ is nonempty, and contains a zero element>>=
+registration
+  let beta be Real;
+  cluster beta-radix_INT -> non empty;
+  coherence by ThZeroInBetaINT;
+  cluster zero for Element of beta-radix_INT;
+  existence
+  proof
+    reconsider x=0 as Element of beta-radix_INT by ThZeroInBetaINT;
+    take x;
+    thus thesis;
+  end;
+end;
+@ 
 
 \begin{theorem}
 Let $c_{j}$ and $d_{j}$ be sequences of real numbers such that for each
@@ -2426,6 +2662,8 @@ formalization of extended natural numbers in the Mizar article [[COUNTERS]]
 for guidance in which theorems to prove.
 
 <<Subsection: Defining the extended integers>>=
+::: Extended Integers
+
 <<Definition: Extended Integers>>
 
 <<Theorem: $\ExtNN\properSubset\ExtZZ$ and $\ExtZZ\properSubset\ExtRR$>>

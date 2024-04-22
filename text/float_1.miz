@@ -1295,6 +1295,26 @@ proof
   hence thesis;
 end;
 
+registration
+  let beta be Real;
+  cluster beta-radix_NAT -> non empty;
+  correctness by ThZeroInBetaNAT;
+  cluster non negative for Element of beta-radix_NAT;
+  existence
+  proof
+    reconsider x=0 as Element of beta-radix_NAT by ThZeroInBetaNAT;
+    take x;
+    thus thesis;
+  end;
+  cluster zero for Element of beta-radix_NAT;
+  existence
+  proof
+    reconsider x=0 as Element of beta-radix_NAT by ThZeroInBetaNAT;
+    take x;
+    thus thesis;
+  end;
+end;
+
 theorem ThBetaRadixNatCompatibility:
   for b being Nat st b > 1 holds b-radix_NAT = NAT
 proof
@@ -1351,6 +1371,141 @@ proof
   then NAT c= b-radix_NAT by TARSKI:def 3;
   hence b-radix_NAT = NAT by A2, XBOOLE_0:def 10;
 end;
+
+theorem ThBetaRadixNATAreNonNegative:
+  for beta being positive Real
+  for x being Element of beta-radix_NAT
+  holds x >= 0
+proof
+  let beta be positive Real;
+  let x be Element of beta-radix_NAT;
+  per cases;
+  suppose x = 0;
+    hence thesis by XXREAL_0:1;
+  end;
+  suppose x <> 0;
+    then consider d being XFinSequence of NAT such that
+    A1: d.((len d) - 1) <> 0
+    & (for j being Nat st j in dom d holds 0 <= d.j & d.j < beta)
+    & x = beta_integer_value(d,beta) by ThBetaNATCriterion;
+    consider d9 being XFinSequence of REAL such that
+    A2: dom d9 = dom d
+    & (for j being Nat st j in dom d9 holds d9.j = (d.j)*(beta |^ j))
+    & beta_integer_value(d,beta) = Sum d9
+    by A1, Def3a;
+    for j being Nat st j in dom d9 holds d9.j >= 0
+    proof
+      let j be Nat;
+      assume A3: j in dom d9;
+      beta > 0;
+      then beta to_power j > 0 by POWER:34;
+      then A4: beta |^ j > 0 by POWER:41;
+      d.j >= 0 by A1,A2,A3;
+      then (d.j) * (beta |^ j) >= 0 by A4, XREAL_1:127;
+      hence thesis by A2,A3;
+    end;
+    then Sum d9 >= (len d9)*0 by AFINSQ_2:60;
+    hence x >= 0 by A1,A2;
+  end;
+end;
+
+registration
+  let beta be positive Real;
+  cluster -> non negative for Element of beta-radix_NAT;
+  correctness by ThBetaRadixNATAreNonNegative;
+end;
+
+definition
+  let beta be Real;
+  func beta-radix_INT -> Subset of REAL means :Def6:
+  for x being Real
+  holds x in it iff |.x.| in beta-radix_NAT;
+  existence
+  proof
+    set IT = {x where x is Element of REAL : |.x.| in beta-radix_NAT };
+    for y being object st y in IT holds y in REAL
+    proof
+      let y be object;
+      assume y in IT;
+      then ex x being Element of REAL st x=y & |.x.| in beta-radix_NAT;
+      hence y in REAL;
+    end;
+    then reconsider IT as Subset of REAL by TARSKI:def 3;
+    take IT;
+    for x being Real holds x in IT iff |.x.| in beta-radix_NAT
+    proof
+      let x be Real;
+      hereby 
+        assume x in IT;
+        then ex y being Element of REAL st y=x & |.y.| in beta-radix_NAT;
+        hence |.x.| in beta-radix_NAT;
+      end;
+      assume |.x.| in beta-radix_NAT;
+      then x in REAL & |.x.| in beta-radix_NAT by XREAL_0:def 1;
+      hence x in IT;
+    end;
+    hence thesis;
+  end;
+  uniqueness
+  proof
+    let X,Y be Subset of REAL such that
+    A1: for x being Real holds x in X iff |.x.| in beta-radix_NAT and
+    A2: for x being Real holds x in Y iff |.x.| in beta-radix_NAT;
+    for x being Element of REAL holds x in X iff x in Y
+    proof
+      let x be Element of REAL;
+      hereby 
+        assume x in X;
+        then |.x.| in beta-radix_NAT by A1;
+        hence x in Y by A2;
+      end;
+      assume x in Y;
+      then |.x.| in beta-radix_NAT by A2;
+      hence x in X by A1;
+    end;
+    hence X = Y by SUBSET_1:3;
+  end;
+end;
+
+theorem Th20:
+  for beta being positive Real
+  holds beta-radix_NAT c= beta-radix_INT
+proof
+  let beta be positive Real;
+  for x being Element of REAL st x in beta-radix_NAT
+  holds x in beta-radix_INT
+  proof
+    let x be Element of REAL;
+    assume Z1: x in beta-radix_NAT;
+    then x >= 0;
+    then |.x.| = x by COMPLEX1:43;
+    hence x in beta-radix_INT by Z1, Def6;
+  end;
+  hence beta-radix_NAT c= beta-radix_INT by SUBSET_1:2;
+end;
+
+theorem ThZeroInBetaINT:
+  for beta being Real holds 0 in beta-radix_INT
+proof
+  let beta be Real;
+  0 in beta-radix_NAT by ThZeroInBetaNAT;
+  hence thesis by Def6, COMPLEX1:44;
+end;
+
+registration
+  let beta be Real;
+  cluster beta-radix_INT -> non empty;
+  coherence by ThZeroInBetaINT;
+  cluster zero for Element of beta-radix_INT;
+  existence
+  proof
+    reconsider x=0 as Element of beta-radix_INT by ThZeroInBetaINT;
+    take x;
+    thus thesis;
+  end;
+end;
+
+::: Extended Integers
 
 definition
   func ExtINT -> Subset of ExtREAL equals
