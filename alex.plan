@@ -1,0 +1,41 @@
+<!--- -*- mode: Markdown; var: -*- -->
+
+# 2024-04-22T15:28:27
+
+My current to do list:
+
+- [X] Prove when `b` is a natural number, that `b-radix_INT = INT`
+- [ ] Prove that the largest normal floating-point number, when `eMax`
+      is a positive integer, in arbitrary `beta being Real` base, is
+      `(([/beta\] - 1)/(beta - 1))*(beta to_power (1 - p))*(beta to_power eMax)`
+  - This is because the significand is `Sum d` where `d.j = ([/beta\] - 1)*(beta to_power -j)`
+- [ ] Prove the limit of the sequence 
+      `c.e = (([/beta\]-1)/(beta-1))*(beta - (beta to_power (1 - p)))*beta.e`
+      is infinite (see `MESFUNC5:def 9`, and `dblseq_3` for theorems
+      concering `is_convergent_to_+infty`)
+- [ ] Define the `normal` floating-point numbers for arbitrary `beta`
+      being real are appropriate
+      - `beta to_power eMin <= |.IT.| & |.IT.| <= ...` if `eMin <> -infty`
+        and `eMax <> +infty`
+      - `beta to_power eMin <= |.IT.| & |.IT.| < +infty` if `eMin <> -infty`
+        and `eMax = +infty`
+      - `0 < |.IT.| & |.IT.| <= ...` if `eMin = -infty` and `eMax <> +infty`
+      - `0 < |.IT.| & |.IT.| < +infty` otherwise
+- [ ] Redefine the normal floating-point numbers 
+      (`redefinition attr IT is normal means...`)  when `beta` is a
+      natural number, to be what we expect
+- [ ] Prove `c.e = beta to_power (- e)` converges to zero
+- [ ] Prove every floating-point number is a `beta-radix_INT` multiple
+      of the smallest subnormal floating-point number when `eMin <> -infty`
+- [ ] Corollary: every floating-point number of format `b`, ..., is an
+      integer multiple of the smallest subnormal floating-point number
+      when `eMin <> -infty`
+
+This would complete the generalization of floating-point format results
+to arbitrary real base $\beta\gt1$ and then we can move on to continuing
+our formalization of section 4:
+
+- [ ] Using Theorem 17, we can establish the "bracket" of floating-point
+      numbers for `x`, which will give us the means to produce rounding
+      functions for the extended real numbers.
+      - This actually only works for `beta > 3/2`

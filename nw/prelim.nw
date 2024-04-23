@@ -78,6 +78,10 @@ begin :: Preliminaries
 
 <<Register: $\ZZ_{\beta}$ is nonempty, and contains a zero element>>
 
+<<Theorem: criterion for being a member of $\ZZ_{\beta}$>>
+
+<<Theorem: if $b>1$ is a natural number, then $\ZZ_{b}=\ZZ$>>
+
 <<Subsection: Defining the extended integers>>
 @
 
@@ -1097,7 +1101,7 @@ of zero to vanish.
 \end{proof}
 
 <<Theorem: $b$-expansion of $0$>>=
-theorem
+theorem ThBetaExpansionOfZero:
   for x being zero Real
   for n being Nat
   holds 0 = (b-expansion x).n
@@ -1127,7 +1131,7 @@ proof
     hence thesis by A2;
   end;
 end;
-@
+@ %def ThBetaExpansionOfZero
 
 \begin{corollary}
 The $b$-expansion of $1$ is $d_{0}=1$ and $d_{j}=0$ for all $j>0$.
@@ -2397,48 +2401,52 @@ definition
   let beta be Real;
   func beta-radix_INT -> Subset of REAL means :Def6:
   for x being Real
-  holds x in it iff |.x.| in beta-radix_NAT;
+  holds x in it iff x in beta-radix_NAT or -x in beta-radix_NAT;
   existence
   proof
-    set IT = {x where x is Element of REAL : |.x.| in beta-radix_NAT };
+    set IT = {x where x is Element of REAL : x in beta-radix_NAT or -x in beta-radix_NAT };
+    
     for y being object st y in IT holds y in REAL
     proof
       let y be object;
       assume y in IT;
-      then ex x being Element of REAL st x=y & |.x.| in beta-radix_NAT;
+      then ex x being Element of REAL st x=y & (x in beta-radix_NAT or -x in beta-radix_NAT);
       hence y in REAL;
     end;
     then reconsider IT as Subset of REAL by TARSKI:def 3;
     take IT;
-    for x being Real holds x in IT iff |.x.| in beta-radix_NAT
+    for x being Real holds x in IT iff (x in beta-radix_NAT or -x in beta-radix_NAT)
     proof
       let x be Real;
-      hereby 
+      thus x in IT implies (x in beta-radix_NAT or -x in beta-radix_NAT)
+      proof 
         assume x in IT;
-        then ex y being Element of REAL st y=x & |.y.| in beta-radix_NAT;
-        hence |.x.| in beta-radix_NAT;
+        then ex y being Element of REAL st y=x & (y in beta-radix_NAT
+        or -y in beta-radix_NAT);
+        hence thesis;
       end;
-      assume |.x.| in beta-radix_NAT;
-      then x in REAL & |.x.| in beta-radix_NAT by XREAL_0:def 1;
+      assume (x in beta-radix_NAT or -x in beta-radix_NAT);
+      then x in REAL & (x in beta-radix_NAT or -x in beta-radix_NAT) by XREAL_0:def 1;
       hence x in IT;
     end;
     hence thesis;
   end;
   uniqueness
   proof
+    defpred P[Real] means ($1 in beta-radix_NAT or -$1 in beta-radix_NAT);
     let X,Y be Subset of REAL such that
-    A1: for x being Real holds x in X iff |.x.| in beta-radix_NAT and
-    A2: for x being Real holds x in Y iff |.x.| in beta-radix_NAT;
+    A1: for x being Real holds x in X iff P[x] and
+    A2: for x being Real holds x in Y iff P[x];
     for x being Element of REAL holds x in X iff x in Y
     proof
       let x be Element of REAL;
       hereby 
         assume x in X;
-        then |.x.| in beta-radix_NAT by A1;
+        then P[x] by A1;
         hence x in Y by A2;
       end;
       assume x in Y;
-      then |.x.| in beta-radix_NAT by A2;
+      then P[x] by A2;
       hence x in X by A1;
     end;
     hence X = Y by SUBSET_1:3;
@@ -2461,19 +2469,12 @@ Then $\NN_{\beta}\subset\ZZ_{\beta}$.
 
 <<Theorem: $\NN_{\beta}\subset\ZZ_{\beta}$>>=
 theorem Th20:
-  for beta being positive Real
+  for beta being Real
   holds beta-radix_NAT c= beta-radix_INT
 proof
-  let beta be positive Real;
+  let beta be Real;
   for x being Element of REAL st x in beta-radix_NAT
-  holds x in beta-radix_INT
-  proof
-    let x be Element of REAL;
-    assume Z1: x in beta-radix_NAT;
-    then x >= 0;
-    then |.x.| = x by COMPLEX1:43;
-    hence x in beta-radix_INT by Z1, Def6;
-  end;
+  holds x in beta-radix_INT by Def6;
   hence beta-radix_NAT c= beta-radix_INT by SUBSET_1:2;
 end;
 @ 
@@ -2509,6 +2510,110 @@ registration
     take x;
     thus thesis;
   end;
+end;
+@
+
+\begin{theorem}
+Let $\beta$ be any real number.
+Let $x$ be a real number.
+Then $x\in\ZZ_{\beta}$ if and only if there exists a $k\in\NN_{\beta}$
+such that $x=k$ or $x=-k$.
+\end{theorem}
+
+\begin{thm-remark}
+This is a generalization of Mizar's criterion for an object being in the
+set $\ZZ$.
+\end{thm-remark}
+
+\begin{proof}[Proof sketch]
+There are two claims which need to be proven:
+\begin{itemize}
+\item[$(\Longrightarrow)$] if $x\in\ZZ_{\beta}$, then there exists a
+  $k\in\NN_{\beta}$ such that $x=k$ or $x=-k$, which follows by definition; and
+\item[$(\Longleftarrow)$] assume there exists a $k\in\NN_{\beta}$ such
+  that $x=k$ or $x=-k$, then $x\in\NN_{\beta}$ or $-x\in\NN_{\beta}$,
+  and the result follows immediately. 
+\end{itemize}
+Either way, the proof follows by unfolding definitions.
+\end{proof}
+
+<<Theorem: criterion for being a member of $\ZZ_{\beta}$>>=
+theorem Th24:
+  for beta being Real
+  for x being Real
+  holds x in beta-radix_INT
+    iff ex k being Element of beta-radix_NAT st x=k or x=-k
+proof
+  let beta be Real;
+  let x be Real;
+  
+  thus x in beta-radix_INT
+  implies ex k being Element of beta-radix_NAT st x=k or x=-k
+  proof
+    assume x in beta-radix_INT;
+    then x in beta-radix_NAT or -x in beta-radix_NAT by Def6;
+    then consider k being Element of beta-radix_NAT such that
+    A1: x=k or -x=k;
+    take k;
+    thus x=k or x = -k by A1;
+  end;
+  
+  thus (ex k being Element of beta-radix_NAT st x=k or x=-k)
+  implies x in beta-radix_INT
+  proof
+    given k being Element of beta-radix_NAT such that 
+    A2: x=k or x=-k;
+    x in beta-radix_NAT or -x in beta-radix_NAT by A2;
+    hence x in beta-radix_INT by Def6;
+  end;
+end;
+@ %def Th24
+
+\begin{theorem}
+Let $b\in\NN$. If $b>1$, then $\ZZ_{b}=\ZZ$.
+\end{theorem}
+
+\begin{thm-remark}
+This is one way to check the consistency of our generalization of
+$\beta$-integers: when we restrict attention to a valid radix, we
+recover the familiar integers.
+\end{thm-remark}
+
+<<Theorem: if $b>1$ is a natural number, then $\ZZ_{b}=\ZZ$>>=
+theorem
+  for b being Nat st b > 1
+  holds b-radix_INT = INT
+proof
+  let b be Nat;
+  assume A1: b > 1;
+  then A2: b-radix_NAT = NAT by ThBetaRadixNatCompatibility;
+  for x being object st x in b-radix_INT holds x in INT
+  proof
+    let x be object;
+    assume B1: x in b-radix_INT;
+    then reconsider y=x as Element of REAL;
+    y in NAT or -y in NAT by A2, B1, Def6;
+    then consider k being Nat such that
+    B2: y=k or -y=k;
+    y = k or y = -k by B2;
+    hence thesis by INT_1:def 1;
+  end;
+  then A3: b-radix_INT c= INT by TARSKI:def 3;
+
+  for x being object st x in INT holds x in b-radix_INT
+  proof
+    let x be object;
+    assume B1: x in INT;
+    then reconsider y=x as Integer;
+    ex k being Nat st y = k or y = -k by B1, INT_1:def 1;
+    then consider k being Nat such that
+    B2: k = y or k = - y;
+    reconsider ell=k as Element of b-radix_NAT by A2, ORDINAL1:def 12;
+    y = ell or y = -ell by B2;
+    hence x in b-radix_INT by Th24;
+  end;
+  then INT c= b-radix_INT by TARSKI:def 3;
+  hence b-radix_INT = INT by A3, XBOOLE_0:def 10;
 end;
 @ 
 
