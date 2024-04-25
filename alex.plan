@@ -1,11 +1,57 @@
 <!--- -*- mode: Markdown; var: -*- -->
+# 2024-04-25T10:39:09
+
+I am pushing in my scratchwork, I need to revise it to make it better.
+But a bird in the hand, and all that.
+
+My current issues:
+
+- [ ] Fix `ThNormalFloatCriteriaFiniteExp`
+- [ ] Define the `normal` floating-point numbers for arbitrary `beta`
+      being real are appropriate
+      - `beta to_power eMin <= |.IT.| & |.IT.| <= ...` if `eMin <> -infty`
+        and `eMax <> +infty`
+      - `beta to_power eMin <= |.IT.| & |.IT.| < +infty` if `eMin <> -infty`
+        and `eMax = +infty`
+      - `0 < |.IT.| & |.IT.| <= ...` if `eMin = -infty` and `eMax <> +infty`
+      - `0 < |.IT.| & |.IT.| < +infty` otherwise
+- [ ] Redefine the normal floating-point numbers 
+      (`redefinition attr IT is normal means...`)  when `beta` is a
+      natural number, to be what we expect
+- [ ] Prove `c.e = beta to_power (- e)` converges to zero
+- [ ] Prove every floating-point number is a `beta-radix_INT` multiple
+      of the smallest subnormal floating-point number when `eMin <> -infty`
+- [ ] Corollary: every floating-point number of format `b`, ..., is an
+      integer multiple of the smallest subnormal floating-point number
+      when `eMin <> -infty`
+
+# 2024-04-23T12:53:12
+
+More things on my todo list:
+
+- [X] Adjust the definition of `FLOAT_NUMBER` to adequately reflect the
+      upper bound of floating-point numbers
+      - It turns out that for some real `beta > 0` that 0 is not a
+        floating-point normal.
+- [X] 0 does not need to be an explicit member of `FLOAT_NUMBER` since
+      `0` is an element of $\mathbb{Z}_{\beta}$ as proven in `ThZeroInBetaINT`
+- [X] Fix the theorems giving criteria for real numbers being
+      floating-point numbers.
+- [X] Fix theorem 17
+- [X] Fix St3300, which establishes the smallest positive floating-point
+      number
+- [X] Fix St3301, which establishes every floating-point number is an
+      integer multiple of the smallest floating-point number.
+- [X] Fix the theorem establishing the existence of a subnormal
+      floating-point number
+- [X] Prove $\mathbb{Z}_{\beta}$ is closed under negation
 
 # 2024-04-22T15:28:27
 
 My current to do list:
 
 - [X] Prove when `b` is a natural number, that `b-radix_INT = INT`
-- [ ] Prove that the largest normal floating-point number, when `eMax`
+- [X] Prove that the largest normal floating-point number, when `eMax`
       is a positive integer, in arbitrary `beta being Real` base, is
       `(([/beta\] - 1)/(beta - 1))*(beta to_power (1 - p))*(beta to_power eMax)`
   - This is because the significand is `Sum d` where `d.j = ([/beta\] - 1)*(beta to_power -j)`

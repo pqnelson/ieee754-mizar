@@ -6,6 +6,8 @@ begin :: 3. Floating-point formats
 
 <<Reserve: parameters for floating-point format>>
 
+<<Theorem: value of maximum mantissa>>
+
 <<Definition: subset of floating-point numbers for a format>>
 
 <<Theorem: zero is a floating-point number>>
@@ -159,7 +161,116 @@ reserve beta for positive Real;
 reserve p for positive Nat;
 reserve eMin for negative ExtInt;
 reserve eMax for positive ExtNat;
-@ 
+@
+
+\begin{theorem}
+Let $d$ be a finite sequence of natural numbers.
+Suppose the length of $d$ is equal to $p$.
+If for each $i=0,1,\dots,p-1$ we have $0\leq d_{i}<(\lceil\beta\rceil-1)\beta^{-i}$,
+then
+\begin{equation*}
+\sum_{j=0}^{p-1}d_{j}<\frac{\lceil\beta\rceil-1}{\beta-1}(\beta-\beta^{1-p}).
+\end{equation*}
+\end{theorem}
+
+We should really think of the sequence $d$ as the digits in the
+expansion $d_{0}\bullet d_{1}d_{2}\cdots d_{p-1}$ in base $\beta>1$. The
+largest value of each digit is $\lceil\beta\rceil-1$, and then we obtain
+a geometric sum for the maximum value. This is important, because the
+Standard assumes $\beta=2$ or $\beta=10$, but if we want to explore the
+design space we should figure out what happens for positive $\beta\in\RR$?
+
+\begin{proof}[Proof sketch]
+Set $\kappa_{0} = \lceil\beta\rceil-1$.
+We construct the sequence $c_{j}=\kappa_{0}\beta^{-j}$ for $j=0,\dots,p-1$.
+We then prove $(A_{5})$ that $\sum_{j}c_{j}=(\kappa_{0}/(\beta-1))(\beta-\beta^{1-p})$,
+and since $(A_{6})$ the lengths of $d$ and $c$ are equal and $d_{j}<c_{j}$ for each $j$, it follows that $\sum d\leq\sum c$,
+and the result follows.
+\end{proof}
+
+<<Theorem: value of maximum mantissa>>=
+theorem ThMaxMantissaValue:
+  for d being XFinSequence of NAT
+  st len d = p
+  & (for i being Nat st i in dom d
+     holds 0 <= d.i & d.i <= ([/beta\] - 1) * (beta to_power - i))
+  & beta <> 1
+  holds Sum d <= (([/beta\]-1)/(beta - 1))*(beta - (beta to_power (1 - p)))
+proof
+  let d be XFinSequence of NAT;
+  assume A1: len d = p;
+  assume A2: for i being Nat st i in dom d
+             holds 0 <= d.i & d.i <= ([/beta\] - 1) * (beta to_power - i);
+  assume A3: beta <> 1;
+  set k0 = [/beta\] - 1;
+  set c = (k0 (#) ((beta ") GeoSeq))|p;
+  A4: dom c = p
+  proof
+    B1: dom (k0 (#) ((beta ") GeoSeq)) = NAT by FUNCT_2:def 1;
+    p is Ordinal & p in omega by ORDINAL1:def 12;
+    then for z being Ordinal st z in p
+    holds z in omega by ORDINAL1:10;
+    hence dom ((k0 (#) ((beta ") GeoSeq))|p) = p
+    by B1, RELAT_1:62, ORDINAL1:def 5;
+  end;
+  then reconsider c as XFinSequence by AFINSQ_1:5;
+  reconsider c as XFinSequence of REAL;
+  
+  A5: Sum c = (k0/(beta - 1)) * (beta - (beta to_power (1 - p)))
+  proof
+    consider n being Nat such that
+    B1: p = n+1
+    by NAT_1:6;
+    B2: n = (n + 1) - 1 by XCMPLX_1:26
+         .= p - 1 by B1;
+    1" = 1; then
+    B3: beta" <> 1 by A3;
+    thus Sum c
+    = (Partial_Sums (k0 (#) ((beta ") GeoSeq))).n by B1,AFINSQ_2:56
+    .= (k0 (#) (Partial_Sums ((beta ") GeoSeq))).n by SERIES_1:9
+    .= k0 * ((Partial_Sums ((beta ") GeoSeq)).n) by SEQ_1:9
+    .= k0 * ((1 - ((beta ") to_power (n + 1)))/(1 - (beta "))) by B3,SERIES_1:22
+    .= k0 * ((1 - ((1 * (beta ")) to_power p))/(1 - (1 * (beta ")))) by B1
+    .= k0 * ((1 - ((1 * (beta ")) to_power p))/(1 - (1 / beta))) by XCMPLX_1:215
+    .= k0 * ((1 - ((1/beta) to_power p))/(1 - (1 / beta))) by XCMPLX_1:215
+    .= k0 * (1 * ((1 - ((1/beta) to_power p))/(1 - (1 / beta))))
+    .= k0 * ((beta/beta) * ((1 - ((1/beta) to_power p))/(1 - (1 / beta))))
+    by XCMPLX_1:60
+    .= k0 * ((beta * (1 - ((1/beta) to_power p)))/(beta * (1 - (1 / beta))))
+    by XCMPLX_1:76
+    .= k0 * (((beta * 1) - (beta * ((1/beta) to_power p)))/(beta * 1 - beta*(1/beta)))
+    .= k0 * ((beta - (beta * ((1/beta) to_power p)))/(beta - 1))
+    by XCMPLX_1:106
+    .= k0 * ((beta - (beta * (beta to_power -p)))/(beta - 1)) by POWER:32
+    .= k0 * ((beta - ((beta to_power 1) * (beta to_power -p)))/(beta - 1))
+    by POWER:25
+    .= k0 * ((beta - (beta to_power (1 + (-p))))/(beta - 1))
+    by POWER:27
+    .= ((beta - (beta to_power (1 + (-p))))/(beta - 1)) * k0
+    .= (k0/(beta - 1)) * (beta - (beta to_power (1 + (-p)))) by XCMPLX_1:75
+    .= (k0/(beta - 1)) * (beta - (beta to_power (1 - p)));
+  end;
+
+  A6: len c = len d by A1,A4;
+  for i being Nat st i in dom d holds d.i <= c.i
+  proof
+    let i be Nat;
+    assume B1: i in dom d;
+    B2: i in dom c by A6,B1;
+    then B3: i in p by A4;
+    c.i = ((k0 (#) ((beta ") GeoSeq))|p).i
+       .= (k0 (#) ((beta ") GeoSeq)).i by B3, FUNCT_1:49
+       .= k0 * (((beta ") GeoSeq).i) by SEQ_1:9
+       .= k0 * ((beta ") to_power i) by PREPOWER:def 1
+       .= k0 * ((1 * (beta ")) to_power i)
+       .= k0 * ((1 / beta) to_power i) by XCMPLX_1:215
+       .= k0 * (beta to_power -i) by POWER:32;
+    hence d.i <= c.i by A2, B1;
+  end;
+  then Sum d <= Sum c by A6, AFINSQ_2:57;
+  hence thesis by A5;
+end;
+@ %def ThMaxMantissaValue
 
 \begin{definition}
 Let $\beta$ be a positive real number, let $p$ be a natural number,
@@ -503,7 +614,7 @@ Then $1\in\FF(b,p,e_{\text{min}},e_{\text{max}})$.
 \end{theorem}
 
 <<Theorem: if $b$ is a natural number, then $1\in\FF(b,p,e_{\text{min}},e_{\text{max}})$>>=
-theorem Th17:
+theorem Th43:
   for b being valid_radix Nat
   holds 1 in FLOAT_NUMBER(b, p, eMin, eMax)
 proof
@@ -531,7 +642,7 @@ proof
   end;
   hence 1 in FLOAT_NUMBER(b, p, eMin, eMax) by Th12;
 end;
-@ %def Th17
+@ %def Th43
 
 \begin{definition}
 Let $\beta$ be a positive real number, let $p$ be a natural number,
@@ -1426,7 +1537,7 @@ theorem ThExistenceNormalFloat:
   st x is normal
 proof
   let b be valid_radix Nat;
-  1 in FLOAT_NUMBER(b, p, eMin, eMax) by Th17; then
+  1 in FLOAT_NUMBER(b, p, eMin, eMax) by Th43; then
   1 in FLOAT(b, p, eMin, eMax) by XBOOLE_0:def 3; then
   A1: 1 is Float of b, p, eMin, eMax by Def8a;
   per cases;
