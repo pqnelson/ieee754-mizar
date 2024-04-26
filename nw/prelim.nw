@@ -70,6 +70,12 @@ begin :: Preliminaries
 
 <<Register: elements of $\beta$-radix $\NN$ are non negative>>
 
+<<Theorem: let $n\in\NN_{b}$, if $0<n$, then $1\leq n$>>
+
+<<Theorem: $\beta\NN_{\beta}\subset\NN_{\beta}$>>
+
+<<Theorem: left shifting $\NN_{\beta}$>>
+
 <<Definition: $\beta$-radix integers>>
 
 <<Theorem: $\NN_{\beta}\subset\ZZ_{\beta}$>>
@@ -81,6 +87,14 @@ begin :: Preliminaries
 <<Theorem: criterion for being a member of $\ZZ_{\beta}$>>
 
 <<Theorem: if $b>1$ is a natural number, then $\ZZ_{b}=\ZZ$>>
+
+<<Theorem: let $n\in\ZZ_{b}$; if $0\leq n$, then $n\in\NN_{b}$>>
+
+<<Theorem: Let $n\in\ZZ_{b}$. If $0<n$, then $1\leq n$.>>
+
+<<Theorem: $\ZZ_{\beta}$ is closed under negation>>
+
+<<Theorem: $m\in\ZZ_{\beta}$ and $N\in\NN$, then $m\beta^{N}\in\ZZ_{\beta}$>>
 
 <<Subsection: Defining the extended integers>>
 @
@@ -2389,7 +2403,344 @@ registration
   cluster -> non negative for Element of beta-radix_NAT;
   correctness by ThBetaRadixNATAreNonNegative;
 end;
+@
+
+\begin{theorem}
+Let $n$ be an element of $\NN_{b}$. If $0<n$, then $1\leq n$.
+\end{theorem}
+
+<<Theorem: let $n\in\NN_{b}$, if $0<n$, then $1\leq n$>>=
+theorem ThSmallestPositiveBetaRadixNat:
+  for n being Element of b-radix_NAT
+  st 0 < n
+  holds 1 <= n
+proof
+  let n be Element of b-radix_NAT;
+  assume A1: 0 < n;
+  then consider d being XFinSequence of NAT such that
+  A2: d.((len d)-1) <> 0
+  & (for j being Nat st j in dom d holds 0 <= d.j & d.j < b)
+  & n = beta_integer_value(d,b)
+  by ThBetaNATCriterion;
+  consider d9 being XFinSequence of REAL such that
+  A3: dom d9 = dom d
+  & (for i being Nat st i in dom d9 holds d9.i = (d.i)*(b |^ i))
+  & beta_integer_value(d,b) = Sum d9
+  by Def3a;
+
+  set y = (d.((len d) - 1)) * (b to_power ((len d) - 1));
+  for r being Real st r in rng d9 holds 0 <= r
+  proof
+    let r be Real;
+    assume r in rng d9;
+    then consider i being object such that
+    B1: i in dom d9 & d9.i = r by FUNCT_1:def 3;
+    reconsider i as Element of NAT by B1;
+    r = (d.i)*(b to_power i) by A3, B1;
+    hence 0 <= r;
+  end;
+  then A5: d9 is nonnegative-yielding by PARTFUN3:def 4;
+  then len d9 = 0 implies contradiction by A1, A2, A3, AFINSQ_2:62;
+  then len d9 > 0;
+  then 0 + len d9 > 0;
+  then A6: len d9 >= 1 by NAT_1:19;
+  ex x being object st (x in dom d9 & d9.x = y)
+  proof
+    1 <= len d by A3,A6;
+    then (len d) - 1 in NAT by INT_1:5;
+    then reconsider x=(len d) - 1 as Nat;
+    take x;
+    (len d) - 1 < (len d) - 0 by XREAL_1:15;
+    then (len d) - 1 < (len d);
+    then x < len d;
+    then x < len d9 by A3;
+    hence x in dom d9 by AFINSQ_1:86;
+    hence d9.x = (d.x) * (b to_power x) by A3
+              .= y;
+  end;
+  then Sum d9 >= y by A5, A6, AFINSQ_2:61;
+  then A7: n >= y by A2,A3;
+  y >= 1
+  proof
+    d.((len d) - 1) <> 0 by A2;
+    then d.((len d) - 1) > 0;
+    then d.((len d) - 1) >= 0 + 1 by INT_1:7;
+    then B1: d.((len d) - 1) >= 1;
+    (len d) >= 1 by A3,A6;
+    then (len d) = 1 or (len d) > 1 by NAT_1:25;
+    then per cases;
+    suppose len d = 1;
+      then (len d) + (- 1) = 0;
+      then (b to_power ((len d) - 1)) = 1 by POWER:24;
+      hence thesis by B1;
+    end;
+    suppose len d > 1;
+      then (len d) - 1 > 0 by XREAL_1:50;
+      then (b to_power ((len d) - 1)) > 1 by Def1, POWER:35;
+      then 1 <= (b to_power ((len d) - 1)) & 1 <= d.((len d) -1) by B1;
+      then 1 * 1 <= (d.((len d) - 1)) * (b to_power ((len d) - 1)) by XREAL_1:66;
+      hence thesis;
+    end;
+  end;
+  hence n >= 1 by A7, XXREAL_0:2;
+end;
+@ %def ThSmallestPositiveBetaRadixNat
+
+\begin{lemma}
+Let $d$ be a finite sequence, let $x$ be an object. If $i\in\dom(d)$,
+then $(\langle x\rangle\wedge d)_{i+1}=d_{i}$.
+\end{lemma}
+
+\begin{proof}[Proof sketch]
+This is because $\|(x)\|\leq i+1$ and $i+1<\|d\|$, which gives the result.
+\end{proof}
+
+<<Lemma: [[(<%x%> ^ d).(i + 1) = d.i]]>>=
+LmShiftIndex:
+  for i being Nat
+  for d being XFinSequence
+  for x being object
+  st i in dom d
+  holds (<%x%> ^ d).(i + 1) = d.i
+proof
+  let i be Nat;
+  let d be XFinSequence;
+  let x be object;
+  assume A1: i in dom d;
+  A2: 1 = len <%x%> by AFINSQ_1:def 4;
+  len (<%x%>) <= i + 1 & i + 1 < len (<%x%> ^ d)
+  proof
+    thus len (<%x%>) <= i + 1 by A2, XREAL_1:38;
+    i + 1 < 1 + (len d) by A1, AFINSQ_1:86, XREAL_1:6;
+    hence i + 1 < len (<%x%> ^ d) by A2, AFINSQ_1:17;
+  end;
+  hence (<%x%> ^ d).(i + 1) = d.((i + 1) -1) by A2, AFINSQ_1:19
+                           .= d.i;
+end;
+@ %def LmShiftIndex
+
+\begin{theorem}
+Let $m\in\NN_{\beta}$. Then $\beta m\in\NN_{\beta}$.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+If $m=0$, then the result is obvious. When $m\neq0$, we need to
+construct a sequence $d'$ such that $d'_{N}\neq0$ where $N+1=\|d'\|$ is
+the length of $d'$, and $0\leq d'_{j}<\beta$ for each $j$, and $\beta m=\sum d'_{j}\beta^{j}$.
+We observe that if $d$ is the $\beta$-expansion of $m$, then
+$d'=\langle0\rangle\wedge d$ is the desired sequence. We just need to
+prove it satisfies the desired properties.
+\end{proof}
+
+<<Theorem: $\beta\NN_{\beta}\subset\NN_{\beta}$>>=
+<<Lemma: [[(<%x%> ^ d).(i + 1) = d.i]]>>
+
+theorem LmLeftShiftOnceBetaRadixNAT:
+  for beta being positive Real
+  for m being Element of beta-radix_NAT
+  holds beta*m in beta-radix_NAT
+proof
+  let beta be positive Real;
+  let m be Element of beta-radix_NAT;
+  per cases;
+  suppose A1: m = 0;
+    then beta*m = m;
+    hence thesis;
+  end;
+  suppose A2: m <> 0;
+    then consider d being XFinSequence of NAT such that
+    A3: d.((len d) - 1) <> 0
+    & (for j being Nat st j in dom d holds 0 <= d.j & d.j < beta)
+    & m = beta_integer_value(d,beta)
+    by ThBetaNATCriterion;
+    set d1 = <%0%> ^ d;
+    A4: len <%0%> = 1 by AFINSQ_1:def 4;
+    A5: d1.((len d1) - 1) <> 0
+    proof
+      (len d) - 1 in dom d by A3, FUNCT_1:def 2;
+      then d.((len d) - 1) = d1.((len <%0%>) + ((len d) - 1)) by AFINSQ_1:def 3
+                          .= d1.((1 + (len d)) - 1) by A4
+                          .= d1.((len d1) - 1) by A4, AFINSQ_1:def 3;
+      hence thesis by A3;
+    end;
+    A6: for j being Nat st j in dom d1 holds 0 <= d1.j & d1.j < beta
+    proof
+      let j be Nat;
+      assume B1: j in dom d1;
+      per cases;
+      suppose j = 0;
+        hence thesis by AFINSQ_1:35;
+      end;
+      suppose j <> 0;
+        then consider k being Nat such that
+        B2: j = k + 1 by NAT_1:6;
+        k + 1 < len d1 by B1, B2, AFINSQ_1:86;
+        then k + 1 < (len <%0%>) + (len d) by AFINSQ_1:17;
+        then (k + 1) -1 < (1 + len d) -1 by A4, XREAL_1:9;
+        then B3: k in dom d by AFINSQ_1:86;
+        then B4: 1 + k < (len <%0%>) + (len d)
+        by A4, AFINSQ_1:86, XREAL_1:8;
+        j = k + len <%0%> by B2, AFINSQ_1:def 4;
+        then d1.j = d.(j - 1) by B2, B4, NAT_1:11, AFINSQ_1:18
+                 .= d.k by B2;
+        hence thesis by A3, B3;
+      end;
+    end;
+    beta * m = beta_integer_value(d1,beta)
+    <<Subproof: $\beta m=\sum_{j}d^{\prime}_{j}$>>
+    hence beta*m in beta-radix_NAT by A2,A5,A6,ThBetaNATCriterion;
+  end;
+end;
+@ %def LmLeftShiftOnceBetaRadixNAT
+
+\begin{proof}[Subproof ($\beta m=\sum_{j}d^{\prime}_{j}$)]
+We begin by constructing the summands $s_{j}=d_{j}\beta^{j}$ and $s'_{j}=d'_{j}\beta^{j}$,
+and we will show that $s'_{j}=(\langle0\rangle\wedge s)_{j}$. The basic
+roadmap will be:
+\begin{itemize}
+\item[$(B_{1})$] $m=\sum s$
+\item[$(B_{2})$] $\beta m=\sum s'$ 
+\item[$(B_{3})$] $\sum s'_{j}=\sum_{j=1}s'_{j}$
+\item[$(B_{4})$] $1<\|s'\|=1+\|d\|$ 
+\item[$(B_{5})$] $\|s'|_{j>0}\| = \|\beta s\|$   
+\item[$(\star)$] $s'_{i+1}=(\beta s)_{i}$
+\end{itemize}
+Hence $\sum s'=\sum s$.
+\end{proof}
+
+<<Subproof: $\beta m=\sum_{j}d^{\prime}_{j}$>>=
+proof
+  consider d9 being XFinSequence of REAL such that
+  B1: dom d9 = dom d
+  & (for i being Nat st i in dom d9 holds d9.i = (d.i)*(beta |^ i))
+  & beta_integer_value(d, beta) = Sum d9
+  by Def3a;
+  consider d91 being XFinSequence of REAL such that
+  B2: dom d91 = dom d1
+  & (for i being Nat st i in dom d91 holds d91.i = (d1.i)*(beta |^ i))
+  & beta_integer_value(d1,beta) = Sum d91
+  by Def3a;
+  d91 = <%0%> ^ (d91 /^ 1)
+  proof
+    0 < 1 + len d;
+    then 0 < len (<%0%> ^ d) by A4, AFINSQ_1:17;
+    then Z1: 0 in dom d91 by B2, AFINSQ_1:66;
+    then Z2: dom (d91) /\ 1 = 1 & dom (<% d91.0 %>) = 1
+    by CARD_1:49, AFINSQ_1:def 4, ZFMISC_1:46;
+    for i being object st i in dom (d91) /\ 1 holds d91.i = <% d91.0 %>.i
+    proof
+      let i be object;
+      assume i in dom (d91) /\ 1;
+      then i = 0 by Z2, CARD_1:49, TARSKI:def 1;
+      hence thesis;
+    end;
+    then Z3: d91 | 1 = <% d91.0 %> by Z2, FUNCT_1:46;
+    d91.0 = (d1.0)*(beta |^ 0) by B2,Z1
+         .= 0 *(beta |^ 0) by AFINSQ_1:35
+         .= 0;
+    hence thesis by Z3;
+  end;
+  then
+  B3: Sum d91 = (Sum <%0%>) + Sum (d91 /^ 1) by AFINSQ_2:55
+             .= 0 + Sum (d91 /^ 1) by AFINSQ_2:53;
+  B4: 1 < len d91 & len d91 = 1 + len d
+  proof
+    for r being Real st r in rng d9 holds 0 <= r
+    proof
+      let r be Real;
+      assume r in rng d9;
+      then consider i being object such that
+      Z1: i in dom d9 & d9.i = r by FUNCT_1:def 3;
+      reconsider i as Nat by Z1;
+      r = (d.i)*(beta to_power i) by B1, Z1;
+      hence 0 <= r;
+    end;
+    then d9 is nonnegative-yielding by PARTFUN3:def 4;
+    then Sum d9 = 0 iff (len d9 = 0 or d9 = (len d9) --> 0)
+    by AFINSQ_2:62;
+    then C1: 1 + len d > 1 + 0 by A2, A3, B1, XREAL_1:8;
+    len d91 = len (<%0%>) + len d by B2, AFINSQ_1:17
+           .= 1 + len d by AFINSQ_1:def 4;
+    hence thesis by C1;
+  end;
+  then
+  B5: len (d91 /^ 1) = (len d91) - 1 by AFINSQ_2:7
+                    .= ((len <%0%>) + (len d)) - 1 by B2, AFINSQ_1:17
+                    .= (1 + (len d)) - 1 by AFINSQ_1:def 4
+                    .= len (beta (#) d9) by B1, VALUED_1:def 5;
+  for i being Nat
+  st i < len (d91 /^ 1)
+  holds (d91 /^ 1).i = (beta (#) d9).i
+  proof
+    let i be Nat;
+    assume Z1: i < len (d91 /^ 1);
+    dom (beta (#) d9) = dom d9 by VALUED_1:def 5;
+    then Z2: i in dom (d91 /^ 1) & i in dom (beta (#) d9)
+    & i in dom d9
+    by B5,Z1,AFINSQ_1:86;
+    len (d91 /^ 1) = (len d91) -' 1 by AFINSQ_2:def 2
+                  .= (len d91) - 1 by B4, XREAL_0:def 2;
+    then Z3: i + 1 in dom d91 by Z1, XREAL_1:20, AFINSQ_1:86;
+    then Z4: d1.(i + 1) = d.i by B1, Z2, LmShiftIndex;
+    (d91 /^ 1).i = d91.(i + 1) by Z2, AFINSQ_2:def 2
+                .= (d1.(i + 1)) * (beta to_power (i + 1)) by B2,Z3
+                .= (d.i) * ((beta to_power i) * (beta to_power 1))
+                   by Z4, POWER:27
+                .= beta * ((d.i) * (beta to_power i))
+                .= beta * (d9.i) by Z2, B1
+                .= (beta (#) d9).i by VALUED_1:6;
+    hence (d91 /^ 1).i = (beta (#) d9).i;
+  end;
+  then Sum (d91 /^ 1) = Sum (beta (#) d9) by B5, AFINSQ_1:9
+                     .= beta * m by A3, B1, AFINSQ_2:64;
+  hence thesis by B2,B3;
+end;
 @ 
+
+\begin{theorem}
+Let $\beta>0$ be real, let $m\in\NN_{\beta}$, let $N\in\NN$.
+Then $m\beta^{N}\in\NN_{\beta}$.
+\end{theorem}
+
+<<Theorem: left shifting $\NN_{\beta}$>>=
+theorem ThLeftShiftBetaRadixNAT:
+  for beta being positive Real
+  for m being Element of beta-radix_NAT
+  for N being Integer st N in NAT
+  holds m*(beta to_power N) in beta-radix_NAT
+proof
+  let beta be positive Real;
+  let m be Element of beta-radix_NAT;
+  let N be Integer;
+  assume A1: N in NAT;
+  then reconsider N1=N as Nat;
+  defpred P[Nat] means m*(beta to_power $1) in beta-radix_NAT;
+  A2: for n being Nat st (for k being Nat st k < n holds P[k])
+  holds P[n]
+  proof
+    let n be Nat;
+    assume B1: for k being Nat st k < n holds P[k];
+    per cases;
+    suppose n = 0;
+      then m*(beta to_power n) = m * 1 by POWER:24;
+      hence thesis;
+    end;
+    suppose n <> 0;
+      then consider k being Nat such that
+      B2: n = k + 1 by NAT_1:6;
+      k < n by B2, NAT_1:16;
+      then B3: m * (beta to_power k) in beta-radix_NAT by B1;
+      m * (beta to_power n) 
+       = m * ((beta to_power k) * (beta to_power 1)) by B2, POWER:27
+      .= beta * (m * (beta to_power k));
+      hence P[n] by B3, LmLeftShiftOnceBetaRadixNAT;
+    end;
+  end;
+  for k being Nat holds P[k] from NAT_1:sch 4(A2);
+  then P[N1];
+  hence thesis;
+end;
+@ %def ThLeftShiftBetaRadixNAT
 
 \begin{definition}
 We define the set of $\beta$-radix integers $\ZZ_{\beta}$ to be the
@@ -2580,7 +2931,7 @@ recover the familiar integers.
 \end{thm-remark}
 
 <<Theorem: if $b>1$ is a natural number, then $\ZZ_{b}=\ZZ$>>=
-theorem
+theorem ThBRadixINTCompatibility:
   for b being Nat st b > 1
   holds b-radix_INT = INT
 proof
@@ -2615,7 +2966,113 @@ proof
   then INT c= b-radix_INT by TARSKI:def 3;
   hence b-radix_INT = INT by A3, XBOOLE_0:def 10;
 end;
-@ 
+@ %def ThBRadixINTCompatibility
+
+\begin{theorem}
+Let $n\in\ZZ_{b}$. If $0\leq n$, then $n\in\NN_{b}$.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+If $n=0$, then $n\in\NN_{b}$. If $n>0$, then $n\in\NN_{b}$.
+\end{proof}
+
+<<Theorem: let $n\in\ZZ_{b}$; if $0\leq n$, then $n\in\NN_{b}$>>=
+theorem ThPositiveBetaRadixIntAreBetaRadixNat:
+  for n being Element of b-radix_INT
+  st 0 <= n
+  holds n in b-radix_NAT
+proof
+  let n be Element of b-radix_INT;
+  assume A1: 0 <= n;
+  then per cases;
+  suppose 0 = n;
+    hence thesis;
+  end;
+  suppose A2: n > 0;
+    consider k being Element of b-radix_NAT such that
+    A3: n = k or n = -k by Th24;
+    thus thesis by A2,A3;
+  end;
+end;
+@ %def ThPositiveBetaRadixIntAreBetaRadixNat
+
+\begin{theorem}
+Let $n\in\ZZ_{b}$. If $0<n$, then $1\leq n$.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+Since $0<n$, we see $n\in\NN_{b}$, and the result follows from a
+previous theorem.
+\end{proof}
+
+<<Theorem: Let $n\in\ZZ_{b}$. If $0<n$, then $1\leq n$.>>=
+theorem ThSmallestPositiveBetaRadixInt:
+  for n being Element of b-radix_INT
+  st 0 < n
+  holds 1 <= n
+proof
+  let n be Element of b-radix_INT;
+  assume A1: 0 < n;
+  then n in b-radix_NAT by ThPositiveBetaRadixIntAreBetaRadixNat;
+  hence 1 <= n by A1, ThSmallestPositiveBetaRadixNat;
+end;
+@ %def ThSmallestPositiveBetaRadixInt
+
+\begin{theorem}
+Let $x\in\ZZ_{\beta}$, then $-x\in\ZZ_{\beta}$.
+\end{theorem}
+
+This follows from 
+
+<<Theorem: $\ZZ_{\beta}$ is closed under negation>>=
+theorem ThBetaRadixIntClosedUnderNegation:
+  for beta being positive Real
+  for x being Element of beta-radix_INT
+  holds -x in beta-radix_INT
+proof
+  let beta be positive Real;
+  let x be Element of beta-radix_INT;
+  ex k being Element of beta-radix_NAT st x = k or x = -k by Th24;
+  hence -x in beta-radix_INT by Th24;
+end;
+@ %def ThBetaRadixIntClosedUnderNegation
+
+\begin{theorem}
+Let $\beta>0$ be real, let $N\in\NN$, let $m\in\ZZ_{\beta}$.
+Then $m\beta^{N}\in\ZZ_{\beta}$.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+We can write $m=k$ or $m=-k$ for some $k\in\NN_{\beta}$. In either case,
+$k\beta^{N}\in\NN_{\beta}$, so we obtain the result.
+\end{proof}
+
+<<Theorem: $m\in\ZZ_{\beta}$ and $N\in\NN$, then $m\beta^{N}\in\ZZ_{\beta}$>>=
+theorem ThLeftShiftBetaRadixINT:
+  for beta being positive Real
+  for m being Element of beta-radix_INT
+  for N being Integer st N in NAT
+  holds m*(beta to_power N) in beta-radix_INT
+proof
+  let beta be positive Real;
+  let m be Element of beta-radix_INT;
+  let N be Integer;
+  assume A1: N in NAT;
+  consider k being Element of beta-radix_NAT such that
+  A2: m=k or m=-k by Th24;
+  per cases by A2;
+  suppose m=k;
+    then m*(beta to_power N)=k*(beta to_power N)
+    & k*(beta to_power N) in beta-radix_NAT by A1, ThLeftShiftBetaRadixNAT;
+    hence thesis by Th20, TARSKI:def 3;
+  end;
+  suppose m=-k;
+    then m*(beta to_power N)=-(k*(beta to_power N))
+    & k*(beta to_power N) in beta-radix_NAT by A1, ThLeftShiftBetaRadixNAT;
+    hence thesis by Th24;
+  end;
+end;
+@ %def ThLeftShiftBetaRadixINT
 
 \begin{theorem}
 Let $c_{j}$ and $d_{j}$ be sequences of real numbers such that for each

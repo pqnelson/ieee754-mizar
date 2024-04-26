@@ -10,37 +10,36 @@
 :: http://creativecommons.org/licenses/by-sa/3.0/.
 
 environ
- vocabularies NUMBERS, ORDINAL1, CARD_1, CARD_3, SUBSET_1, XBOOLE_0, ARYTM_2, ARYTM_3,
-   ZFMISC_1, XCMPLX_0, XREAL_0, XXREAL_0, XXREAL_1, XXREAL_2, TARSKI, FUNCT_1, FUNCT_7, RELAT_1,
-   REAL_1, INT_1, PREPOWER, POWER, ARYTM_1, NAT_1, COUNTERS, MEMBERED,
-   COMPLEX1, FINSEQ_1, FINSET_1, PARTFUN1, FUNCOP_1, RFINSEQ,
-   NEWTON, PARTFUN3, PRE_TOPC, FUZNUM_1, SEQ_1, ORDINAL2, SEQ_2,
-   SEQ_4, SERIES_1, NUMERAL1, AFINSQ_1, ORDINAL4, VALUED_0, VALUED_1,
-   FLOAT_1;
- notations TARSKI, XBOOLE_0, ZFMISC_1, SUBSET_1, ORDINAL1, ORDINAL4, ARYTM_2, ARYTM_3,
-   FINSEQ_1, RELSET_1, RELAT_1, PARTFUN1, PARTFUN3, FUNCOP_1, AFINSQ_1, AFINSQ_2, ENUMSET1,
-   XXREAL_2, XXREAL_3, NUMBERS, XCMPLX_0, XXREAL_0, XXREAL_1, XREAL_0, NEWTON, FUNCT_1,
-   FUNCT_2, NAT_1, INT_1, COUNTERS, COMPLEX1, FINSET_1, SEQ_1, MEMBERED, SEQ_2, SEQ_4,
-   SERIES_1, NUMERAL1, VALUED_0, VALUED_1,
-   PREPOWER, POWER;
+ vocabularies NUMBERS, ORDINAL1, CARD_1, CARD_3, SUBSET_1, XBOOLE_0,
+   ARYTM_2, ARYTM_3, ZFMISC_1, XCMPLX_0, XREAL_0, XXREAL_0, TARSKI,
+   FUNCT_1, FUNCT_7, RELAT_1, REAL_1, INT_1, PREPOWER, POWER, ARYTM_1,
+   NAT_1, COUNTERS, COMPLEX1, FINSEQ_1, FINSET_1, FUNCOP_1, RFINSEQ,
+   NEWTON, PARTFUN3, PRE_TOPC, FUZNUM_1, SEQ_1, ORDINAL2, SEQ_2, SERIES_1,
+   NUMERAL1, AFINSQ_1, ORDINAL4, VALUED_0, VALUED_1, FLOAT_1;
+ notations TARSKI, XBOOLE_0, ZFMISC_1, SUBSET_1, ORDINAL1, ORDINAL4,
+   ARYTM_2, ARYTM_3, FINSEQ_1, RELSET_1, RELAT_1, PARTFUN1, PARTFUN3,
+   FUNCOP_1, AFINSQ_1, AFINSQ_2, ENUMSET1, XXREAL_2, XXREAL_3, NUMBERS,
+   XCMPLX_0, XXREAL_0, XREAL_0, NEWTON, FUNCT_1, FUNCT_2, NAT_1, INT_1,
+   COUNTERS, COMPLEX1, FINSET_1, SEQ_1, MEMBERED, SEQ_2, SEQ_4,
+   SERIES_1, NUMERAL1, VALUED_0, VALUED_1, PREPOWER, POWER;
  constructors FINSEQ_1, FUNCOP_1, BINOP_2, ORDINAL4, ARYTM_2, ARYTM_3,
-   NUMBERS, XCMPLX_0, XXREAL_0, XXREAL_1, XXREAL_2, XXREAL_3,
-   XREAL_0, RELSET_1, FUNCT_1, FUNCT_2, NAT_1, INT_1, ENUMSET1,
-   COMPLEX1, NEWTON, FINSET_1, COUNTERS, PREPOWER, POWER, PARTFUN1,
-   PARTFUN3, SERIES_1, MEMBERED, NUMERAL1, RECDEF_1,
-   AFINSQ_1, NAT_D, AFINSQ_2, VALUED_0, VALUED_1, COMSEQ_2, SEQ_2, SEQ_4, SEQ_1;
+   NUMBERS, XCMPLX_0, XXREAL_0, XXREAL_1, XXREAL_2, XXREAL_3, XREAL_0,
+   RELSET_1, FUNCT_1, FUNCT_2, NAT_1, INT_1, ENUMSET1, COMPLEX1, NEWTON,
+   FINSET_1, COUNTERS, PREPOWER, POWER, PARTFUN1, PARTFUN3, SERIES_1,
+   MEMBERED, NUMERAL1, RECDEF_1, AFINSQ_1, NAT_D, AFINSQ_2, VALUED_0,
+   VALUED_1, COMSEQ_2, SEQ_2, SEQ_4, SEQ_1;
  registrations ORDINAL1, XBOOLE_0, COUNTERS, NUMBERS, NUMBER01,
    XCMPLX_0, XXREAL_0, XREAL_0, XXREAL_3, FINSET_1, RAT_1, NAT_1, INT_1,
-   RELSET_1, AFINSQ_1, AFINSQ_2, VALUED_0, VALUED_1, FUNCT_2, SEQ_1, SEQ_2,
-   FOMODEL0, NEWTON, POWER, MEMBERED;
+   RELSET_1, AFINSQ_1, AFINSQ_2, VALUED_0, VALUED_1, FUNCT_2, SEQ_1,
+   SEQ_2, FOMODEL0, NEWTON, POWER, MEMBERED;
  requirements REAL, SUBSET, BOOLE, NUMERALS, ARITHM;
- theorems AFINSQ_1, AFINSQ_2, ARYTM_2, ARYTM_3, CARD_1, COMPLEX1, COUNTERS, ENUMSET1,
-   FINANCE2, FINSET_1, FUNCOP_1, FUNCT_1, FUNCT_2, INT_1, MEMBERED, NAT_1, NEWTON,
-   NUMERAL1, NUMBERS, ORDINAL1, ORDINAL2, ORDINAL3, PARTFUN3, POWER, PREPOWER, RELAT_1,
-   SEQ_1, SEQ_2, SEQ_4, SERIES_1, SUBSET_1, TARSKI, VALUED_1, XBOOLE_0, XBOOLE_1,
-   XCMPLX_0, XCMPLX_1, XREAL_0, XREAL_1, XXREAL_0, XXREAL_2, XXREAL_3,
-   XTUPLE_0, ZFMISC_1;
- schemes AFINSQ_1, NAT_1, RECDEF_1, SEQ_1;
+ theorems AFINSQ_1, AFINSQ_2, ARYTM_2, ARYTM_3, CARD_1, COMPLEX1,
+   COUNTERS, ENUMSET1, FINSET_1, FUNCOP_1, FUNCT_1, FUNCT_2, INT_1,
+   NAT_1, NUMERAL1, NUMBERS, ORDINAL1, ORDINAL3, PARTFUN3, POWER,
+   PREPOWER, RELAT_1, SEQ_1, SEQ_2, SERIES_1, SUBSET_1, TARSKI,
+   VALUED_1, XBOOLE_0, XBOOLE_1, XCMPLX_0, XCMPLX_1, XREAL_0, XREAL_1,
+   XXREAL_0, XXREAL_3, XTUPLE_0, ZFMISC_1;
+ schemes AFINSQ_1, NAT_1, SEQ_1;
 
 begin :: Preliminaries
 
@@ -1415,6 +1414,283 @@ registration
   correctness by ThBetaRadixNATAreNonNegative;
 end;
 
+theorem ThSmallestPositiveBetaRadixNat:
+  for n being Element of b-radix_NAT
+  st 0 < n
+  holds 1 <= n
+proof
+  let n be Element of b-radix_NAT;
+  assume A1: 0 < n;
+  then consider d being XFinSequence of NAT such that
+  A2: d.((len d)-1) <> 0
+  & (for j being Nat st j in dom d holds 0 <= d.j & d.j < b)
+  & n = beta_integer_value(d,b)
+  by ThBetaNATCriterion;
+  consider d9 being XFinSequence of REAL such that
+  A3: dom d9 = dom d
+  & (for i being Nat st i in dom d9 holds d9.i = (d.i)*(b |^ i))
+  & beta_integer_value(d,b) = Sum d9
+  by Def3a;
+
+  set y = (d.((len d) - 1)) * (b to_power ((len d) - 1));
+  for r being Real st r in rng d9 holds 0 <= r
+  proof
+    let r be Real;
+    assume r in rng d9;
+    then consider i being object such that
+    B1: i in dom d9 & d9.i = r by FUNCT_1:def 3;
+    reconsider i as Element of NAT by B1;
+    r = (d.i)*(b to_power i) by A3, B1;
+    hence 0 <= r;
+  end;
+  then A5: d9 is nonnegative-yielding by PARTFUN3:def 4;
+  then len d9 = 0 implies contradiction by A1, A2, A3, AFINSQ_2:62;
+  then len d9 > 0;
+  then 0 + len d9 > 0;
+  then A6: len d9 >= 1 by NAT_1:19;
+  ex x being object st (x in dom d9 & d9.x = y)
+  proof
+    1 <= len d by A3,A6;
+    then (len d) - 1 in NAT by INT_1:5;
+    then reconsider x=(len d) - 1 as Nat;
+    take x;
+    (len d) - 1 < (len d) - 0 by XREAL_1:15;
+    then (len d) - 1 < (len d);
+    then x < len d;
+    then x < len d9 by A3;
+    hence x in dom d9 by AFINSQ_1:86;
+    hence d9.x = (d.x) * (b to_power x) by A3
+              .= y;
+  end;
+  then Sum d9 >= y by A5, A6, AFINSQ_2:61;
+  then A7: n >= y by A2,A3;
+  y >= 1
+  proof
+    d.((len d) - 1) <> 0 by A2;
+    then d.((len d) - 1) > 0;
+    then d.((len d) - 1) >= 0 + 1 by INT_1:7;
+    then B1: d.((len d) - 1) >= 1;
+    (len d) >= 1 by A3,A6;
+    then (len d) = 1 or (len d) > 1 by NAT_1:25;
+    then per cases;
+    suppose len d = 1;
+      then (len d) + (- 1) = 0;
+      then (b to_power ((len d) - 1)) = 1 by POWER:24;
+      hence thesis by B1;
+    end;
+    suppose len d > 1;
+      then (len d) - 1 > 0 by XREAL_1:50;
+      then (b to_power ((len d) - 1)) > 1 by Def1, POWER:35;
+      then 1 <= (b to_power ((len d) - 1)) & 1 <= d.((len d) -1) by B1;
+      then 1 * 1 <= (d.((len d) - 1)) * (b to_power ((len d) - 1)) by XREAL_1:66;
+      hence thesis;
+    end;
+  end;
+  hence n >= 1 by A7, XXREAL_0:2;
+end;
+
+LmShiftIndex:
+  for i being Nat
+  for d being XFinSequence
+  for x being object
+  st i in dom d
+  holds (<%x%> ^ d).(i + 1) = d.i
+proof
+  let i be Nat;
+  let d be XFinSequence;
+  let x be object;
+  assume A1: i in dom d;
+  A2: 1 = len <%x%> by AFINSQ_1:def 4;
+  len (<%x%>) <= i + 1 & i + 1 < len (<%x%> ^ d)
+  proof
+    thus len (<%x%>) <= i + 1 by A2, XREAL_1:38;
+    i + 1 < 1 + (len d) by A1, AFINSQ_1:86, XREAL_1:6;
+    hence i + 1 < len (<%x%> ^ d) by A2, AFINSQ_1:17;
+  end;
+  hence (<%x%> ^ d).(i + 1) = d.((i + 1) -1) by A2, AFINSQ_1:19
+                           .= d.i;
+end;
+
+theorem LmLeftShiftOnceBetaRadixNAT:
+  for beta being positive Real
+  for m being Element of beta-radix_NAT
+  holds beta*m in beta-radix_NAT
+proof
+  let beta be positive Real;
+  let m be Element of beta-radix_NAT;
+  per cases;
+  suppose A1: m = 0;
+    then beta*m = m;
+    hence thesis;
+  end;
+  suppose A2: m <> 0;
+    then consider d being XFinSequence of NAT such that
+    A3: d.((len d) - 1) <> 0
+    & (for j being Nat st j in dom d holds 0 <= d.j & d.j < beta)
+    & m = beta_integer_value(d,beta)
+    by ThBetaNATCriterion;
+    set d1 = <%0%> ^ d;
+    A4: len <%0%> = 1 by AFINSQ_1:def 4;
+    A5: d1.((len d1) - 1) <> 0
+    proof
+      (len d) - 1 in dom d by A3, FUNCT_1:def 2;
+      then d.((len d) - 1) = d1.((len <%0%>) + ((len d) - 1)) by AFINSQ_1:def 3
+                          .= d1.((1 + (len d)) - 1) by A4
+                          .= d1.((len d1) - 1) by A4, AFINSQ_1:def 3;
+      hence thesis by A3;
+    end;
+    A6: for j being Nat st j in dom d1 holds 0 <= d1.j & d1.j < beta
+    proof
+      let j be Nat;
+      assume B1: j in dom d1;
+      per cases;
+      suppose j = 0;
+        hence thesis by AFINSQ_1:35;
+      end;
+      suppose j <> 0;
+        then consider k being Nat such that
+        B2: j = k + 1 by NAT_1:6;
+        k + 1 < len d1 by B1, B2, AFINSQ_1:86;
+        then k + 1 < (len <%0%>) + (len d) by AFINSQ_1:17;
+        then (k + 1) -1 < (1 + len d) -1 by A4, XREAL_1:9;
+        then B3: k in dom d by AFINSQ_1:86;
+        then B4: 1 + k < (len <%0%>) + (len d)
+        by A4, AFINSQ_1:86, XREAL_1:8;
+        j = k + len <%0%> by B2, AFINSQ_1:def 4;
+        then d1.j = d.(j - 1) by B2, B4, NAT_1:11, AFINSQ_1:18
+                 .= d.k by B2;
+        hence thesis by A3, B3;
+      end;
+    end;
+    beta * m = beta_integer_value(d1,beta)
+    proof
+      consider d9 being XFinSequence of REAL such that
+      B1: dom d9 = dom d
+      & (for i being Nat st i in dom d9 holds d9.i = (d.i)*(beta |^ i))
+      & beta_integer_value(d, beta) = Sum d9
+      by Def3a;
+      consider d91 being XFinSequence of REAL such that
+      B2: dom d91 = dom d1
+      & (for i being Nat st i in dom d91 holds d91.i = (d1.i)*(beta |^ i))
+      & beta_integer_value(d1,beta) = Sum d91
+      by Def3a;
+      d91 = <%0%> ^ (d91 /^ 1)
+      proof
+        0 < 1 + len d;
+        then 0 < len (<%0%> ^ d) by A4, AFINSQ_1:17;
+        then Z1: 0 in dom d91 by B2, AFINSQ_1:66;
+        then Z2: dom (d91) /\ 1 = 1 & dom (<% d91.0 %>) = 1
+        by CARD_1:49, AFINSQ_1:def 4, ZFMISC_1:46;
+        for i being object st i in dom (d91) /\ 1 holds d91.i = <% d91.0 %>.i
+        proof
+          let i be object;
+          assume i in dom (d91) /\ 1;
+          then i = 0 by Z2, CARD_1:49, TARSKI:def 1;
+          hence thesis;
+        end;
+        then Z3: d91 | 1 = <% d91.0 %> by Z2, FUNCT_1:46;
+        d91.0 = (d1.0)*(beta |^ 0) by B2,Z1
+             .= 0 *(beta |^ 0) by AFINSQ_1:35
+             .= 0;
+        hence thesis by Z3;
+      end;
+      then
+      B3: Sum d91 = (Sum <%0%>) + Sum (d91 /^ 1) by AFINSQ_2:55
+                 .= 0 + Sum (d91 /^ 1) by AFINSQ_2:53;
+      B4: 1 < len d91 & len d91 = 1 + len d
+      proof
+        for r being Real st r in rng d9 holds 0 <= r
+        proof
+          let r be Real;
+          assume r in rng d9;
+          then consider i being object such that
+          Z1: i in dom d9 & d9.i = r by FUNCT_1:def 3;
+          reconsider i as Nat by Z1;
+          r = (d.i)*(beta to_power i) by B1, Z1;
+          hence 0 <= r;
+        end;
+        then d9 is nonnegative-yielding by PARTFUN3:def 4;
+        then Sum d9 = 0 iff (len d9 = 0 or d9 = (len d9) --> 0)
+        by AFINSQ_2:62;
+        then C1: 1 + len d > 1 + 0 by A2, A3, B1, XREAL_1:8;
+        len d91 = len (<%0%>) + len d by B2, AFINSQ_1:17
+               .= 1 + len d by AFINSQ_1:def 4;
+        hence thesis by C1;
+      end;
+      then
+      B5: len (d91 /^ 1) = (len d91) - 1 by AFINSQ_2:7
+                        .= ((len <%0%>) + (len d)) - 1 by B2, AFINSQ_1:17
+                        .= (1 + (len d)) - 1 by AFINSQ_1:def 4
+                        .= len (beta (#) d9) by B1, VALUED_1:def 5;
+      for i being Nat
+      st i < len (d91 /^ 1)
+      holds (d91 /^ 1).i = (beta (#) d9).i
+      proof
+        let i be Nat;
+        assume Z1: i < len (d91 /^ 1);
+        dom (beta (#) d9) = dom d9 by VALUED_1:def 5;
+        then Z2: i in dom (d91 /^ 1) & i in dom (beta (#) d9)
+        & i in dom d9
+        by B5,Z1,AFINSQ_1:86;
+        len (d91 /^ 1) = (len d91) -' 1 by AFINSQ_2:def 2
+                      .= (len d91) - 1 by B4, XREAL_0:def 2;
+        then Z3: i + 1 in dom d91 by Z1, XREAL_1:20, AFINSQ_1:86;
+        then Z4: d1.(i + 1) = d.i by B1, Z2, LmShiftIndex;
+        (d91 /^ 1).i = d91.(i + 1) by Z2, AFINSQ_2:def 2
+                    .= (d1.(i + 1)) * (beta to_power (i + 1)) by B2,Z3
+                    .= (d.i) * ((beta to_power i) * (beta to_power 1))
+                       by Z4, POWER:27
+                    .= beta * ((d.i) * (beta to_power i))
+                    .= beta * (d9.i) by Z2, B1
+                    .= (beta (#) d9).i by VALUED_1:6;
+        hence (d91 /^ 1).i = (beta (#) d9).i;
+      end;
+      then Sum (d91 /^ 1) = Sum (beta (#) d9) by B5, AFINSQ_1:9
+                         .= beta * m by A3, B1, AFINSQ_2:64;
+      hence thesis by B2,B3;
+    end;
+    hence beta*m in beta-radix_NAT by A2,A5,A6,ThBetaNATCriterion;
+  end;
+end;
+
+theorem ThLeftShiftBetaRadixNAT:
+  for beta being positive Real
+  for m being Element of beta-radix_NAT
+  for N being Integer st N in NAT
+  holds m*(beta to_power N) in beta-radix_NAT
+proof
+  let beta be positive Real;
+  let m be Element of beta-radix_NAT;
+  let N be Integer;
+  assume A1: N in NAT;
+  then reconsider N1=N as Nat;
+  defpred P[Nat] means m*(beta to_power $1) in beta-radix_NAT;
+  A2: for n being Nat st (for k being Nat st k < n holds P[k])
+  holds P[n]
+  proof
+    let n be Nat;
+    assume B1: for k being Nat st k < n holds P[k];
+    per cases;
+    suppose n = 0;
+      then m*(beta to_power n) = m * 1 by POWER:24;
+      hence thesis;
+    end;
+    suppose n <> 0;
+      then consider k being Nat such that
+      B2: n = k + 1 by NAT_1:6;
+      k < n by B2, NAT_1:16;
+      then B3: m * (beta to_power k) in beta-radix_NAT by B1;
+      m * (beta to_power n) 
+       = m * ((beta to_power k) * (beta to_power 1)) by B2, POWER:27
+      .= beta * (m * (beta to_power k));
+      hence P[n] by B3, LmLeftShiftOnceBetaRadixNAT;
+    end;
+  end;
+  for k being Nat holds P[k] from NAT_1:sch 4(A2);
+  then P[N1];
+  hence thesis;
+end;
+
 definition
   let beta be Real;
   func beta-radix_INT -> Subset of REAL means :Def6:
@@ -1566,6 +1842,71 @@ proof
   end;
   then INT c= b-radix_INT by TARSKI:def 3;
   hence b-radix_INT = INT by A3, XBOOLE_0:def 10;
+end;
+
+theorem ThPositiveBetaRadixIntAreBetaRadixNat:
+  for n being Element of b-radix_INT
+  st 0 <= n
+  holds n in b-radix_NAT
+proof
+  let n be Element of b-radix_INT;
+  assume A1: 0 <= n;
+  then per cases;
+  suppose 0 = n;
+    hence thesis;
+  end;
+  suppose A2: n > 0;
+    consider k being Element of b-radix_NAT such that
+    A3: n = k or n = -k by Th24;
+    thus thesis by A2,A3;
+  end;
+end;
+
+theorem ThSmallestPositiveBetaRadixInt:
+  for n being Element of b-radix_INT
+  st 0 < n
+  holds 1 <= n
+proof
+  let n be Element of b-radix_INT;
+  assume A1: 0 < n;
+  then n in b-radix_NAT by ThPositiveBetaRadixIntAreBetaRadixNat;
+  hence 1 <= n by A1, ThSmallestPositiveBetaRadixNat;
+end;
+
+theorem ThBetaRadixIntClosedUnderNegation:
+  for beta being positive Real
+  for x being Element of beta-radix_INT
+  holds -x in beta-radix_INT
+proof
+  let beta be positive Real;
+  let x be Element of beta-radix_INT;
+  ex k being Element of beta-radix_NAT st x = k or x = -k by Th24;
+  hence -x in beta-radix_INT by Th24;
+end;
+
+theorem ThLeftShiftBetaRadixINT:
+  for beta being positive Real
+  for m being Element of beta-radix_INT
+  for N being Integer st N in NAT
+  holds m*(beta to_power N) in beta-radix_INT
+proof
+  let beta be positive Real;
+  let m be Element of beta-radix_INT;
+  let N be Integer;
+  assume A1: N in NAT;
+  consider k being Element of beta-radix_NAT such that
+  A2: m=k or m=-k by Th24;
+  per cases by A2;
+  suppose m=k;
+    then m*(beta to_power N)=k*(beta to_power N)
+    & k*(beta to_power N) in beta-radix_NAT by A1, ThLeftShiftBetaRadixNAT;
+    hence thesis by Th20, TARSKI:def 3;
+  end;
+  suppose m=-k;
+    then m*(beta to_power N)=-(k*(beta to_power N))
+    & k*(beta to_power N) in beta-radix_NAT by A1, ThLeftShiftBetaRadixNAT;
+    hence thesis by Th24;
+  end;
 end;
 
 ::: Extended Integers
@@ -2156,10 +2497,10 @@ definition
     proof
       let x be object;
       assume Z1: x in IT;
-      then x in NUM or x in {+infty, -infty} by XBOOLE_0:def 3;
-      then per cases;
+      then per cases by XBOOLE_0:def 3;
       suppose A1: x in NUM;
-        then ex y being Real st x = y & ex M being Element of beta-radix_INT, e being Integer
+        then ex y being Real st x = y
+        & ex M being Element of beta-radix_INT, e being Integer
         st y = M * (beta to_power (e - p + 1))
         & |.M.| <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1)
         & eMin - 1 < e & e <= eMax;
@@ -2184,15 +2525,10 @@ proof
   then b - 1 > 1 - 1;
   then
   A1: b - 1 > 0;
-  [/b\] = b by INT_1:30;
-  then [/b\] + (-1) = b + (-1)
-                   .= b - 1;
-  then ([/b\] -1) = b - 1;
-  then ([/b\] -1)/(b - 1) = 1 by A1, XCMPLX_1:60;
-  hence (([/b\] -1)/(b - 1)) * ((b to_power p) - 1) = 1 * ((b to_power p) - 1)
-                                                   .= ((b to_power p) - 1);
+  ([/b\] - 1)/(b - 1) = 1 by A1, XCMPLX_1:60;
+  hence (([/b\] - 1)/(b - 1)) * ((b to_power p) - 1) = 1 * ((b to_power p) - 1)
+                                                    .= ((b to_power p) - 1);
 end;
-
 
 definition
   let b be valid_radix Nat, p, eMin, eMax;
@@ -2216,13 +2552,7 @@ definition
       let z be object;
       thus z in FLOAT_NUMBER(b, p, eMin, eMax) implies z in NEW
       proof
-        assume Z1: z in FLOAT_NUMBER(b, p, eMin, eMax);
-        :: then z in {x where x is Real :
-        ::   ex M being Element of b-radix_INT, e being Integer
-        ::   st x = M * (b to_power (e - p + 1))
-        ::   & |.M.| <= (([/b\] - 1)/(b - 1)) * ((b to_power p) - 1)
-        ::   & eMin - 1 < e & e <= eMax }
-        :: or z in {+infty, -infty, 0} by XBOOLE_0:def 3;
+        assume z in FLOAT_NUMBER(b, p, eMin, eMax);
         then per cases by XBOOLE_0:def 3;
         suppose z in {x where x is Real :
           ex M being Element of b-radix_INT, e being Integer
@@ -2237,9 +2567,8 @@ definition
           INT = b-radix_INT by Def1, ThBRadixINTCompatibility;
           then z in {x where x is Real : ex M, e being Integer
           st x = M * (b to_power (e - p + 1)) & |.M.| <= (b to_power p) - 1
-          & eMin - 1 < e & e <= eMax } by A1,B1;
+          & eMin - 1 < e & e <= eMax } by B1;
           hence z in NEW by XBOOLE_0:def 3;
-          hence thesis;
         end;
         suppose z in {+infty,-infty};
           hence thesis by XBOOLE_0:def 3;
@@ -2259,8 +2588,7 @@ definition
           B1: z = M * (b to_power (e - p + 1)) & |.M.| <= (b to_power p) - 1
           & eMin - 1 < e & e <= eMax;
           INT = b-radix_INT by Def1, ThBRadixINTCompatibility;
-          then M in b-radix_INT by INT_1:def 2;
-          then B2: M is Element of b-radix_INT;
+          then B2: M is Element of b-radix_INT by INT_1:def 2;
           z in {x where x is Real :
           ex M being Element of b-radix_INT, e being Integer
           st x = M * (b to_power (e - p + 1))
@@ -2273,12 +2601,11 @@ definition
         end;
       end;
     end;
-    then FLOAT_NUMBER(b, p, eMin, eMax) = NEW by TARSKI:2;
-    hence A = FLOAT_NUMBER(b, p, eMin, eMax) iff A = NEW;
+    hence A = FLOAT_NUMBER(b, p, eMin, eMax) iff A = NEW by TARSKI:2;
   end;
 end;
 
-LmCeil:
+theorem LmCeil:
   for x being Real
   for n being Integer
   st n < x & x <= n + 1
@@ -2289,21 +2616,17 @@ proof
   assume A1: n < x;
   assume A2: x <= n + 1;
   n + 1 < x + 1 by A1, XREAL_1:8;
-  then x <= n + 1 & (n + 1) < x + 1 by A2;
-  hence [/x\] = n+1 by INT_1:def 7;
+  hence [/x\] = n+1 by A2, INT_1:def 7;
 end;
 
-LmZeroBound:
+theorem LmZeroBound:
   0 <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1)
 proof
   per cases;
   suppose A1: beta <= 1;
     then 0 < beta & beta <= 0 + 1;
-    then [/beta\] = 0 + 1 by LmCeil;
-    then [/beta\] + (-1) = 1 + (-1)
-                        .= 1 - 1
+    then [/beta\] + (-1) = 1 + (-1)  by LmCeil
                         .= 0;
-    then [/beta\] - 1 = 0;
     hence thesis;
   end;
   suppose A2: beta > 1;
@@ -2312,30 +2635,22 @@ proof
     proof
       beta - 1 > 1 - 1 by A2, XREAL_1:9;
       then B1: beta - 1 > 0;
-      [/beta\] >= beta by INT_1:def 7;
-      then [/beta\] - 1 >= beta - 1 by XREAL_1:9; 
+      [/beta\] - 1 >= beta - 1 by XREAL_1:9, INT_1:def 7; 
       then ([/beta\] - 1)/(beta - 1) >= (beta - 1)/(beta - 1)
       by B1, XREAL_1:72;
-      then ([/beta\] - 1)/(beta - 1) >= 1
-      by B1, XCMPLX_1:60;
-      hence thesis;
+      hence thesis by B1, XCMPLX_1:60;
     end;
     set b = beta to_power p;
-    b > 1 by A2, POWER:35;
-    then b >= 1;
+    b >= 1 by A2, POWER:35;
     then b - 1 >= 1 - 1 by XREAL_1:9;
-    then 0 <= b - 1;
-    then 0 <= a * (b - 1)
-    by A3, XREAL_1:128;
-    hence thesis;
+    hence thesis by A3;
   end;
 end;
 
 theorem ThZeroInFloatNumber:
   0 in FLOAT_NUMBER(beta, p, eMin, eMax)
 proof
-  0 in beta-radix_INT by ThZeroInBetaINT;
-  then reconsider M=0 as Element of beta-radix_INT;
+  reconsider M=0 as Element of beta-radix_INT by ThZeroInBetaINT;
   ex M being Element of beta-radix_INT, e being Integer
   st 0 = M * (beta to_power (e - p + 1))
   & |.M.| <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1)
@@ -2344,7 +2659,7 @@ proof
     take M, e = 0;
     thus 0 = M * (beta to_power (e - p + 1));
     thus |.M.| <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1)
-    by LmZeroBound, XXREAL_0:2, COMPLEX1:44;
+    by LmZeroBound, COMPLEX1:44;
     thus eMin - 1 < e;
     thus e <= eMax;
   end;
@@ -2359,15 +2674,7 @@ end;
 registration
   let beta, p, eMin, eMax;
   cluster FLOAT_NUMBER(beta, p, eMin, eMax) -> non empty;
-  coherence
-  proof
-    thus FLOAT_NUMBER(beta, p, eMin, eMax) is non empty
-    proof
-      ex x being object st x in FLOAT_NUMBER(beta, p, eMin, eMax)
-      by ThZeroInFloatNumber;
-      hence thesis;
-    end;
-  end;
+  coherence by ThZeroInFloatNumber;
 end;
 
 registration
@@ -2381,22 +2688,16 @@ registration
     thus thesis;
   end;
   cluster -> ext-real for Element of FLOAT_NUMBER(beta, p, eMin, eMax);
-  coherence
-  proof
-    let x be Element of FLOAT_NUMBER(beta, p, eMin, eMax);
-    FLOAT_NUMBER(beta, p, eMin, eMax) c= ExtREAL;
-    then x in ExtREAL by TARSKI:def 3;
-    hence thesis;
-  end;
+  coherence by TARSKI:def 3;
 end;
 
 theorem St3200:
   -infty in FLOAT_NUMBER(beta, p, eMin, eMax)
   & +infty in FLOAT_NUMBER(beta, p, eMin, eMax)
 proof
-  -infty in {+infty,-infty} by TARSKI:def 2;
+  -infty in {-infty,+infty} by TARSKI:def 2;
   hence -infty in FLOAT_NUMBER(beta, p, eMin, eMax) by XBOOLE_0:def 3;
-  +infty in {+infty,-infty} by TARSKI:def 2;
+  +infty in {-infty,+infty} by TARSKI:def 2;
   hence +infty in FLOAT_NUMBER(beta, p, eMin, eMax) by XBOOLE_0:def 3;
 end;
 
@@ -2420,11 +2721,11 @@ proof
   & eMin - 1 < e & e <= eMax)
   proof
     assume A1: x in FLOAT_NUMBER(beta, p, eMin, eMax);
-    then x in NUM or x in {+infty, -infty} by A1,XBOOLE_0:def 3;
+    then x in NUM or x in {+infty, -infty} by XBOOLE_0:def 3;
     then ex y being Real st x = y & ex M being Element of beta-radix_INT, e being Integer
     st y = M * (beta to_power (e - p + 1))
     & |.M.| <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1)
-    & eMin - 1 < e & e <= eMax by A1, TARSKI:def 2;
+    & eMin - 1 < e & e <= eMax by TARSKI:def 2;
     hence thesis;
   end;
   thus (ex M being Element of beta-radix_INT, e being Integer
@@ -2432,7 +2733,7 @@ proof
   & |.M.| <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1)
   & eMin - 1 < e & e <= eMax) implies x in FLOAT_NUMBER(beta, p, eMin, eMax)
   proof
-    assume Z1: ex M being Element of beta-radix_INT, e being Integer st x = M * (beta to_power (e - p + 1)) & |.M.| <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1) & eMin - 1 < e & e <= eMax;
+    assume ex M being Element of beta-radix_INT, e being Integer st x = M * (beta to_power (e - p + 1)) & |.M.| <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1) & eMin - 1 < e & e <= eMax;
     then x in NUM;
     hence x in FLOAT_NUMBER(beta, p, eMin, eMax) by XBOOLE_0:def 3;
   end;
@@ -2475,211 +2776,25 @@ proof
   hence x in FLOAT_NUMBER(b, p, eMin, eMax) by A1, A2, Th11;
 end;
 
-theorem ThSmallestPositiveBetaRadixNat:
-  for n being Element of b-radix_NAT
-  st 0 < n
-  holds 1 <= n
-proof
-  let n be Element of b-radix_NAT;
-  assume A1: 0 < n;
-  then consider d being XFinSequence of NAT such that
-  A2: d.((len d)-1) <> 0
-  & (for j being Nat st j in dom d holds 0 <= d.j & d.j < b)
-  & n = beta_integer_value(d,b)
-  by ThBetaNATCriterion;
-  consider d9 being XFinSequence of REAL such that
-  A3: dom d9 = dom d
-  & (for i being Nat st i in dom d9 holds d9.i = (d.i)*(b |^ i))
-  & beta_integer_value(d,b) = Sum d9
-  by Def3a;
-
-  set y = (d.((len d) - 1)) * (b to_power ((len d) - 1));
-  (b to_power ((len d) - 1)) > 0 by Def1, POWER:34; then
-  A4: y >= 0 by A2;
-  for r being Real st r in rng d9 holds 0 <= r
-  proof
-    let r be Real;
-    assume B1: r in rng d9;
-    then consider i being object such that
-    B2: i in dom d9 & d9.i = r by FUNCT_1:def 3;
-    reconsider i as Element of NAT by B2;
-    r = (d.i)*(b |^ i) by A3, B1, B2
-    .= (d.i)*(b to_power i);
-    hence 0 <= r by A2,A3, Def1, POWER:34;
-  end;
-  then A5: d9 is nonnegative-yielding by PARTFUN3:def 4;
-  len d9 = 0 implies contradiction
-  proof
-    assume Z1: len d9 = 0;
-    then Sum d9 = 0 by A5, AFINSQ_2:62;
-    then n = 0 by A2,A3;
-    hence contradiction by A1;
-  end;
-  then len d9 > 0;
-  then 0 + len d9 > 0;
-  then A6: len d9 >= 1 by NAT_1:19;
-  ex x being object st (x in dom d9 & d9.x = y)
-  proof
-    1 <= len d by A2,A3,A6;
-    then (len d) - 1 in NAT by INT_1:5;
-    then reconsider x=(len d) - 1 as Nat;
-    take x;
-    len d <= len d & 0 < 1 by XXREAL_0:2;
-    then (len d) - 1 < (len d) - 0 by XREAL_1:15;
-    then (len d) - 1 < (len d);
-    then x < len d;
-    then x < len d9 by A3;
-    hence B1: x in dom d9 by AFINSQ_1:86;
-    hence d9.x = (d.x)*(b |^ x) by A3
-              .= (d.x) * (b to_power x)
-              .= y;
-  end;
-  then Sum d9 >= y by A5, A6, AFINSQ_2:61;
-  then A7: n >= y by A2,A3;
-  y >= 1
-  proof
-    d.((len d) - 1) <> 0 by A2;
-    then d.((len d) - 1) > 0;
-    then d.((len d) - 1) >= 0 + 1 by INT_1:7;
-    then B1: d.((len d) - 1) >= 1;
-    (len d) >= 1 by A3,A6;
-    then (len d) = 1 or (len d) > 1 by NAT_1:25;
-    then per cases;
-    suppose len d = 1;
-      then (len d) + (- 1) = 1 + (- 1)
-                          .= 0;
-      then B2: (b to_power ((len d) - 1)) = 1 by POWER:24;
-      then y = d.((len d) - 1) & d.((len d) - 1) > 0 by A2;
-      hence thesis by A2,B2, B1;
-    end;
-    suppose len d > 1;
-      then (len d) - 1 > 0 by XREAL_1:50;
-      then (b to_power ((len d) - 1)) > 1 by Def1, POWER:35;
-      then 1 <= (b to_power ((len d) - 1)) & 1 <= d.((len d) -1) by B1;
-      then 1 * 1 <= (d.((len d) - 1)) * (b to_power ((len d) - 1)) by XREAL_1:66;
-      hence thesis by A2,A3,B1, XREAL_1:66;
-    end;
-  end;
-  hence n >= 1 by A4, A7, XXREAL_0:2;
-end;
-
-theorem ThPositiveBetaRadixIntAreBetaRadixNat:
-  for n being Element of b-radix_INT
-  st 0 <= n
-  holds n in b-radix_NAT
-proof
-  let n be Element of b-radix_INT;
-  assume A1: 0 <= n;
-  then 0 = n or 0 < n; then
-  per cases;
-  suppose 0 = n;
-    hence thesis by ThZeroInBetaNAT;
-  end;
-  suppose A2: n > 0;
-    consider k being Element of b-radix_NAT such that
-    A3: n = k or n = -k by Th24;
-    per cases by A3;
-    suppose A4: n = k;
-      hence thesis;
-    end;
-    suppose A5: n = -k;
-      b is positive;
-      then k >= 0 by ThBetaRadixNATAreNonNegative;
-      then -k <= 0;
-      then n <= 0 by A5;
-      then contradiction by A2;
-      hence thesis;
-    end;
-  end;
-end;
-
-theorem ThSmallestPositiveBetaRadixInt:
-  for n being Element of b-radix_INT
-  st 0 < n
-  holds 1 <= n
-proof
-  let n be Element of b-radix_INT;
-  assume A1: 0 < n;
-  then n in b-radix_NAT by ThPositiveBetaRadixIntAreBetaRadixNat;
-  hence 1 <= n by A1, ThSmallestPositiveBetaRadixNat;
-end;
-
-
-theorem ThBetaRadixIntClosedUnderNegation:
-  for x being Element of beta-radix_INT
-  holds -x in beta-radix_INT
-proof
-  let x be Element of beta-radix_INT;
-  consider k being Element of beta-radix_NAT such that
-  A1: x = k or x = -k
-  by Th24;
-  set y = -x;
-  per cases by A1;
-  suppose A2: x = k;
-    then y = -k;
-    then -y = -(- k)
-           .= k;
-    hence y in beta-radix_INT by Def6;
-  end;
-  suppose A3: x = -k;
-    then y = -(- k)
-          .= k;
-    hence thesis by Def6;
-  end;
-end;
-
 Lm7:
   for y being ExtReal st y in REAL
   holds y in FLOAT_NUMBER(beta, p, eMin, eMax)
   implies (- y) in FLOAT_NUMBER(beta, p, eMin, eMax)
 proof
   let y be ExtReal;
-  assume A2: y in REAL;
-  per cases;
-  suppose y is zero;
-    then B1: y = 0;
-    then -y = 0
-    .= y by B1;
-    hence thesis by ThZeroInFloatNumber;
-  end;
-  suppose B2: y is non zero;
-    assume y in FLOAT_NUMBER(beta, p, eMin, eMax);
-    then consider M being Element of beta-radix_INT, e being Integer such that
-    A3: y = M * (beta to_power (e - p + 1))
-    & |.M.| <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1)
-    & eMin - 1 < e & e <= eMax
-    by A2, B2, Th11;
-    A4: (- M) * (beta to_power (e - p + 1))
-    = - (M * (beta to_power (e - p + 1)))
-    .= (-1) * ((M * (beta to_power (e - p + 1))) qua ExtReal)
-    .= (-1) * (y) by A3
-    .= - y by XXREAL_3:91;
-    A5: |.(- M).| = |.M.| by COMPLEX1:52;
-    - M is Element of beta-radix_INT by ThBetaRadixIntClosedUnderNegation;
-    -y is zero implies contradiction
-    proof
-      assume -y is zero;
-      then -y = 0;
-      then 0 = - (- y)
-            .= y;
-      hence contradiction by B2;
-    end;
-    then A6: -y is non zero;
-    ex M1 being Element of beta-radix_INT, e1 being Integer st
-    - y = M1 * (beta to_power (e1 - p + 1))
-    & |.M1.| <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1)
-    & eMin - 1 < e1 & e1 <= eMax
-    proof
-      reconsider M1 = - M as Element of beta-radix_INT by ThBetaRadixIntClosedUnderNegation;
-      take M1, e1 = e;
-      thus - y = M1 * (beta to_power (e1 - p + 1)) by A4;
-      thus |.M1.| <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1)
-      by A3, A5;
-      thus eMin - 1 < e1 & e1 <= eMax by A3;
-    end;
-    hence (- y) in FLOAT_NUMBER(beta, p, eMin, eMax)
-    by B2, A2,A3,A4, A6, Th11, ThBetaRadixIntClosedUnderNegation;
-  end;
+  assume A1: y in REAL;
+  assume y in FLOAT_NUMBER(beta, p, eMin, eMax);
+  then consider M being Element of beta-radix_INT, e being Integer such that
+  A2: y = M * (beta to_power (e - p + 1))
+  & |.M.| <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1)
+  & eMin - 1 < e & e <= eMax
+  by A1, Th11;
+  A3: (- M) * (beta to_power (e - p + 1))
+   = (-1) * ((M * (beta to_power (e - p + 1))) qua ExtReal)
+  .= - y by A2, XXREAL_3:91;
+  -M in beta-radix_INT & |.(- M).| = |.M.|
+  by ThBetaRadixIntClosedUnderNegation, COMPLEX1:52;
+  hence (- y) in FLOAT_NUMBER(beta, p, eMin, eMax) by A2,A3,Th11;
 end;
 
 theorem ThFloatClosedUnderNegation:
@@ -2730,9 +2845,6 @@ proof
   hence x in FLOAT_NUMBER(beta, p, eMin, eMax) by ThFloatClosedUnderNegation;
 end;
 
-for x being positive Real
-holds x is non zero;
-
 theorem Th12:
   for x being positive Real
   holds x in FLOAT_NUMBER(beta, p, eMin, eMax) iff
@@ -2775,54 +2887,37 @@ Lm17:
 proof
   let b be valid_radix Nat;
   defpred P[Nat] means b to_power ($1 - 1) <= (b to_power $1) - 1;
-  b > 1 by Def1;
-  then A1: b >= 2 by NAT_1:23;
-  A2: P[1]
+  A1: P[1]
   proof
-    B1: b to_power (1 - 1) = b to_power 0
-                          .= 1 by POWER:24;
-    B2: (b to_power 1) - 1 = b - 1;
-    b >= 2 by A1;
-    then b - 1 >= 2 - 1 by XREAL_1:9;
-    then b - 1 >= 1;
-    hence thesis by B1,B2;
+    b > 1 by Def1;
+    then b - 1 >= 2 - 1 by NAT_1:23, XREAL_1:9;
+    hence thesis by POWER:24;
   end;
-  A3: for k being non zero Nat st P[k]
+  A2: for k being non zero Nat st P[k]
   holds P[k + 1]
   proof
     let k be non zero Nat;
-    assume B1: P[k];
-    then b to_power (k - 1) <= (b to_power k) - 1;
-    then B2: b * (b to_power (k - 1)) <= b * ((b to_power k) - 1)
+    assume P[k];
+    then B1: b * (b to_power (k - 1)) <= b * ((b to_power k) - 1)
     by XREAL_1:64;
-    RHS: b * ((b to_power k) - 1) = (b * (b to_power k)) - b * 1
-    .= (b * (b to_power k)) - b
-    .= ((b to_power 1) * (b to_power k)) - b by POWER:25
-    .= (b to_power (1 + k)) - b by Def1, POWER:27;
-    LHS: b * (b to_power (k - 1)) = (b to_power 1)*(b to_power (k - 1)) by POWER:25
-    .= b to_power (1 + (k - 1)) by Def1, POWER:27
-    .= b to_power (1 + k - 1)
-    .= b to_power k;
-    b > 1 by Def1;
-    then (b to_power (1 + k)) - b < (b to_power (1 + k)) - 1 by XREAL_1:10;
-    then b * ((b to_power k) - 1) < (b to_power (1 + k)) - 1 by RHS;
-    then b * (b to_power (k - 1)) <= (b to_power (1 + k)) - 1
-    by B2, XXREAL_0:2;
-    hence thesis by B2,LHS,RHS,XBOOLE_0:2;
+    RHS: b * ((b to_power k) - 1) = ((b to_power 1) * (b to_power k)) - b
+                                 .= (b to_power (1 + k)) - b by POWER:27;
+    LHS: b * (b to_power (k - 1)) = (b to_power 1)*(b to_power (k - 1))
+                                 .= b to_power (1 + (k - 1)) by POWER:27
+                                 .= b to_power k;
+    (b to_power (1 + k)) - b < (b to_power (1 + k)) - 1 by Def1, XREAL_1:10;
+    hence thesis by B1, LHS, RHS, XXREAL_0:2;
   end;
 
-  for k being non zero Nat holds P[k] from NAT_1:sch 10(A2, A3);
+  for k being non zero Nat holds P[k] from NAT_1:sch 10(A1, A2);
   hence b to_power (p - 1) <= (b to_power p) - 1;
 end;
 
-:: for b in REAL \ NAT, if b > 1, then this is not necessarily true
-:: which may be an oversight in the IEEE standard
-theorem Th17:
+theorem Th53:
   for b being valid_radix Nat
   holds 1 in FLOAT_NUMBER(b, p, eMin, eMax)
 proof
   let b be valid_radix Nat;
-  1 is positive Real;
   ex M, e being Integer
   st 1 = M * (b to_power (e - p + 1)) & |.M.| <= ((b to_power p) - 1)
   & eMin - 1 < e & e <= eMax
@@ -2835,19 +2930,14 @@ proof
     take M;
     take e = 0;
     thus M * (b to_power (e - p + 1))
-          = (b to_power (p - 1)) * (b to_power (e - p + 1))
-         .= b to_power ((p - 1) + (e - p + 1)) by POWER:27
+          = b to_power ((p - 1) + (e - p + 1)) by POWER:27
          .= 1 by POWER:24;
-    0 < M;
-    then |.M.| = M by COMPLEX1:43;
+    |.M.| = M by COMPLEX1:43;
     hence |.M.| <= (b to_power p) - 1 by Lm17;
     thus eMin - 1 < e;
     thus e <= eMax;
   end;
-  then 1 in {x where x is Real : ex M, e being Integer
-    st x = M * (b to_power (e - p + 1)) & |.M.| <= ((b to_power p) - 1)
-    & eMin - 1 < e & e <= eMax };
-  hence 1 in FLOAT_NUMBER(b, p, eMin, eMax) by DefSigh, XBOOLE_0:def 3;
+  hence 1 in FLOAT_NUMBER(b, p, eMin, eMax) by Th12a;
 end;
 
 definition
@@ -3094,284 +3184,7 @@ proof
   hence v = -infty by A1, XXREAL_0:14;
 end;
 
-LmShiftIndex:
-  for i being Nat
-  for d being XFinSequence
-  for x being object
-  st i in dom d
-  holds (<%x%> ^ d).(i + 1) = d.i
-proof
-  let i be Nat;
-  let d be XFinSequence;
-  let x be object;
-  assume Z1: i in dom d;
-  Z2: 1 = len <%x%> by AFINSQ_1:def 4;
-  len (<%x%>) <= i + 1 & i + 1 < len (<%x%> ^ d)
-  proof
-    0 <= i;
-    hence len (<%x%>) <= i + 1 by Z2, XREAL_1:38;
-    i < len d by Z1, AFINSQ_1:86;
-    then i + 1 < 1 + (len d) by XREAL_1:6;
-    hence i + 1 < len (<%x%> ^ d) by Z2, AFINSQ_1:17;
-  end;
-  hence (<%x%> ^ d).(i + 1) = d.((i + 1) -1) by Z2, AFINSQ_1:19
-                           .= d.i;
-end;
-
-
-LmLeftShiftOnceBetaRadixNAT:
-  for m being Element of beta-radix_NAT
-  holds beta*m in beta-radix_NAT
-proof
-  let m be Element of beta-radix_NAT;
-  per cases;
-  suppose A1: m = 0;
-    then beta*m = beta*0
-               .= 0
-               .= m by A1;
-    hence thesis;
-  end;
-  suppose A2: m <> 0;
-    then consider d being XFinSequence of NAT such that
-    A3: d.((len d) - 1) <> 0
-    & (for j being Nat st j in dom d holds 0 <= d.j & d.j < beta)
-    & m = beta_integer_value(d,beta)
-    by ThBetaNATCriterion;
-    set d1 = <%0%> ^ d;
-    A4: len <%0%> = 1 by AFINSQ_1:def 4;
-    A5: d1.((len d1) - 1) <> 0
-    proof
-      d.((len d) - 1) <> 0 by A3;
-      then B1: (len d) - 1 in dom d by FUNCT_1:def 2;
-      then d.((len d) - 1) = d1.((len <%0%>) + ((len d) - 1)) by AFINSQ_1:def 3
-                          .= d1.(1 + (len d) - 1) by A4
-                          .= d1.((1 + (len d)) - 1)
-                          .= d1.((len d1) - 1) by A4, AFINSQ_1:def 3;
-      hence thesis by A3;
-    end;
-    A6: for j being Nat st j in dom d1 holds 0 <= d1.j & d1.j < beta
-    proof
-      let j be Nat;
-      assume B1: j in dom d1;
-      per cases;
-      suppose j = 0;
-        then d1.j = 0 by AFINSQ_1:35;
-        hence thesis;
-      end;
-      suppose j <> 0;
-        then consider k being Nat such that
-        B2: j = k + 1 by NAT_1:6;
-        k + 1 in dom d1 by B1,B2;
-        then k + 1 < len d1 by AFINSQ_1:86;
-        then k + 1 < (len <%0%>) + (len d) by AFINSQ_1:17;
-        then k + 1 < 1 + len d by A4;
-        then (k + 1) -1 < (1 + len d) -1 by XREAL_1:8, XREAL_1:9;
-        then k < len d;
-        then B3: k in dom d by AFINSQ_1:86;
-        then k < len d by AFINSQ_1:86;
-        then 1 + k < 1 + len d by XREAL_1:8, XXREAL_0:2;
-        then B4: 1 + k < (len <%0%>) + (len d) by A4;
-        j = k + 1 by B2
-         .= k + len <%0%> by A4,AFINSQ_1:def 3;
-        then len <%0%> <= j & j < (len <%0%>) + (len d)
-        by A4, B2, B4, AFINSQ_1:17, NAT_1:11;
-        then d1.j = d.(j - (len <%0%>)) by AFINSQ_1:18
-                 .= d.(j - 1) by A4
-                 .= d.((k + 1) - 1) by B2
-                 .= d.k;
-        hence thesis by A3, B3;
-      end;
-    end;
-    beta * m = beta_integer_value(d1,beta)
-    proof
-      consider d9 being XFinSequence of REAL such that
-      B1: dom d9 = dom d
-      & (for i being Nat st i in dom d9 holds d9.i = (d.i)*(beta |^ i))
-      & beta_integer_value(d, beta) = Sum d9
-      by Def3a;
-      consider d91 being XFinSequence of REAL such that
-      B2: dom d91 = dom d1
-      & (for i being Nat st i in dom d91 holds d91.i = (d1.i)*(beta |^ i))
-      & beta_integer_value(d1,beta) = Sum d91
-      by Def3a;
-      dom <%0%> = 1 by A4;
-      then B2b: (len <%0%>) = 1 & <%0%> = d1 | 1 by A4,AFINSQ_1:57;
-      0 < 1 + len d;
-      then 0 < len (<%0%> ^ d) by A4, AFINSQ_1:17;
-      then 0 in dom (<%0%> ^ d) by AFINSQ_1:66;
-      then B3: 0 in dom d91 by B2;
-      B3a: dom (d91) /\ 1 = 1 & dom (<% d91.0 %>) = 1
-      proof
-        0 in dom d91 by B3;
-        then dom d91 /\ {0} = {0} by ZFMISC_1:46
-                           .= 1 by CARD_1:49;
-        hence dom (d91) /\ 1 = 1 by CARD_1:49;
-        thus dom (<% d91.0 %>) = 1 by AFINSQ_1:def 4;
-      end;
-      for i being object st i in dom (d91) /\ 1 holds d91.i = <% d91.0 %>.i
-      proof
-        let i be object;
-        assume i in dom (d91) /\ 1;
-        then i in 1 by B3a;
-        then i in {0} by CARD_1:49;
-        then Z1: i = 0 by TARSKI:def 1;
-        thus d91.i = d91.0 by Z1
-                  .= <% d91.0 %>.0 by AFINSQ_1:def 4
-                  .= <% d91.0 %>.i by Z1;
-      end;
-      then B4: d91 | 1 = <% d91.0 %> by B3a, FUNCT_1:46;
-      then d91.0 = (d1.0)*(beta |^ 0) by B2,B3
-                .= (( <%0%> ^ d).0) * (beta |^ 0)
-                .= 0 *(beta |^ 0) by AFINSQ_1:35
-                .= 0;
-      then d91 | 1 = <%0%> by A4, B4, AFINSQ_1:def 4, AFINSQ_1:33;
-      then d91 = <%0%> ^ (d91 /^ 1) by AFINSQ_2:13; then
-      B3: Sum d91 = (Sum <%0%>) + Sum (d91 /^ 1) by AFINSQ_2:55
-                 .= 0 + Sum (d91 /^ 1) by AFINSQ_2:53;
-      B4: 1 < len d91 & len d91 = 1 + len d
-      proof
-        for r being Real st r in rng d9 holds 0 <= r
-        proof
-          let r be Real;
-          assume Z1: r in rng d9;
-          then consider i being object such that
-          Z2: i in dom d9 & d9.i = r by FUNCT_1:def 3;
-          reconsider i as Nat by Z2;
-          r = d9.i by Z1, Z2
-           .= (d.i)*(beta |^ i) by B1, Z2
-           .= (d.i)*(beta to_power i);
-          hence 0 <= r by A3, B1, Def1, POWER:34;
-        end;
-        then d9 is nonnegative-yielding by PARTFUN3:def 4;
-        then C1: Sum d9 = 0 iff (len d9 = 0 or d9 = (len d9) --> 0)
-        by AFINSQ_2:62;
-        m <> 0 & Sum d9 = m by A2, A3, B1;
-        then len d9 <> 0 by C1;
-        then len d <> 0 by B1;
-        then len d > 0;
-        then C2: 1 + len d > 1 + 0 by XREAL_1:8;
-        len d91 = len d1 by B2
-        .= len (<%0%>) + len d by AFINSQ_1:17
-        .= 1 + len d by AFINSQ_1:def 4;
-        hence thesis by C2;
-      end;
-      then
-      B5: len (d91 /^ 1) = (len d91) - 1 by AFINSQ_2:7
-      .= (len d1) - 1 by B2
-      .= ((len <%0%>) + (len d)) - 1 by AFINSQ_1:17
-      .= (1 + (len d)) - 1 by AFINSQ_1:def 4
-      .= len d
-      .= len d9 by B1
-      .= len (beta (#) d9) by VALUED_1:def 5;
-      for i being Nat
-      st i < len (d91 /^ 1)
-      holds (d91 /^ 1).i = (beta (#) d9).i
-      proof
-        let i be Nat;
-        assume Z1: i < len (d91 /^ 1);
-        dom (beta (#) d9) = dom d9 by VALUED_1:def 5;
-        then Z2: i in dom (d91 /^ 1) & i in dom (beta (#) d9)
-         & i in dom d9
-        by B5,Z1,AFINSQ_1:86;
-        len (d91 /^ 1) = (len d91) -' 1 by AFINSQ_2:def 2
-                      .= (len d91) - 1 by B4, XREAL_0:def 2;
-        then i < (len d91) - 1 by Z1;
-        then i + 1 < len d91 by XREAL_1:20;
-        then Z3: i + 1 in dom d91 by AFINSQ_1:86;
-        then i + 1 in dom d1 & i in dom d by B1,B2,Z2;
-        then Z4: d1.(i + 1) = d.i by LmShiftIndex;
-        (d91 /^ 1).i = d91.(i + 1) by Z2,AFINSQ_2:def 2
-        .= (d1.(i + 1)) * (beta |^ (i + 1)) by B2,B4,Z2,Z3
-        .= (d1.(i + 1)) * (beta to_power (i + 1))
-        .= (d.i) * (beta to_power (i + 1)) by Z4
-        .= (d.i) * ((beta to_power i) * (beta to_power 1)) by POWER:27
-        .= (d.i) * ((beta to_power i) * beta) by POWER:25
-        .= beta * ((d.i) * (beta to_power i))
-        .= beta * (d9.i) by Z2, B1, B2
-        .= (beta (#) d9).i by VALUED_1:6;
-        hence (d91 /^ 1).i = (beta (#) d9).i;
-      end;
-
-      then (d91 /^ 1) = (beta (#) d9) by B5, AFINSQ_1:9;
-      then Sum (d91 /^ 1) = Sum (beta (#) d9)
-                         .= beta * (Sum d9) by AFINSQ_2:64
-                         .= beta * beta_integer_value(d,beta) by B1
-                         .= beta * m by A3;
-      hence thesis by B2,B3;
-    end;
-
-    hence beta*m in beta-radix_NAT by A2,A5,A6,ThBetaNATCriterion;
-  end;
-end;
-
-
-theorem ThLeftShiftBetaRadixNAT:
-  for m being Element of beta-radix_NAT
-  for N being Integer st N in NAT
-  holds m*(beta to_power N) in beta-radix_NAT
-proof
-  let m be Element of beta-radix_NAT;
-  let N be Integer;
-  assume A1: N in NAT;
-  then reconsider N1=N as Nat by ORDINAL1:def 12;
-  defpred P[Nat] means m*(beta to_power $1) in beta-radix_NAT;
-  A2: for n being Nat st (for k being Nat st k < n holds P[k])
-  holds P[n]
-  proof
-    let n be Nat;
-    assume B1: for k being Nat st k < n holds P[k];
-    per cases;
-    suppose n = 0;
-      then m*(beta to_power n) = m * 1 by POWER:24
-                              .= m;
-      hence thesis;
-    end;
-    suppose n <> 0;
-      then consider k being Nat such that
-      B2: n = k + 1 by NAT_1:6;
-      k < n by B2, NAT_1:16;
-      then P[k] by B1;
-      then B3: m * (beta to_power k) in beta-radix_NAT;
-      m * (beta to_power n) = m * (beta to_power (k + 1)) by B2
-      .= m * ((beta to_power k) * (beta to_power 1)) by POWER:27
-      .= (m * (beta to_power k)) * beta by POWER:25
-      .= beta * (m * (beta to_power k));
-      hence P[n] by B3, LmLeftShiftOnceBetaRadixNAT;
-    end;
-  end;
-  for k being Nat holds P[k] from NAT_1:sch 4(A2);
-  then P[N1];
-  hence thesis;
-end;
-
-
-theorem ThLeftShiftBetaRadixINT:
-  for m being Element of beta-radix_INT
-  for N being Integer st N in NAT
-  holds m*(beta to_power N) in beta-radix_INT
-proof
-  let m be Element of beta-radix_INT;
-  let N be Integer;
-  assume A1: N in NAT;
-  consider k being Element of beta-radix_NAT such that
-  A2: m=k or m=-k by Th24;
-  per cases by A2;
-  suppose m=k;
-    then m*(beta to_power N)=k*(beta to_power N)
-    & k*(beta to_power N) in beta-radix_NAT by A1, ThLeftShiftBetaRadixNAT;
-    hence thesis by Th20, TARSKI:def 3;
-  end;
-  suppose m=-k;
-    then m*(beta to_power N)=(-k)*(beta to_power N)
-    & k*(beta to_power N) in beta-radix_NAT by A1, ThLeftShiftBetaRadixNAT;
-    then m*(beta to_power N)=-(k*(beta to_power N))
-    & k*(beta to_power N) in beta-radix_NAT;
-    hence thesis by Th20, Th24, TARSKI:def 3;
-  end;
-end;
-
-
-theorem St3301a:
+theorem St3301:
   for eMin being negative Integer
   for x being real Float of beta, p, eMin, eMax
   ex n being Element of beta-radix_INT
@@ -3399,7 +3212,7 @@ proof
   .= x by A1;
 end;
 
-theorem St3301:
+theorem St3302:
   b in INT implies
   for eMin being negative Integer
   for x being real Float of b, p, eMin, eMax
@@ -3413,7 +3226,7 @@ proof
   b is Nat by A1, ORDINAL1:def 12;
   then b-radix_INT = INT by Def1, A1, ThBRadixINTCompatibility;
   then ex n being Element of INT
-  st n*(b to_power (eMin - p + 1)) = x by St3301a;
+  st n*(b to_power (eMin - p + 1)) = x by St3301;
   hence thesis by INT_1:def 2;
 end;
 
@@ -3433,7 +3246,7 @@ proof
     then b in INT by NUMBERS:17;
     then consider n being Integer such that
     A3: n*(b to_power (eMin - p + 1)) = x
-    by A2, St3301;
+    by A2, St3302;
     x is positive real by A2;
     then n is positive by A3;
     then 0 + 1 <= n by INT_1:7;
@@ -3461,7 +3274,7 @@ proof
     b in NAT by ORDINAL1:def 12;
     then consider n being Integer such that
     A2: n*(b to_power (eMin - p + 1)) = x
-    by A1, St3301, NUMBERS:17;
+    by A1, St3302, NUMBERS:17;
     x is negative real by A1;
     then n is negative by A2;
     then n <= -1 by INT_1:8;
@@ -3641,7 +3454,7 @@ theorem ThExistenceNormalFloat:
   st x is normal
 proof
   let b be valid_radix Nat;
-  1 in FLOAT_NUMBER(b, p, eMin, eMax) by Th17; then
+  1 in FLOAT_NUMBER(b, p, eMin, eMax) by Th53; then
   1 in FLOAT(b, p, eMin, eMax) by XBOOLE_0:def 3; then
   A1: 1 is Float of b, p, eMin, eMax by Def8a;
   per cases;
@@ -3814,26 +3627,6 @@ proof
   end;
 end;
 
-theorem Th37:
-  for x,y,z being Real st x > 0 & x <= y & z > 0
-  holds x to_power z <= y to_power z
-proof
-  let x,y,z be Real;
-  assume A1: x > 0;
-  assume A2: x <= y;
-  assume A3: z > 0;
-  x < y or x = y by A2, XXREAL_0:1;
-  then per cases;
-  suppose x < y;
-    then x to_power z < y to_power z by A1, A3, POWER:37;
-    hence thesis;
-  end;
-  suppose x = y;
-    then x to_power z = y to_power z;
-    hence thesis;
-  end;
-end;
-
 theorem ThBabyExistenceSubnormalFloat:
   p > 1 implies
   for b being valid_radix Nat
@@ -3850,33 +3643,16 @@ proof
   proof
     set M = 1, e = eMin;
     set x = M * (b to_power (e - p + 1));
-    x > 0;
-    then reconsider x as positive Real;
-    B1: |.M.| = M by COMPLEX1:43;
-    B2: M <= (b to_power p) - 1
-    proof
-      b > 1 by Def1;
-      then b >= 2 & 2 > 0 & p > 0 by NAT_1:23;
-      then C1: b to_power p >= 2 to_power p by Th37;
-      p >= 2 by A1, NAT_1:23;
-      then 2 to_power p >= 2 to_power 2 by Th1;
-      then C2: b to_power p >= 2 to_power 2 by C1, XXREAL_0:2;
-      2 to_power 2 > 2 to_power 0 by POWER:39;
-      then 2 to_power 2 > 1 by POWER:24;
-      then 2 to_power 2 > M;
-      then b to_power p > M by C2, XXREAL_0:2;
-      then M + 1 <= b to_power p by INT_1:7;
-      then (M + 1) - 1 <= (b to_power p) - 1 by XREAL_1:9;
-      hence thesis by C2;
-    end;
+    reconsider x as positive Real;
     eMin + (- 1) < e + 0 by XREAL_1:8;
-    then eMin - 1 < e;
-    then x = M * (b to_power (e - p + 1))
-    & 0 < M & M <= (b to_power p) - 1
-    & eMin - 1 < e & e <= eMax by B2;
+    then B1: x = M * (b to_power (e - p + 1))
+    & 0 < M & M <= b to_power (p - 1)
+    & eMin - 1 < e & e <= eMax by Lm19;
+    then |.M.| <= b to_power (p - 1)
+    & b to_power (p - 1) <= ((b to_power p) - 1) by Lm17, COMPLEX1:43;
+    then |.M.| <= ((b to_power p) - 1) by XXREAL_0:2;
     then x in FLOAT_NUMBER(b,p,eMin,eMax) by B1, Th12a;
-    then reconsider v=x as Float of b, p, eMin, eMax
-    by ThRealFloatsAreInFLOATNUMBER;
+    then reconsider v=x as Float of b, p, eMin, eMax by ThRealFloatsAreInFLOATNUMBER;
     take v;
     x = b to_power ((1 - p) + e)
      .= (b to_power (1 - p)) * (b to_power e) by POWER:27;
@@ -3889,27 +3665,19 @@ proof
   ex x being Real st x = v & 0 < |.x.| & |.x.| < b to_power eMin
   proof
     reconsider x = (b to_power (1 - p))*(b to_power eMin) as Real;
-    B1: v in FLOAT(b, p, eMin, eMax) & x = v by A2, Def8a;
     take x;
-    thus x = v by B1;
-    B2: b > 1 by Def1;
-    B3: x = (b to_power (1 - p))*(b to_power eMin)
-         .= b to_power (1 - p + eMin) by POWER:27;
-    x > 0 by B2,POWER:34;
-    then B4: |.x.| = x by COMPLEX1:43;
-    hence 0 < |.x.|;
-    p > 1 by A1;
-    then 1 + 1 <= p by INT_1:7;
-    then 2 <= p;
+    thus x = v by A2, Def8a;
+    B1: b > 1 by Def1;
+    B2: x = b to_power (1 - p + eMin) by POWER:27;
+    thus 0 < |.x.|;
+    1 + 1 <= p by A1, INT_1:7;
     then 1 - p <= 1 - 2 by XREAL_1:10;
     then 1 - p <= -1;
-    then 1 - p < 0 & eMin <= eMin by XXREAL_0:1;
     then 1 - p + eMin < 0 + eMin by XREAL_1:8;
-    then 1 - p + eMin < eMin;
-    then b to_power (1 - p + eMin) < b to_power eMin by B2, POWER:39;
-    hence |.x.| < b to_power eMin by B3,B4;
+    then b to_power (1 - p + eMin) < b to_power eMin by B1, POWER:39;
+    hence |.x.| < b to_power eMin by B2, COMPLEX1:43;
   end;
-  hence v is subnormal by Def9;
+  hence v is subnormal;
 end;
 
 theorem ThExistenceSubnormalFloat:

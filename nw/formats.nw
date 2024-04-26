@@ -10,13 +10,25 @@ begin :: 3. Floating-point formats
 
 <<Definition: subset of floating-point numbers for a format>>
 
+<<Theorem: if $b\in\NN$, then $(\lceil b\rceil-1))(b^{p}-1)/(b-1)=(b^{p}-1)$>>
+
+<<Definition: [[FLOAT_NUMBER]] over integer radix>>
+
+<<Theorem: If $n<x\leq n+1$, then $\lceil x\rceil=n+1$>>
+
+<<Theorem: $0\leq\bigl((\lceil\beta\rceil-1)/(\beta-1)\bigr)(\beta^{p}-1)$>>
+
 <<Theorem: zero is a floating-point number>>
+
+<<Register: [[FLOAT_NUMBER]] is non empty>>
 
 <<Register: real for [[FLOAT_NUMBER]] and they're all extended reals>>
 
 <<Theorem: infinity is a float-poing number>>
 
 <<Theorem: criteria for real numbers to be exact floating-point numbers>>
+
+<<Theorem: criterion for floating-point numbers over integer radix>>
 
 <<Lemma: if $y$ is floating-point number, then $-y$ is a floating-point number>>
 
@@ -286,7 +298,7 @@ $\{x\in\RR \mid \exists M,e\in\ZZ, x=M\cdot \beta^{e-p+1}\land
 \begin{def-remark}
 We should really have the set be
 $\{x\in\RR \mid \exists M,e\in\ZZ, x=M\cdot \beta^{e-p+1}\land
-|M|\leq\beta^{p}-1\land e_{\text{min}}\leq e\leq e_{\text{max}}\}\cup\{\pm\infty\}$
+|M|\leq(\lceil\beta\rceil-1)(\beta^{p}-1)/(\beta-1)\land e_{\text{min}}\leq e\leq e_{\text{max}}\}\cup\{\pm\infty\}$
 if we were trying to \emph{literally} formalize the Standard, but this
 is logically equivalent to the definition offered. The reason why we use
 $e_{\text{min}}-1<e\leq e_{\text{max}}$ instead of
@@ -310,13 +322,16 @@ the set [[FLOAT_NUMBER]] as a subset of the extended reals.
 definition
   let beta, p, eMin, eMax;
   func FLOAT_NUMBER(beta, p, eMin, eMax) -> Subset of ExtREAL equals
-  {x where x is Real : ex M, e being Integer
-   st x = M * (beta to_power (e - p + 1)) & |.M.| <= beta to_power (p-1)
+  {x where x is Real : ex M being Element of beta-radix_INT, e being Integer
+   st x = M * (beta to_power (e - p + 1))
+   & |.M.| <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1)
    & eMin - 1 < e & e <= eMax } \/ {+infty, -infty};
   coherence
   proof
-    set NUM = {x where x is Real : ex M, e being Integer
-    st x = M * (beta to_power (e - p + 1)) & |.M.| <= beta to_power (p-1)
+    set NUM = {x where x is Real :
+    ex M being Element of beta-radix_INT, e being Integer
+    st x = M * (beta to_power (e - p + 1))
+    & |.M.| <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1)
     & eMin - 1 < e & e <= eMax };
     set IT = NUM \/ {+infty, -infty};
     for x being object st x in IT holds x in ExtREAL
@@ -325,13 +340,15 @@ definition
       assume Z1: x in IT;
       then per cases by XBOOLE_0:def 3;
       suppose A1: x in NUM;
-        then ex y being Real st x = y & ex M, e being Integer
-        st y = M * (beta to_power (e - p + 1)) & |.M.| <= beta to_power (p-1)
+        then ex y being Real st x = y
+        & ex M being Element of beta-radix_INT, e being Integer
+        st y = M * (beta to_power (e - p + 1))
+        & |.M.| <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1)
         & eMin - 1 < e & e <= eMax;
         then x in REAL by XREAL_0:def 1;
         hence x in ExtREAL by XBOOLE_0:def 3, XXREAL_0:def 4;
       end;
-      suppose A2: x in {-infty, +infty};
+      suppose A2: x in {+infty, -infty};
         hence x in ExtREAL by XBOOLE_0:def 3, XXREAL_0:def 4;
       end;
     end;
@@ -341,30 +358,227 @@ end;
 @ %def FLOAT_NUMBER
 
 \begin{theorem}
-Zero is a floating-point number.
+When $b\in\NN$, we see $(\lceil b\rceil-1))(b^{p}-1)/(b-1)=(b^{p}-1)$.
 \end{theorem}
+
+<<Theorem: if $b\in\NN$, then $(\lceil b\rceil-1))(b^{p}-1)/(b-1)=(b^{p}-1)$>>=
+LmSigh:
+  for b being valid_radix Nat
+  holds (([/b\] -1)/(b - 1)) * ((b to_power p) - 1) = (b to_power p) - 1
+proof
+  let b be valid_radix Nat;
+  b > 1 by Def1;
+  then b + (-1) > 1 + (-1) by XREAL_1:8;
+  then b - 1 > 1 - 1;
+  then
+  A1: b - 1 > 0;
+  ([/b\] - 1)/(b - 1) = 1 by A1, XCMPLX_1:60;
+  hence (([/b\] - 1)/(b - 1)) * ((b to_power p) - 1) = 1 * ((b to_power p) - 1)
+                                                    .= ((b to_power p) - 1);
+end;
+@ %def LmSigh
+
+\begin{definition}
+When $b\in\NN$ is a valid radix, the set of floating-point numbers may
+be defined by the criteria $x\in\RR$ is a floating-point number iff
+there exists integers $M$ and $e$ such that $x=Mb^{e-p+1}$ and $|M|\leq b^{p}-1$
+and $e_{\text{min}}\leq e\leq e_{\text{max}}$, or if $x=\pm\infty$.
+\end{definition}
+
+We need to prove this new redefinition is compatible with the old
+definition, $\mathbb{F}_{\text{new}}\subset\mathbb{F}_{\text{old}}$ and
+$\mathbb{F}_{\text{new}}\supset\mathbb{F}_{\text{old}}$.
+
+<<Definition: [[FLOAT_NUMBER]] over integer radix>>=
+definition
+  let b be valid_radix Nat, p, eMin, eMax;
+  redefine func FLOAT_NUMBER(b, p, eMin, eMax) equals :DefSigh:
+  {x where x is Real : ex M, e being Integer
+   st x = M * (b to_power (e - p + 1)) & |.M.| <= ((b to_power p) - 1)
+   & eMin - 1 < e & e <= eMax } \/ {+infty, -infty};
+  compatibility
+  proof
+    let A be Subset of ExtREAL;
+    set NEW = {x where x is Real : ex M, e being Integer
+    st x = M * (b to_power (e - p + 1)) & |.M.| <= (b to_power p) - 1
+    & eMin - 1 < e & e <= eMax } \/ {+infty, -infty};
+
+    A1: (([/b\] -1)/(b - 1)) * ((b to_power p) - 1) = (b to_power p) - 1
+    by LmSigh;
+
+    for z being object
+    holds z in FLOAT_NUMBER(b, p, eMin, eMax) iff z in NEW
+    proof
+      let z be object;
+      thus z in FLOAT_NUMBER(b, p, eMin, eMax) implies z in NEW
+      proof
+        assume z in FLOAT_NUMBER(b, p, eMin, eMax);
+        then per cases by XBOOLE_0:def 3;
+        suppose z in {x where x is Real :
+          ex M being Element of b-radix_INT, e being Integer
+          st x = M * (b to_power (e - p + 1))
+          & |.M.| <= (([/b\] - 1)/(b - 1)) * ((b to_power p) - 1)
+          & eMin - 1 < e & e <= eMax };
+          then B1: ex x being Real st z = x
+          & ex M being Element of b-radix_INT, e being Integer
+          st x = M * (b to_power (e - p + 1))
+          & |.M.| <= ((b to_power p) - 1)
+          & eMin - 1 < e & e <= eMax by A1;
+          INT = b-radix_INT by Def1, ThBRadixINTCompatibility;
+          then z in {x where x is Real : ex M, e being Integer
+          st x = M * (b to_power (e - p + 1)) & |.M.| <= (b to_power p) - 1
+          & eMin - 1 < e & e <= eMax } by B1;
+          hence z in NEW by XBOOLE_0:def 3;
+        end;
+        suppose z in {+infty,-infty};
+          hence thesis by XBOOLE_0:def 3;
+        end;
+      end;
+      thus z in NEW implies z in FLOAT_NUMBER(b, p, eMin, eMax)
+      proof
+        assume z in NEW;
+        then per cases by XBOOLE_0:def 3;
+        suppose z in {x where x is Real : ex M, e being Integer
+          st x = M * (b to_power (e - p + 1)) & |.M.| <= (b to_power p) - 1
+          & eMin - 1 < e & e <= eMax };
+          then ex x being Real st x = z & ex M, e being Integer
+          st x = M * (b to_power (e - p + 1)) & |.M.| <= (b to_power p) - 1
+          & eMin - 1 < e & e <= eMax;
+          then consider M, e being Integer such that
+          B1: z = M * (b to_power (e - p + 1)) & |.M.| <= (b to_power p) - 1
+          & eMin - 1 < e & e <= eMax;
+          INT = b-radix_INT by Def1, ThBRadixINTCompatibility;
+          then B2: M is Element of b-radix_INT by INT_1:def 2;
+          z in {x where x is Real :
+          ex M being Element of b-radix_INT, e being Integer
+          st x = M * (b to_power (e - p + 1))
+          & |.M.| <= (([/b\] - 1)/(b - 1)) * ((b to_power p) - 1)
+          & eMin - 1 < e & e <= eMax } by A1,B1,B2;
+          hence z in FLOAT_NUMBER(b, p, eMin, eMax) by XBOOLE_0:def 3;
+        end;
+        suppose z in {+infty, -infty};
+          hence z in FLOAT_NUMBER(b, p, eMin, eMax) by XBOOLE_0:def 3;
+        end;
+      end;
+    end;
+    hence A = FLOAT_NUMBER(b, p, eMin, eMax) iff A = NEW by TARSKI:2;
+  end;
+end;
+@ %def DefSigh
+
+\begin{theorem}
+For any real number $x\in\RR$ and integer $n\in\ZZ$, if $n<x\leq n+1$,
+then $\lceil x\rceil = n+1$.
+\end{theorem}
+
+<<Theorem: If $n<x\leq n+1$, then $\lceil x\rceil=n+1$>>=
+theorem LmCeil:
+  for x being Real
+  for n being Integer
+  st n < x & x <= n + 1
+  holds [/x\] = n + 1
+proof
+  let x be Real;
+  let n be Integer;
+  assume A1: n < x;
+  assume A2: x <= n + 1;
+  n + 1 < x + 1 by A1, XREAL_1:8;
+  hence [/x\] = n+1 by A2, INT_1:def 7;
+end;
+@ %def LmCeil
+
+\begin{theorem}
+Let $\beta\in\RR$ be positive, let $p\in\NN$.
+Then $0\leq\bigl((\lceil\beta\rceil-1)/(\beta-1)\bigr)(\beta^{p}-1)$.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+There are two cases to consider here:
+\begin{enumerate}
+\item $0<\beta\leq 1$, in which case $\lceil\beta\rceil-1=0$ and then
+  the result follows;
+\item $1<\beta$, in which case $0\leq\bigl((\lceil\beta\rceil-1)/(\beta-1)\bigr)$,
+  and $\beta^{p}>1$, so the right-hand side of our inequality is positive.
+\end{enumerate}
+Either way, the result follows.
+\end{proof}
+
+<<Theorem: $0\leq\bigl((\lceil\beta\rceil-1)/(\beta-1)\bigr)(\beta^{p}-1)$>>=
+theorem LmZeroBound:
+  0 <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1)
+proof
+  per cases;
+  suppose A1: beta <= 1;
+    then 0 < beta & beta <= 0 + 1;
+    then [/beta\] + (-1) = 1 + (-1)  by LmCeil
+                        .= 0;
+    hence thesis;
+  end;
+  suppose A2: beta > 1;
+    set a = (([/beta\] - 1)/(beta - 1));
+    A3: 0 <= a
+    proof
+      beta - 1 > 1 - 1 by A2, XREAL_1:9;
+      then B1: beta - 1 > 0;
+      [/beta\] - 1 >= beta - 1 by XREAL_1:9, INT_1:def 7; 
+      then ([/beta\] - 1)/(beta - 1) >= (beta - 1)/(beta - 1)
+      by B1, XREAL_1:72;
+      hence thesis by B1, XCMPLX_1:60;
+    end;
+    set b = beta to_power p;
+    b >= 1 by A2, POWER:35;
+    then b - 1 >= 1 - 1 by XREAL_1:9;
+    hence thesis by A3;
+  end;
+end;
+@ %def LmZeroBound
+
+\begin{theorem}
+Zero is a floating-point number in any real base $\beta>1$.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+We recall that zero is an element of $\ZZ_{\beta}$, so we take $M=0$ and
+$e=0$, then the result follows.
+\end{proof}
 
 <<Theorem: zero is a floating-point number>>=
 theorem ThZeroInFloatNumber:
   0 in FLOAT_NUMBER(beta, p, eMin, eMax)
 proof
-  set NUM = {x where x is Real : ex M, e being Integer
-  st x = M * (beta to_power (e - p + 1)) & |.M.| <= beta to_power (p-1)
-  & eMin - 1 < e & e <= eMax };
-  ex M, e being Integer st 0 = M * (beta to_power (e - p + 1))
-  & |.M.| <= beta to_power (p-1) & eMin - 1 < e & e <= eMax
+  reconsider M=0 as Element of beta-radix_INT by ThZeroInBetaINT;
+  ex M being Element of beta-radix_INT, e being Integer
+  st 0 = M * (beta to_power (e - p + 1))
+  & |.M.| <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1)
+  & eMin - 1 < e & e <= eMax
   proof
-    set M = 0, e = 0;
-    take M, e;
+    take M, e = 0;
     thus 0 = M * (beta to_power (e - p + 1));
-    thus |.M.| <= beta to_power (p-1) by COMPLEX1:44;
+    thus |.M.| <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1)
+    by LmZeroBound, COMPLEX1:44;
     thus eMin - 1 < e;
     thus e <= eMax;
   end;
-  then 0 in NUM;
+
+  then 0 in {x where x is Real : ex M being Element of beta-radix_INT, e being Integer
+   st x = M * (beta to_power (e - p + 1))
+   & |.M.| <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1)
+   & eMin - 1 < e & e <= eMax };
   hence thesis by XBOOLE_0:def 3;
 end;
 @ %def ThZeroInFloatNumber
+
+\begin{registration}
+We see that the set of floating-point numbers is nonempty.
+\end{registration}
+
+<<Register: [[FLOAT_NUMBER]] is non empty>>=
+registration
+  let beta, p, eMin, eMax;
+  cluster FLOAT_NUMBER(beta, p, eMin, eMax) -> non empty;
+  coherence by ThZeroInFloatNumber;
+end;
+@ 
 
 \begin{registration}
 We observe there exists a real element of floating-point numbers, and
@@ -392,12 +606,7 @@ registration
     thus thesis;
   end;
   cluster -> ext-real for Element of FLOAT_NUMBER(beta, p, eMin, eMax);
-  coherence
-  proof
-    let x be Element of FLOAT_NUMBER(beta, p, eMin, eMax);
-    x in ExtREAL by TARSKI:def 3;
-    hence thesis;
-  end;
+  coherence by TARSKI:def 3;
 end;
 @ 
 
@@ -443,38 +652,87 @@ to side-step awkwardly using Fraenkel terms (the set construction object).
 theorem Th11:
   for x being Real
   holds x in FLOAT_NUMBER(beta, p, eMin, eMax) iff
-  (ex M, e being Integer
-  st x = M * (beta to_power (e - p + 1)) & |.M.| <= beta to_power (p-1)
+  (ex M being Element of beta-radix_INT, e being Integer
+  st x = M * (beta to_power (e - p + 1))
+  & |.M.| <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1)
   & eMin - 1 < e & e <= eMax)
 proof
-  set NUM = {x where x is Real : ex M, e being Integer
-   st x = M * (beta to_power (e - p + 1)) & |.M.| <= beta to_power (p-1)
+  set NUM = {x where x is Real : ex M being Element of beta-radix_INT, e being Integer
+   st x = M * (beta to_power (e - p + 1))
+   & |.M.| <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1)
    & eMin - 1 < e & e <= eMax };
   let x be Real;
   thus x in FLOAT_NUMBER(beta, p, eMin, eMax) implies
-  (ex M, e being Integer
-  st x = M * (beta to_power (e - p + 1)) & |.M.| <= beta to_power (p-1)
+  (ex M being Element of beta-radix_INT, e being Integer
+  st x = M * (beta to_power (e - p + 1))
+  & |.M.| <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1)
   & eMin - 1 < e & e <= eMax)
   proof
     assume A1: x in FLOAT_NUMBER(beta, p, eMin, eMax);
     then x in NUM or x in {+infty, -infty} by XBOOLE_0:def 3;
-    then ex y being Real st x = y & ex M, e being Integer
-    st y = M * (beta to_power (e - p + 1)) & |.M.| <= beta to_power (p-1)
+    then ex y being Real st x = y & ex M being Element of beta-radix_INT, e being Integer
+    st y = M * (beta to_power (e - p + 1))
+    & |.M.| <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1)
     & eMin - 1 < e & e <= eMax by TARSKI:def 2;
     hence thesis;
   end;
-  thus (ex M, e being Integer
-  st x = M * (beta to_power (e - p + 1)) & |.M.| <= beta to_power (p-1)
+  thus (ex M being Element of beta-radix_INT, e being Integer
+  st x = M * (beta to_power (e - p + 1))
+  & |.M.| <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1)
   & eMin - 1 < e & e <= eMax) implies x in FLOAT_NUMBER(beta, p, eMin, eMax)
   proof
-    given M, e being Integer such that 
-    A1: x = M * (beta to_power (e - p + 1)) & |.M.| <= beta to_power (p-1)
-    & eMin - 1 < e & e <= eMax;
-    x in NUM by A1;
+    assume ex M being Element of beta-radix_INT, e being Integer st x = M * (beta to_power (e - p + 1)) & |.M.| <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1) & eMin - 1 < e & e <= eMax;
+    then x in NUM;
     hence x in FLOAT_NUMBER(beta, p, eMin, eMax) by XBOOLE_0:def 3;
   end;
 end;
 @ %def Th11
+
+\begin{theorem}
+Let $b\in\NN$ be a valid radix, let $x$ be a real number.
+Then $x$ is a floating-point number in base $b$ if and only if there
+exists integers $M$ and $e$ such that $x=Mb^{e-p+1}$ and $|M|\leq b^{p}-1$
+and $e_{\text{min}}\leq e\leq e_{\text{max}}$.
+\end{theorem}
+
+<<Theorem: criterion for floating-point numbers over integer radix>>=
+theorem Th12a:
+  for b being valid_radix Nat
+  for x being Real
+  holds x in FLOAT_NUMBER(b, p, eMin, eMax) iff
+  (ex M, e being Integer
+   st x = M * (b to_power (e - p + 1)) & |.M.| <= ((b to_power p) - 1)
+   & eMin - 1 < e & e <= eMax)
+proof
+  let b be valid_radix Nat;
+  let x be Real;
+  hereby 
+    assume x in FLOAT_NUMBER(b, p, eMin, eMax);
+    then consider M being Element of b-radix_INT, e being Integer such that
+    A1: x = M * (b to_power (e - p + 1))
+    & |.M.| <= (([/b\] - 1)/(b - 1)) * ((b to_power p) - 1)
+    & eMin - 1 < e & e <= eMax
+    by Th11;
+    M in b-radix_INT &
+    b-radix_INT = INT by Def1, ThBRadixINTCompatibility;
+    then M in INT;
+    then reconsider M1 = M as Integer;
+    take M1, e;
+    thus x = M1 * (b to_power (e - p + 1)) by A1;
+    (([/b\] - 1)/(b - 1)) * ((b to_power p) - 1) = (b to_power p) - 1 by LmSigh;
+    hence |.M1.| <= ((b to_power p) - 1) by A1;
+    thus eMin - 1 < e by A1;
+    thus e <= eMax by A1;
+  end;
+  given M, e being Integer such that 
+  A1: x = M * (b to_power (e - p + 1)) & |.M.| <= ((b to_power p) - 1)
+  & eMin - 1 < e & e <= eMax;
+  M in INT by INT_1:def 2;
+  then A2: M in b-radix_INT by Def1, ThBRadixINTCompatibility;
+  |.M.| <= (([/b\] - 1)/(b - 1)) * ((b to_power p) - 1) by A1, LmSigh;
+  hence x in FLOAT_NUMBER(b, p, eMin, eMax) by A1, A2, Th11;
+end;
+@ 
 
 \begin{lemma}
 Let $y$ be an extended real number. If $y\in\RR$ and $y$ is a
@@ -488,19 +746,19 @@ Lm7:
   implies (- y) in FLOAT_NUMBER(beta, p, eMin, eMax)
 proof
   let y be ExtReal;
-  assume A2: y in REAL;
+  assume A1: y in REAL;
   assume y in FLOAT_NUMBER(beta, p, eMin, eMax);
-  then consider M, e being Integer such that
-  A3: y = M * (beta to_power (e - p + 1)) & |.M.| <= beta to_power (p-1)
+  then consider M being Element of beta-radix_INT, e being Integer such that
+  A2: y = M * (beta to_power (e - p + 1))
+  & |.M.| <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1)
   & eMin - 1 < e & e <= eMax
-  by A2, Th11;
-  A4: (- M) * (beta to_power (e - p + 1))
-  = - (M * (beta to_power (e - p + 1)))
-  .= (-1) * ((M * (beta to_power (e - p + 1))) qua ExtReal)
-  .= (-1) * (y) by A3
-  .= - y by XXREAL_3:91;
-  |.(- M).| = |.M.| by COMPLEX1:52;
-  hence (- y) in FLOAT_NUMBER(beta, p, eMin, eMax) by A3,A4,Th11;
+  by A1, Th11;
+  A3: (- M) * (beta to_power (e - p + 1))
+   = (-1) * ((M * (beta to_power (e - p + 1))) qua ExtReal)
+  .= - y by A2, XXREAL_3:91;
+  -M in beta-radix_INT & |.(- M).| = |.M.|
+  by ThBetaRadixIntClosedUnderNegation, COMPLEX1:52;
+  hence (- y) in FLOAT_NUMBER(beta, p, eMin, eMax) by A2,A3,Th11;
 end;
 @ %def Lm7
 
@@ -578,50 +836,120 @@ end;
 Let $x$ be a positive real number.
 Then $x\in\FF_{n}(\beta,p,e_{\text{min}},e_{\text{max}})$
 if and only if there exists integers $e$ and $M$ such that
-$x=M\cdot(\beta^{e-p+1})$ and $0<M\leq\beta^{p-1}$ and $e_{\text{min}}-1<e\leq e_{\text{max}}$.
+$x=M\cdot(\beta^{e-p+1})$ and
+$0<M\leq(\beta^{p}-1)(\lceil\beta\rceil-1)/(\beta-1)$ and
+$e_{\text{min}}\leq e\leq e_{\text{max}}$.
 \end{theorem}
 
 <<Theorem: criteria for positive real numbers to be exact floating-point numbers>>=
 theorem Th12:
   for x being positive Real
   holds x in FLOAT_NUMBER(beta, p, eMin, eMax) iff
-  (ex M, e being Integer
-  st x = M * (beta to_power (e - p + 1)) & 0 < M & M <= beta to_power (p-1)
+  (ex M being Element of beta-radix_INT, e being Integer
+  st x = M * (beta to_power (e - p + 1)) & 0 < M
+  & M <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1)
   & eMin - 1 < e & e <= eMax)
 proof
   let x be positive Real;
-  thus x in FLOAT_NUMBER(beta, p, eMin, eMax) implies (ex M, e being Integer
-  st x = M * (beta to_power (e - p + 1)) & 0 < M & M <= beta to_power (p-1)
+  thus x in FLOAT_NUMBER(beta, p, eMin, eMax) implies (ex M being Element of beta-radix_INT, e being Integer
+  st x = M * (beta to_power (e - p + 1)) & 0 < M
+  & M <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1)
   & eMin - 1 < e & e <= eMax)
   proof
     assume x in FLOAT_NUMBER(beta, p, eMin, eMax);
-    then consider M, e being Integer such that
-    A1: x = M * (beta to_power (e - p + 1)) & |.M.| <= beta to_power (p-1)
+    then consider M being Element of beta-radix_INT, e being Integer such that
+    A1: x = M * (beta to_power (e - p + 1))
+    & |.M.| <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1)
     & eMin - 1 < e & e <= eMax by Th11;
     take M, e;
-    thus thesis by A1, COMPLEX1:43;
+    thus x = M * (beta to_power (e - p + 1)) by A1;
+    M > 0 by A1;
+    then M = |.M.| by COMPLEX1:43;
+    then M <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1)
+    by A1;
+    hence thesis by A1;
   end;
-  given M, e being Integer such that 
-  A2: x = M * (beta to_power (e - p + 1)) & 0 < M & M <= beta to_power (p-1) & eMin - 1 < e & e <= eMax;
+  given M being Element of beta-radix_INT, e being Integer such that 
+  A2: x = M * (beta to_power (e - p + 1)) & 0 < M
+  & M <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1)
+  & eMin - 1 < e & e <= eMax;
   |.M.| = M by A2, COMPLEX1:43;
   hence thesis by A2, Th11;
 end;
 @ %def Th12
+
+\begin{lemma}
+Let $b\in\NN$ be a valid radix, let $p\in\NN$ be nonzero $p\neq0$.
+Then $b^{p-1}\leq b^{p}-1$.
+\end{lemma}
+
+\begin{proof}[Proof sketch]
+This follows by induction on $p$.
+The base case $p=1$ requires proving $b^{0}\leq b-1$, which follows from
+the definition of valid-radices $b>1$.
+
+The inductive case, assuming $b^{p-1}\leq b^{p}-1$, we see that we can
+multiply both sides by $b$ to obtain $b^{p}\leq b^{p+1}-b\leq b^{p+1}-1$.
+\end{proof}
+
+<<Lemma: $b^{p-1}\leq b^{p}-1$>>=
+Lm17:
+  for b being valid_radix Nat
+  for p being non zero Nat
+  holds b to_power (p - 1) <= (b to_power p) - 1
+proof
+  let b be valid_radix Nat;
+  defpred P[Nat] means b to_power ($1 - 1) <= (b to_power $1) - 1;
+  A1: P[1]
+  proof
+    b > 1 by Def1;
+    then b - 1 >= 2 - 1 by NAT_1:23, XREAL_1:9;
+    hence thesis by POWER:24;
+  end;
+  A2: for k being non zero Nat st P[k]
+  holds P[k + 1]
+  proof
+    let k be non zero Nat;
+    assume P[k];
+    then B1: b * (b to_power (k - 1)) <= b * ((b to_power k) - 1)
+    by XREAL_1:64;
+    RHS: b * ((b to_power k) - 1) = ((b to_power 1) * (b to_power k)) - b
+                                 .= (b to_power (1 + k)) - b by POWER:27;
+    LHS: b * (b to_power (k - 1)) = (b to_power 1)*(b to_power (k - 1))
+                                 .= b to_power (1 + (k - 1)) by POWER:27
+                                 .= b to_power k;
+    (b to_power (1 + k)) - b < (b to_power (1 + k)) - 1 by Def1, XREAL_1:10;
+    hence thesis by B1, LHS, RHS, XXREAL_0:2;
+  end;
+
+  for k being non zero Nat holds P[k] from NAT_1:sch 10(A1, A2);
+  hence b to_power (p - 1) <= (b to_power p) - 1;
+end;
+@ %def Lm17
 
 \begin{theorem}
 Let $b\in\NN$ be a valid radix.
 Then $1\in\FF(b,p,e_{\text{min}},e_{\text{max}})$.
 \end{theorem}
 
+The critical premise is that $b$ is a valid radix, it could be real but
+that greatly complicates the proof.
+
+\begin{proof}[Proof sketch]
+We see that $M=b^{p-1}\leq b^{p}-1$ and $e=0$ gives us the
+floating-point value $1$.
+\end{proof}
+
 <<Theorem: if $b$ is a natural number, then $1\in\FF(b,p,e_{\text{min}},e_{\text{max}})$>>=
-theorem Th43:
+<<Lemma: $b^{p-1}\leq b^{p}-1$>>
+
+theorem Th53:
   for b being valid_radix Nat
   holds 1 in FLOAT_NUMBER(b, p, eMin, eMax)
 proof
   let b be valid_radix Nat;
-  1 is positive Real;
   ex M, e being Integer
-  st 1 = M * (b to_power (e - p + 1)) & 0 < M & M <= b to_power (p-1)
+  st 1 = M * (b to_power (e - p + 1)) & |.M.| <= ((b to_power p) - 1)
   & eMin - 1 < e & e <= eMax
   proof
     p >= 0 + 1 by INT_1:7;
@@ -632,17 +960,16 @@ proof
     take M;
     take e = 0;
     thus M * (b to_power (e - p + 1))
-          = (b to_power (p - 1)) * (b to_power (e - p + 1))
-         .= b to_power ((p - 1) + (e - p + 1)) by POWER:27
+          = b to_power ((p - 1) + (e - p + 1)) by POWER:27
          .= 1 by POWER:24;
-    thus 0 < M;
-    thus M <= b to_power (p-1);
+    |.M.| = M by COMPLEX1:43;
+    hence |.M.| <= (b to_power p) - 1 by Lm17;
     thus eMin - 1 < e;
     thus e <= eMax;
   end;
-  hence 1 in FLOAT_NUMBER(b, p, eMin, eMax) by Th12;
+  hence 1 in FLOAT_NUMBER(b, p, eMin, eMax) by Th12a;
 end;
-@ %def Th43
+@ %def Th53
 
 \begin{definition}
 Let $\beta$ be a positive real number, let $p$ be a natural number,
@@ -1023,14 +1350,15 @@ proof
     then reconsider X=x as positive Real by ThPositiveFloat;
     x in FLOAT(b, p, eMin, eMax) by Def8a;
     then x in FLOAT_NUMBER(b, p, eMin, eMax) by A1, ThRealFloatsAreInFLOATNUMBER;
-    then consider M, e being Integer such that
-    A3: X = M * (b to_power (e - p + 1)) & 0 < M & M <= b to_power (p-1)
+    then consider M being Element of b-radix_INT, e being Integer such that
+    A3: X = M * (b to_power (e - p + 1)) & 0 < M
+    & M <= (([/b\] - 1)/(b - 1)) * ((b to_power p) - 1)
     & eMin - 1 < e & e <= eMax by Th12;
     eMin - 1 + 1 <= e by A3, INT_1:7;
     then eMin + (1 - p) <= e + (1 - p) by XREAL_1:6;
     then A4: (b to_power (eMin - p + 1)) <= (b to_power (e - p + 1))
     by Def1, Th1;
-    0 + 1 <= M by A3, INT_1:7;
+    1 <= M by A3, ThSmallestPositiveBetaRadixInt;
     then 1 * (b to_power (e - p + 1)) <= M * (b to_power (e - p + 1))
     by XREAL_1:64;
     hence (b to_power (eMin - p + 1)) <= x by A3, A4, XXREAL_0:2;
@@ -1079,44 +1407,72 @@ end;
 @ %def ThNegativeFloatIsRealOrInfinity
 
 \begin{theorem}
-Let $\beta$ be a positive integer.
-When $e_{\text{min}}\in\ZZ$ is finite, every Float of format $\beta$, $p$,
-$e_{\text{min}}$, $e_{\text{max}}$ is an integer multiple of
-$\beta^{e_{\text{min}}-p+1}$.
+Let $e_{\text{min}}$ be a negative integer, let $x$ be a Float of format
+$\beta$, $p$, $e_{\text{min}}$, $e_{\text{max}}$. Then there exists an
+$n\in\ZZ_{\beta}$ such that $n\beta^{e_{\text{min}}-p+1}=x$.
 \end{theorem}
 
-The standard says this in passing, but doesn't prove it.
-
-<<Theorem: floating-point numbers are integer multiples of $\beta^{e_{\text{min}}-p+1}$>>=
+<<Theorem: $x\in\FF_{\beta}$, $\exists n\in\ZZ_{\beta}.x=n\beta^{e_{\text{min}}-p+1}$>>=
 theorem St3301:
-  beta in INT implies
   for eMin being negative Integer
   for x being real Float of beta, p, eMin, eMax
-  ex n being Integer
+  ex n being Element of beta-radix_INT
   st n*(beta to_power (eMin - p + 1)) = x
 proof
-  assume beta in INT;
-  then A1: beta in NAT by INT_1:3;
   let eMin be negative Integer;
   let x be real Float of beta, p, eMin, eMax;
   x in FLOAT_NUMBER(beta, p, eMin, eMax) by ThRealFloatsAreInFLOATNUMBER;
-  then consider M, e being Integer such that
-  A2: x = M * (beta to_power (e - p + 1)) & |.M.| <= beta to_power (p-1)
-  & eMin - 1 < e & e <= eMax by Th11;
-  (eMin - 1) + 1 <= e by A2, INT_1:7;
+  then consider M being Element of beta-radix_INT, e being Integer such that
+  A1: x = M * (beta to_power (e - p + 1))
+  & |.M.| <= (([/beta\] - 1)/(beta - 1)) * ((beta to_power p) - 1)
+  & eMin - 1 < e & e <= eMax
+  by Th11;
+  (eMin - 1) + 1 <= e by A1, INT_1:7;
   then eMin - eMin <= e - eMin by XREAL_1:9;
   then e - eMin in NAT by INT_1:3;
-  then beta to_power (e - eMin) in NAT by A1, ThNatPowers;
-  then reconsider n = M * (beta to_power (e - eMin)) as Integer;
+  then reconsider n = M*(beta to_power (e - eMin)) as Element of beta-radix_INT
+  by ThLeftShiftBetaRadixINT;
   take n;
   thus n*(beta to_power (eMin - p + 1))
    = (M * (beta to_power (e - eMin))) * (beta to_power (eMin - p + 1))
   .= M * ((beta to_power (e - eMin)) * (beta to_power (eMin - p + 1)))
   .= M * (beta to_power ((e - eMin) + (eMin - p + 1))) by POWER:27
   .= M * (beta to_power (e - p + 1))
-  .= x by A2;
+  .= x by A1;
 end;
 @ %def St3301
+
+\begin{theorem}
+Let $b$ be a valid-radix integer.
+When $e_{\text{min}}\in\ZZ$ is finite, every Float of format $b$, $p$,
+$e_{\text{min}}$, $e_{\text{max}}$ is an integer multiple of
+$b^{e_{\text{min}}-p+1}$.
+\end{theorem}
+
+The standard says this in passing, but doesn't prove it. This is an
+immediate corollary to the previous theorem.
+
+<<Theorem: floating-point numbers are integer multiples of $\beta^{e_{\text{min}}-p+1}$>>=
+<<Theorem: $x\in\FF_{\beta}$, $\exists n\in\ZZ_{\beta}.x=n\beta^{e_{\text{min}}-p+1}$>>
+
+theorem St3302:
+  b in INT implies
+  for eMin being negative Integer
+  for x being real Float of b, p, eMin, eMax
+  ex n being Integer
+  st n*(b to_power (eMin - p + 1)) = x
+proof
+  assume b in INT;
+  then A1: b in NAT by INT_1:3;
+  let eMin be negative Integer;
+  let x be real Float of b, p, eMin, eMax;
+  b is Nat by A1, ORDINAL1:def 12;
+  then b-radix_INT = INT by Def1, A1, ThBRadixINTCompatibility;
+  then ex n being Element of INT
+  st n*(b to_power (eMin - p + 1)) = x by St3301;
+  hence thesis by INT_1:def 2;
+end;
+@ %def St3302
 
 \begin{corollary}
 Let $b$ be a valid radix natural number.
@@ -1152,7 +1508,7 @@ proof
     then b in INT by NUMBERS:17;
     then consider n being Integer such that
     A3: n*(b to_power (eMin - p + 1)) = x
-    by A2, St3301;
+    by A2, St3302;
     x is positive real by A2;
     then n is positive by A3;
     then 0 + 1 <= n by INT_1:7;
@@ -1187,7 +1543,7 @@ proof
     b in NAT by ORDINAL1:def 12;
     then consider n being Integer such that
     A2: n*(b to_power (eMin - p + 1)) = x
-    by A1, St3301, NUMBERS:17;
+    by A1, St3302, NUMBERS:17;
     x is negative real by A1;
     then n is negative by A2;
     then n <= -1 by INT_1:8;
@@ -1537,7 +1893,7 @@ theorem ThExistenceNormalFloat:
   st x is normal
 proof
   let b be valid_radix Nat;
-  1 in FLOAT_NUMBER(b, p, eMin, eMax) by Th43; then
+  1 in FLOAT_NUMBER(b, p, eMin, eMax) by Th53; then
   1 in FLOAT(b, p, eMin, eMax) by XBOOLE_0:def 3; then
   A1: 1 is Float of b, p, eMin, eMax by Def8a;
   per cases;
@@ -1810,15 +2166,15 @@ proof
   proof
     set M = 1, e = eMin;
     set x = M * (b to_power (e - p + 1));
-    x > 0;
-    then reconsider x as positive Real;
-    eMin <= e & -1 < 0;
-    then eMin + (- 1) < e + 0 by XREAL_1:8;
-    then eMin - 1 < e;
+    reconsider x as positive Real;
+    eMin + (- 1) < e + 0 by XREAL_1:8;
     then B1: x = M * (b to_power (e - p + 1))
     & 0 < M & M <= b to_power (p - 1)
-    & eMin - 1 < e & e <= eMax  by Lm19, XXREAL_0:2;
-    then x in FLOAT_NUMBER(b,p,eMin,eMax) by Th12;
+    & eMin - 1 < e & e <= eMax by Lm19;
+    then |.M.| <= b to_power (p - 1)
+    & b to_power (p - 1) <= ((b to_power p) - 1) by Lm17, COMPLEX1:43;
+    then |.M.| <= ((b to_power p) - 1) by XXREAL_0:2;
+    then x in FLOAT_NUMBER(b,p,eMin,eMax) by B1, Th12a;
     then reconsider v=x as Float of b, p, eMin, eMax by ThRealFloatsAreInFLOATNUMBER;
     take v;
     x = b to_power ((1 - p) + e)
@@ -1832,27 +2188,19 @@ proof
   ex x being Real st x = v & 0 < |.x.| & |.x.| < b to_power eMin
   proof
     reconsider x = (b to_power (1 - p))*(b to_power eMin) as Real;
-    B1: v in FLOAT(b, p, eMin, eMax) & x = v by A2, Def8a;
     take x;
-    thus x = v by B1;
-    B2: b > 1 by Def1;
-    B3: x = (b to_power (1 - p))*(b to_power eMin)
-         .= b to_power (1 - p + eMin) by POWER:27;
-    x > 0 by B2,POWER:34;
-    then B4: |.x.| = x by COMPLEX1:43;
-    hence 0 < |.x.|;
-    p > 1 by A1;
-    then 1 + 1 <= p by INT_1:7;
-    then 2 <= p;
+    thus x = v by A2, Def8a;
+    B1: b > 1 by Def1;
+    B2: x = b to_power (1 - p + eMin) by POWER:27;
+    thus 0 < |.x.|;
+    1 + 1 <= p by A1, INT_1:7;
     then 1 - p <= 1 - 2 by XREAL_1:10;
     then 1 - p <= -1;
-    then 1 - p < 0 & eMin <= eMin by XXREAL_0:1;
     then 1 - p + eMin < 0 + eMin by XREAL_1:8;
-    then 1 - p + eMin < eMin;
-    then b to_power (1 - p + eMin) < b to_power eMin by B2, POWER:39;
-    hence |.x.| < b to_power eMin by B3,B4;
+    then b to_power (1 - p + eMin) < b to_power eMin by B1, POWER:39;
+    hence |.x.| < b to_power eMin by B2, COMPLEX1:43;
   end;
-  hence v is subnormal by Def9;
+  hence v is subnormal;
 end;
 @ %def ThBabyExistenceSubnormalFloat
 
