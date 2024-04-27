@@ -66,12 +66,21 @@ a number of observations, thoughts, and comments.
 We define \define{Signed Zero} to be the term equal to $-0 := (0,0)$.
 \end{definition}
 
+\begin{def-remark}[Regarding $+0$]
+This implementation then takes $+0$ to be equal to the real number $0$,
+which is justified by the fact that $v-v=+0$ for every finite
+floating-point number $v$, which is part of the 1985 standard. Kahan~\cite{kahan1987branch}
+notes this in his article regarding signed zero.
+\end{def-remark}
+
+\begin{def-remark}[Implementation justification]
 This is in accordance with the Mizar formalization of negative
 numbers. If $n\in\NN$, then $-n\in\ZZ$ is defined as $(0,n)$. If
 $x\in\RR$ is positive, then $-x\in\RR$ is defined as $(0,x)$. It stands
 to reason that $-0$ would be defined following the same
 pattern. However, this has the peculiar quirk that
 $-0=\{\{0\},\{0,0\}\}=\{\{0\}\}=\{1\}$.
+\end{def-remark}
 
 <<Definition: $-0$>>=
 definition
@@ -113,10 +122,9 @@ theorem Th4:
   holds [n,0] <> +infty & [n,0] <> -infty
 proof
   let n be Nat;
-  A1: n in REAL by NUMBERS:19, TARSKI:def 3, ORDINAL1:def 12;
   +infty = [n,0] implies contradiction
   proof
-    assume A2: +infty = [n,0];
+    assume +infty = [n,0];
     then +infty = {{n}, {n,0}} by TARSKI:def 5;
     then n = {n} or n = {n,0};
     then per cases;
@@ -129,7 +137,7 @@ proof
     end;
   end;
   hence [n,0] <> +infty;
-  thus [n,0] <> -infty by A1, XXREAL_0:def 3, XTUPLE_0:1, ORDINAL1:def 13;
+  thus [n,0] <> -infty by XXREAL_0:def 3, XTUPLE_0:1;
 end;
 @ 
 
@@ -178,7 +186,7 @@ proof
   assume A1: [n,0] in RAT+;
   n in omega by ORDINAL1:def 12;
   then 0 <> {} by A1, ARYTM_3:33;
-  hence contradiction by ORDINAL1:def 13;
+  hence contradiction;
 end;
 @ %def Lm1
 
@@ -237,7 +245,7 @@ proof
   then per cases by ARYTM_3:29;
   suppose {i} in omega;
     then {} in {i} by ORDINAL3:8;
-    hence contradiction by A1, ORDINAL1:def 13, TARSKI:def 1;
+    hence contradiction by A1;
   end;
   suppose ex a,b being Element of omega st ({i} = [a,b] &
     a,b are_coprime & b <> {} & b <> 1);
@@ -379,7 +387,10 @@ ONaN
 We see that $\NaN\notin\ExtRR$.
 \end{theorem}
 
+The proof is automatic thanks to earlier registrations of the fact
+$(i,0)\notin\ExtRR$ for any $i\in\NN$.
+
 <<Theorem: $\NaN\notin\ExtRR$>>=
 theorem
-  not NaN in ExtREAL by Th6;
+  not NaN in ExtREAL;
 @ 

@@ -1126,17 +1126,10 @@ proof
 
   per cases;
   suppose n = 0;
-    hence (b-expansion x).n = (b-expansion x).0
-                           .= [\ 0 * (b to_power (-[\ log(b, x) /])) /] by A1
-                           .= 0;
+    hence (b-expansion x).n = 0 by A1;
   end;
-  suppose A2: n > 0;
-    r.0 = (x * (b to_power (-[\ log(b, x) /]))) - [\ (x * (b to_power (-[\ log(b, x) /])))/] by A1
-       .= 0 - [\0/]
-       .= 0;
-    then A3: for j being Nat st j > 0 holds (b-expansion x).j = 0
-    by A1, ThBetaExpansionHitsZero;
-    hence thesis by A2;
+  suppose n > 0;
+    hence thesis by A1, ThBetaExpansionHitsZero;
   end;
 end;
 @ %def ThBetaExpansionOfZero
@@ -1302,7 +1295,7 @@ proof
   thus (for i being Nat st i in dom d9 holds d9.i = (d.i) * (b |^ i))
   by B1;
 
-  reconsider dd9 = n --> 0 as XFinSequence of NAT by AFINSQ_1:63;
+  reconsider dd9 = n --> 0 as XFinSequence of NAT;
   b |^ n is Element of NAT by ORDINAL1:def 12; then
   reconsider ff9 = <% (b |^ n) %> as XFinSequence of NAT;
   
@@ -1550,8 +1543,8 @@ proof
     let i be Nat;
     assume i in dom d;
     then A3: i in dom k9 & i in dom l9 by A1,A2;
-    hence k9.i = (d.i)*(b |^ i) by A1,A2
-              .= l9.i by A1,A2,A3;
+    hence k9.i = (d.i)*(b |^ i) by A1
+              .= l9.i by A2,A3;
   end;
   hence thesis by A1,A2,AFINSQ_1:8;
 end;
@@ -1634,10 +1627,7 @@ proof
     then rng d9 c= NAT by TARSKI:def 3;
     then reconsider k9=d9 as XFinSequence of NAT by RELAT_1:def 19;
     take k9;
-    thus dom k9 = dom d by A1;
-    thus (for i being Nat st i in dom k9 holds k9.i = (d.i)*(b |^ i))
-    by A1;
-    hence thesis by A1,AFINSQ_2:def 9;
+    thus thesis by A1;
   end;
   thus (ex d9 being XFinSequence of NAT
   st dom d9 = dom d
@@ -1680,7 +1670,7 @@ proof
   then rng d9 c= NAT by TARSKI:def 3;
   then reconsider d9 as XFinSequence of NAT by RELAT_1:def 19;
   d9 is natural-valued;
-  hence beta_integer_value(d,b) is Nat by A1, AFINSQ_2:51;
+  hence beta_integer_value(d,b) is Nat by A1;
 end;
 @
 
@@ -1936,7 +1926,8 @@ theorem Th17:
   for d1 being Real_Sequence
   st (for j being Nat holds d1.j = ((b-expansion x).j)*(b to_power -j))
   holds (Partial_Sums d1).n <= x * (b to_power (-[\ log(b, x) /]))
-  & x * (b to_power (-[\ log(b, x) /])) <= ((([/b\] - 1)/(b - 1))*(b to_power -n)) + (Partial_Sums d1).n
+  & x * (b to_power (-[\ log(b, x) /]))
+    <= ((([/b\] - 1)/(b - 1))*(b to_power -n)) + (Partial_Sums d1).n
 proof
   let x be positive Real;
   let n be Nat;
@@ -2374,7 +2365,7 @@ proof
   let x be Element of beta-radix_NAT;
   per cases;
   suppose x = 0;
-    hence thesis by XXREAL_0:1;
+    hence thesis;
   end;
   suppose x <> 0;
     then consider d being XFinSequence of NAT such that
@@ -2385,16 +2376,14 @@ proof
     A2: dom d9 = dom d
     & (for j being Nat st j in dom d9 holds d9.j = (d.j)*(beta |^ j))
     & beta_integer_value(d,beta) = Sum d9
-    by A1, Def3a;
+    by Def3a;
     for j being Nat st j in dom d9 holds d9.j >= 0
     proof
       let j be Nat;
       assume A3: j in dom d9;
-      beta > 0;
-      then beta to_power j > 0 by POWER:34;
-      then A4: beta |^ j > 0 by POWER:41;
-      d.j >= 0 by A1,A2,A3;
-      then (d.j) * (beta |^ j) >= 0 by A4, XREAL_1:127;
+      beta to_power j > 0;
+      then beta |^ j > 0;
+      then (d.j) * (beta |^ j) >= 0;
       hence thesis by A2,A3;
     end;
     then Sum d9 >= (len d9)*0 by AFINSQ_2:60;
@@ -2692,7 +2681,7 @@ proof
     len (d91 /^ 1) = (len d91) -' 1 by AFINSQ_2:def 2
                   .= (len d91) - 1 by B4, XREAL_0:def 2;
     then Z3: i + 1 in dom d91 by Z1, XREAL_1:20, AFINSQ_1:86;
-    then Z4: d1.(i + 1) = d.i by B1, Z2, LmShiftIndex;
+    Z4: d1.(i + 1) = d.i by B1, Z2, LmShiftIndex;
     (d91 /^ 1).i = d91.(i + 1) by Z2, AFINSQ_2:def 2
                 .= (d1.(i + 1)) * (beta to_power (i + 1)) by B2,Z3
                 .= (d.i) * ((beta to_power i) * (beta to_power 1))
@@ -2851,7 +2840,7 @@ theorem ThZeroInBetaINT:
 proof
   let beta be Real;
   0 in beta-radix_NAT by ThZeroInBetaNAT;
-  hence thesis by Def6, COMPLEX1:44;
+  hence thesis by Def6;
 end;
 @ %def ThZeroInBetaINT
 

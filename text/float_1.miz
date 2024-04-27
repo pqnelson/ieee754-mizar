@@ -633,17 +633,10 @@ proof
 
   per cases;
   suppose n = 0;
-    hence (b-expansion x).n = (b-expansion x).0
-                           .= [\ 0 * (b to_power (-[\ log(b, x) /])) /] by A1
-                           .= 0;
+    hence (b-expansion x).n = 0 by A1;
   end;
-  suppose A2: n > 0;
-    r.0 = (x * (b to_power (-[\ log(b, x) /]))) - [\ (x * (b to_power (-[\ log(b, x) /])))/] by A1
-       .= 0 - [\0/]
-       .= 0;
-    then A3: for j being Nat st j > 0 holds (b-expansion x).j = 0
-    by A1, ThBetaExpansionHitsZero;
-    hence thesis by A2;
+  suppose n > 0;
+    hence thesis by A1, ThBetaExpansionHitsZero;
   end;
 end;
 
@@ -759,7 +752,7 @@ proof
     thus (for i being Nat st i in dom d9 holds d9.i = (d.i) * (b |^ i))
     by B1;
 
-    reconsider dd9 = n --> 0 as XFinSequence of NAT by AFINSQ_1:63;
+    reconsider dd9 = n --> 0 as XFinSequence of NAT;
     b |^ n is Element of NAT by ORDINAL1:def 12; then
     reconsider ff9 = <% (b |^ n) %> as XFinSequence of NAT;
     
@@ -895,8 +888,8 @@ definition
       let i be Nat;
       assume i in dom d;
       then A3: i in dom k9 & i in dom l9 by A1,A2;
-      hence k9.i = (d.i)*(b |^ i) by A1,A2
-                .= l9.i by A1,A2,A3;
+      hence k9.i = (d.i)*(b |^ i) by A1
+                .= l9.i by A2,A3;
     end;
     hence thesis by A1,A2,AFINSQ_1:8;
   end;
@@ -937,10 +930,7 @@ definition
       then rng d9 c= NAT by TARSKI:def 3;
       then reconsider k9=d9 as XFinSequence of NAT by RELAT_1:def 19;
       take k9;
-      thus dom k9 = dom d by A1;
-      thus (for i being Nat st i in dom k9 holds k9.i = (d.i)*(b |^ i))
-      by A1;
-      hence thesis by A1,AFINSQ_2:def 9;
+      thus thesis by A1;
     end;
     thus (ex d9 being XFinSequence of NAT
     st dom d9 = dom d
@@ -966,7 +956,7 @@ definition
     then rng d9 c= NAT by TARSKI:def 3;
     then reconsider d9 as XFinSequence of NAT by RELAT_1:def 19;
     d9 is natural-valued;
-    hence beta_integer_value(d,b) is Nat by A1, AFINSQ_2:51;
+    hence beta_integer_value(d,b) is Nat by A1;
   end;
 end;
 
@@ -1093,7 +1083,8 @@ theorem Th17:
   for d1 being Real_Sequence
   st (for j being Nat holds d1.j = ((b-expansion x).j)*(b to_power -j))
   holds (Partial_Sums d1).n <= x * (b to_power (-[\ log(b, x) /]))
-  & x * (b to_power (-[\ log(b, x) /])) <= ((([/b\] - 1)/(b - 1))*(b to_power -n)) + (Partial_Sums d1).n
+  & x * (b to_power (-[\ log(b, x) /]))
+    <= ((([/b\] - 1)/(b - 1))*(b to_power -n)) + (Partial_Sums d1).n
 proof
   let x be positive Real;
   let n be Nat;
@@ -1366,7 +1357,7 @@ proof
   let x be Element of beta-radix_NAT;
   per cases;
   suppose x = 0;
-    hence thesis by XXREAL_0:1;
+    hence thesis;
   end;
   suppose x <> 0;
     then consider d being XFinSequence of NAT such that
@@ -1377,16 +1368,14 @@ proof
     A2: dom d9 = dom d
     & (for j being Nat st j in dom d9 holds d9.j = (d.j)*(beta |^ j))
     & beta_integer_value(d,beta) = Sum d9
-    by A1, Def3a;
+    by Def3a;
     for j being Nat st j in dom d9 holds d9.j >= 0
     proof
       let j be Nat;
       assume A3: j in dom d9;
-      beta > 0;
-      then beta to_power j > 0 by POWER:34;
-      then A4: beta |^ j > 0 by POWER:41;
-      d.j >= 0 by A1,A2,A3;
-      then (d.j) * (beta |^ j) >= 0 by A4, XREAL_1:127;
+      beta to_power j > 0;
+      then beta |^ j > 0;
+      then (d.j) * (beta |^ j) >= 0;
       hence thesis by A2,A3;
     end;
     then Sum d9 >= (len d9)*0 by AFINSQ_2:60;
@@ -1621,7 +1610,7 @@ proof
         len (d91 /^ 1) = (len d91) -' 1 by AFINSQ_2:def 2
                       .= (len d91) - 1 by B4, XREAL_0:def 2;
         then Z3: i + 1 in dom d91 by Z1, XREAL_1:20, AFINSQ_1:86;
-        then Z4: d1.(i + 1) = d.i by B1, Z2, LmShiftIndex;
+        Z4: d1.(i + 1) = d.i by B1, Z2, LmShiftIndex;
         (d91 /^ 1).i = d91.(i + 1) by Z2, AFINSQ_2:def 2
                     .= (d1.(i + 1)) * (beta to_power (i + 1)) by B2,Z3
                     .= (d.i) * ((beta to_power i) * (beta to_power 1))
@@ -1748,7 +1737,7 @@ theorem ThZeroInBetaINT:
 proof
   let beta be Real;
   0 in beta-radix_NAT by ThZeroInBetaNAT;
-  hence thesis by Def6, COMPLEX1:44;
+  hence thesis by Def6;
 end;
 
 registration
@@ -2235,10 +2224,9 @@ theorem Th4:
   holds [n,0] <> +infty & [n,0] <> -infty
 proof
   let n be Nat;
-  A1: n in REAL by NUMBERS:19, TARSKI:def 3, ORDINAL1:def 12;
   +infty = [n,0] implies contradiction
   proof
-    assume A2: +infty = [n,0];
+    assume +infty = [n,0];
     then +infty = {{n}, {n,0}} by TARSKI:def 5;
     then n = {n} or n = {n,0};
     then per cases;
@@ -2251,7 +2239,7 @@ proof
     end;
   end;
   hence [n,0] <> +infty;
-  thus [n,0] <> -infty by A1, XXREAL_0:def 3, XTUPLE_0:1, ORDINAL1:def 13;
+  thus [n,0] <> -infty by XXREAL_0:def 3, XTUPLE_0:1;
 end;
 
 theorem Th5:
@@ -2271,7 +2259,7 @@ proof
   assume A1: [n,0] in RAT+;
   n in omega by ORDINAL1:def 12;
   then 0 <> {} by A1, ARYTM_3:33;
-  hence contradiction by ORDINAL1:def 13;
+  hence contradiction;
 end;
 
 Lm2:
@@ -2299,7 +2287,7 @@ proof
   then per cases by ARYTM_3:29;
   suppose {i} in omega;
     then {} in {i} by ORDINAL3:8;
-    hence contradiction by A1, ORDINAL1:def 13, TARSKI:def 1;
+    hence contradiction by A1;
   end;
   suppose ex a,b being Element of omega st ({i} = [a,b] &
     a,b are_coprime & b <> {} & b <> 1);
@@ -2372,7 +2360,7 @@ definition
 end;
 
 theorem
-  not NaN in ExtREAL by Th6;
+  not NaN in ExtREAL;
 
 
 begin :: 3. Floating-point formats
@@ -2414,7 +2402,7 @@ proof
     consider n being Nat such that
     B1: p = n+1
     by NAT_1:6;
-    B2: n = (n + 1) - 1 by XCMPLX_1:26
+    B2: n = (n + 1) - 1
          .= p - 1 by B1;
     1" = 1; then
     B3: beta" <> 1 by A3;
@@ -2436,9 +2424,7 @@ proof
     by XCMPLX_1:106
     .= k0 * ((beta - (beta * (beta to_power -p)))/(beta - 1)) by POWER:32
     .= k0 * ((beta - ((beta to_power 1) * (beta to_power -p)))/(beta - 1))
-    by POWER:25
-    .= k0 * ((beta - (beta to_power (1 + (-p))))/(beta - 1))
-    by POWER:27
+    .= k0 * ((beta - (beta to_power (1 + (-p))))/(beta - 1)) by POWER:27
     .= ((beta - (beta to_power (1 + (-p))))/(beta - 1)) * k0
     .= (k0/(beta - 1)) * (beta - (beta to_power (1 + (-p)))) by XCMPLX_1:75
     .= (k0/(beta - 1)) * (beta - (beta to_power (1 - p)));
@@ -2623,7 +2609,7 @@ proof
       [/beta\] - 1 >= beta - 1 by XREAL_1:9, INT_1:def 7; 
       then ([/beta\] - 1)/(beta - 1) >= (beta - 1)/(beta - 1)
       by B1, XREAL_1:72;
-      hence thesis by B1, XCMPLX_1:60;
+      hence thesis by B1;
     end;
     set b = beta to_power p;
     b >= 1 by A2, POWER:35;
@@ -2659,7 +2645,7 @@ end;
 registration
   let beta, p, eMin, eMax;
   cluster FLOAT_NUMBER(beta, p, eMin, eMax) -> non empty;
-  coherence by ThZeroInFloatNumber;
+  coherence;
 end;
 
 registration
@@ -2673,7 +2659,7 @@ registration
     thus thesis;
   end;
   cluster -> ext-real for Element of FLOAT_NUMBER(beta, p, eMin, eMax);
-  coherence by TARSKI:def 3;
+  coherence;
 end;
 
 theorem St3200:
@@ -2800,13 +2786,12 @@ proof
     assume (- x) in FLOAT_NUMBER(beta, p, eMin, eMax);
     then - (- x) = x & - (- x) in FLOAT_NUMBER(beta, p, eMin, eMax) by Lm7,A2;
     hence x in FLOAT_NUMBER(beta, p, eMin, eMax);
-    hence thesis by Lm7;
   end;
   suppose CASE2: x=+infty;
-    hence thesis by A1, CASE2, St3200;
+    hence thesis by A1, St3200;
   end;
   suppose CASE3: x=-infty;
-    hence thesis by A1, CASE3, St3200;
+    hence thesis by A1, St3200;
   end;
 end;
 

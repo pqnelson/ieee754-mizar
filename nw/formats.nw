@@ -230,7 +230,7 @@ proof
     consider n being Nat such that
     B1: p = n+1
     by NAT_1:6;
-    B2: n = (n + 1) - 1 by XCMPLX_1:26
+    B2: n = (n + 1) - 1
          .= p - 1 by B1;
     1" = 1; then
     B3: beta" <> 1 by A3;
@@ -252,9 +252,7 @@ proof
     by XCMPLX_1:106
     .= k0 * ((beta - (beta * (beta to_power -p)))/(beta - 1)) by POWER:32
     .= k0 * ((beta - ((beta to_power 1) * (beta to_power -p)))/(beta - 1))
-    by POWER:25
-    .= k0 * ((beta - (beta to_power (1 + (-p))))/(beta - 1))
-    by POWER:27
+    .= k0 * ((beta - (beta to_power (1 + (-p))))/(beta - 1)) by POWER:27
     .= ((beta - (beta to_power (1 + (-p))))/(beta - 1)) * k0
     .= (k0/(beta - 1)) * (beta - (beta to_power (1 + (-p)))) by XCMPLX_1:75
     .= (k0/(beta - 1)) * (beta - (beta to_power (1 - p)));
@@ -526,7 +524,7 @@ proof
       [/beta\] - 1 >= beta - 1 by XREAL_1:9, INT_1:def 7; 
       then ([/beta\] - 1)/(beta - 1) >= (beta - 1)/(beta - 1)
       by B1, XREAL_1:72;
-      hence thesis by B1, XCMPLX_1:60;
+      hence thesis by B1;
     end;
     set b = beta to_power p;
     b >= 1 by A2, POWER:35;
@@ -579,7 +577,7 @@ We see that the set of floating-point numbers is nonempty.
 registration
   let beta, p, eMin, eMax;
   cluster FLOAT_NUMBER(beta, p, eMin, eMax) -> non empty;
-  coherence by ThZeroInFloatNumber;
+  coherence;
 end;
 @ 
 
@@ -609,7 +607,7 @@ registration
     thus thesis;
   end;
   cluster -> ext-real for Element of FLOAT_NUMBER(beta, p, eMin, eMax);
-  coherence by TARSKI:def 3;
+  coherence;
 end;
 @ 
 
@@ -796,13 +794,12 @@ proof
     assume (- x) in FLOAT_NUMBER(beta, p, eMin, eMax);
     then - (- x) = x & - (- x) in FLOAT_NUMBER(beta, p, eMin, eMax) by Lm7,A2;
     hence x in FLOAT_NUMBER(beta, p, eMin, eMax);
-    hence thesis by Lm7;
   end;
   suppose CASE2: x=+infty;
-    hence thesis by A1, CASE2, St3200;
+    hence thesis by A1, St3200;
   end;
   suppose CASE3: x=-infty;
-    hence thesis by A1, CASE3, St3200;
+    hence thesis by A1, St3200;
   end;
 end;
 @ %def ThFloatClosedUnderNegation
