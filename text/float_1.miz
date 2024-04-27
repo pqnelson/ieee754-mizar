@@ -54,7 +54,7 @@ registration
   existence
   proof
     take x=2;
-    thus thesis by Def1;
+    thus thesis;
   end;
 end;
 
@@ -69,7 +69,7 @@ end;
 
 registration
   cluster valid_radix -> positive for Real;
-  coherence by Def1, XXREAL_0:def 6;
+  coherence;
 end;
 
 registration
@@ -102,7 +102,7 @@ proof
   assume A1: x in NAT;
   assume A2: y in NAT;
   reconsider X=x, Y=y as Nat by A1,A2;
-  X to_power Y = X |^ Y by POWER:41;
+  X to_power Y = X |^ Y;
   hence x to_power y in NAT by ORDINAL1:def 12;
 end;
 
@@ -130,15 +130,13 @@ proof
         hence thesis by A3, POWER:def 3;
       end;
       suppose A5: b to_power N < x;
-        A6: b to_power N > 0 by POWER:34;
-        then N = log(b, b to_power N) by A3, POWER:def 3;
-        hence thesis by A3, A5, A6, POWER:57;
+        N = log(b, b to_power N) by A3, POWER:def 3;
+        hence thesis by A3, A5, POWER:57;
       end;
     end;
     log(b,x) < N + 1
     proof
-      b to_power (N + 1) > 0 by POWER:34;
-      then N + 1 = log(b, b to_power (N + 1)) by A3, POWER:def 3;
+      N + 1 = log(b, b to_power (N + 1)) by A3, POWER:def 3;
       hence log(b,x) < (N+1) by A2, A3, POWER:57;
     end;
     then log(b,x) - 1 < (N + 1) - 1 by XREAL_1:14;
@@ -178,29 +176,18 @@ theorem Th2:
 proof
   let x be positive Real;
   set N = [\ log(b, x) /];
-  A1: b > 0 & b <> 1 by Def1;
-  A2: b to_power N > 0 by POWER:34;
-  A3: (b to_power N) * (b to_power (- N))
+  A1: (b to_power N) * (b to_power (- N))
      = b to_power (N + (- N)) by POWER:27
     .= 1 by POWER:24;
 
-  thus 1 <= x * (b to_power (- N))
-  proof
-    set z = b to_power N;
-    1 / z = b to_power (- N) by POWER:28;
-    hence 1 <= x * (b to_power (- N)) by A2, A3, Th1b, XREAL_1:64;
-  end;
+  hence 1 <= x * (b to_power (- N)) by Th1b, XREAL_1:64;
 
-  thus x * (b to_power (- N)) < b
-  proof
-    b to_power (N + 1) = (b to_power 1) * (b to_power N) by POWER:27
-                      .= b * (b to_power N) by POWER:25;
-    then B1: (b to_power (N + 1)) * (b to_power (- N))
-     = b * ((b to_power N) * (b to_power (- N)))
-    .= b by A3;
-    0 < (b to_power (- N)) by POWER:34;
-    hence x * (b to_power (- N)) < b by Th1b, B1, XREAL_1:68;
-  end;
+  b to_power (N + 1) = (b to_power 1) * (b to_power N) by POWER:27
+                    .= b * (b to_power N);
+  then (b to_power (N + 1)) * (b to_power (- N))
+   = b * ((b to_power N) * (b to_power (- N)))
+  .= b by A1;
+  hence x * (b to_power (- N)) < b by Th1b, XREAL_1:68;
 end;
 
 theorem ThBetaExpansionExistence:
@@ -262,12 +249,12 @@ proof
     then b to_power -N < 1 by POWER:24;
     hence thesis by A2, XXREAL_0:2;
   end;
-  suppose A2: epsilon < 1;
+  suppose A3: epsilon < 1;
     A4: 0 < -log(b, epsilon)
     proof
-      A3: 0 < epsilon & epsilon < 1 & b > 1 by A1, A2, Def1;
+      B1: 0 < epsilon & epsilon < 1 & b > 1 by A1, A3, Def1;
       then log(b,1) > log(b,epsilon) by POWER:57;
-      then 0 > log(b, epsilon) by A3, POWER:51;
+      then 0 > log(b, epsilon) by B1, POWER:51;
       hence thesis;
     end;
     consider r being Real such that
@@ -364,8 +351,7 @@ proof
       s.(k + 1) + (r.(k + 1)) * (b to_power (- (k + 1)))
       = s.k + (d.(k + 1) + r.(k + 1)) * (b to_power (-k - 1))
       .= s.k + (b * (r.k)) * (b to_power (-k - 1)) by A5
-      .= s.k + (r.k) * (b * (b to_power (-k - 1)))
-      .= s.k + (r.k) * ((b to_power 1) * (b to_power (-k - 1))) by POWER:25
+      .= s.k + (r.k) * ((b to_power 1) * (b to_power (-k - 1)))
       .= s.k + (r.k) * (b to_power (-k - 1 + 1)) by POWER:27
       .= s.k + (r.k) * (b to_power -k);
       hence P[k + 1] by B3;
@@ -428,7 +414,7 @@ proof
     then b to_power -m <= b to_power -N by Th1;
     then b to_power -m < epsilon by B2, XXREAL_0:2;
     hence |.((s.m) - x * (b to_power (-[\ log(b, x) /]))).| < epsilon
-    by B2,B4,XXREAL_0:2;
+    by B4,XXREAL_0:2;
   end;
 
   hence s is convergent by SEQ_2:def 6;
