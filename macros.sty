@@ -38,7 +38,10 @@
   \RequirePackage[nottoc,notlot,notlof]{tocbibind}
 \fi
 \RequirePackage{ifpdf}
-\RequirePackage[\ifpdf\else dvipdfmx\fi]{hyperref}
+% "hypertexnames=false" needed for appendix destinations to work
+% properly, otherwise hyperref will link them to section 1.1, 1.2, etc.
+% https://tex.stackexchange.com/q/460375/14751
+\RequirePackage[\ifpdf\else dvipdfmx\fi,hypertexnames=false]{hyperref}
 
 % eTeX uses this color for links, it's better than BrickRed imho
 \definecolor{linkRed}{cmyk}{0.28, 1, 1, 0.35}
