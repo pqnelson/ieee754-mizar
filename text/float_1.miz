@@ -3291,84 +3291,48 @@ definition
   let beta, p, eMin, eMax;
   let IT be Float of beta, p, eMin, eMax;
   attr IT is normal means :Def8:
-  IT <> 0 & IT in FLOAT_NUMBER(beta,p,eMin,eMax) if eMin =-infty,
-  ex iMin being negative Integer st iMin = eMin
-  & ex x being Real st x = IT
-  & beta to_power iMin <= |.x.| if eMin <> -infty & eMax = +infty
-  otherwise ex iMin being negative Integer st iMin = eMin
-  & ex iMax being positive Integer st iMax = eMax
-  & ex x being Real st x = IT
-  & beta to_power iMin <= |.x.|
-  & |.x.| <= (beta to_power iMax)*(beta - (beta to_power (1 - p)));
+  IT is real & IT <> 0 if eMin = -infty
+  otherwise IT is real & ex x being Real, iMin being negative Integer
+  st iMin = eMin & x = IT & beta to_power iMin <= |.x.|;
   consistency;
-end;
-
-theorem ThNormalInFloatNumber:
-  for v being Float of beta, p, eMin, eMax
-  st v is normal
-  holds v in FLOAT_NUMBER(beta, p, eMin, eMax)
-proof
-  let v be Float of beta, p, eMin, eMax;
-  assume A1: v is normal;
-  then per cases;
-  suppose eMin = -infty;
-    hence v in FLOAT_NUMBER(beta, p, eMin, eMax) by A1, Def8;
-  end;
-  suppose eMin <> -infty & eMax = +infty;
-    then ex iMin being negative Integer st iMin = eMin
-    & ex x being Real st x = v
-    & beta to_power iMin <= |.x.| by A1, Def8;
-    then v is real;
-    hence v in FLOAT_NUMBER(beta,p,eMin,eMax) by ThRealFloatsAreInFLOATNUMBER;
-  end;
-  suppose eMin <> -infty & eMax <> +infty;
-    then ex iMin being negative Integer st iMin = eMin
-    & ex iMax being positive Integer st iMax = eMax
-    & ex x being Real st x = v
-    & beta to_power iMin <= |.x.|
-    & |.x.| <= (beta to_power iMax)*(beta - (beta to_power (1 - p))) by A1,Def8;
-    then v is real;
-    hence v in FLOAT_NUMBER(beta,p,eMin,eMax) by ThRealFloatsAreInFLOATNUMBER;
-  end;
 end;
 
 registration
   let beta, p, eMin, eMax;
-  cluster normal -> ext-real for Float of beta, p, eMin, eMax;
+  cluster normal -> real for Float of beta, p, eMin, eMax;
   coherence
   proof
-    let x be Float of beta, p, eMin, eMax;
-    assume x is normal;
-    then x in FLOAT_NUMBER(beta, p, eMin, eMax) by ThNormalInFloatNumber;
-    hence thesis;
+    let v be Float of beta, p, eMin, eMax;
+    assume A1: v is normal;
+    per cases;
+    suppose eMin = -infty;
+      hence thesis by A1, Def8;
+    end;
+    suppose eMin <> -infty;
+      hence thesis by A1, Def8;
+    end;
   end;
 end;
 
 theorem ThNormalFloatCriteriaFiniteExp:
   for eMin being negative Integer
-  for eMax being positive Integer
   for v being Float of beta, p, eMin, eMax
   holds v is normal iff ex x being Real st x = v
   & beta to_power eMin <= |.x.|
-  & |.x.| <= (beta to_power eMax)*(beta - (beta to_power (1 - p)))
 proof
   let eMin be negative Integer;
-  let eMax be positive Integer;
   let v be Float of beta, p, eMin, eMax;
   thus v is normal implies ex x being Real st x = v
   & beta to_power eMin <= |.x.|
-  & |.x.| <= (beta to_power eMax)*(beta - (beta to_power (1 - p)))
   proof
     assume v is normal;
-    then ex iMin being negative Integer st iMin = eMin
-    & ex iMax being positive Integer st iMax = eMax
-    & ex x being Real st x = v
-    & beta to_power iMin <= |.x.|
-    & |.x.| <= (beta to_power iMax)*(beta - (beta to_power (1 - p))) by Def8;
+    then ex x being Real, iMin being negative Integer st iMin = eMin
+    & x = v
+    & beta to_power iMin <= |.x.| by Def8;
     hence thesis;
   end;
   given x being Real such that 
-  A1: x = v & beta to_power eMin <= |.x.| & |.x.| <= (beta to_power eMax)*(beta - (beta to_power (1 - p)));
+  A1: x = v & beta to_power eMin <= |.x.|;
   thus v is normal by A1, Def8;
 end;
 
@@ -3582,7 +3546,7 @@ theorem
   eMin = -infty implies not ex v being Float of beta, p, eMin, eMax
   st v is subnormal by Def9;
 
-theorem
+theorem ThZeroIsNotNormal:
   for x being Float of beta, p, eMin, eMax
   st x = 0
   holds not x is normal & not x is subnormal
@@ -3597,22 +3561,12 @@ proof
       then x <> 0 by A2, Def8;
       hence contradiction by A1;
     end;
-    suppose eMin <> -infty & eMax = +infty;
-      then ex iMin being negative Integer st
-      iMin = eMin
-      & ex x0 being Real st x0 = x
+    suppose eMin <> -infty;
+      then ex x0 being Real, iMin being negative Integer
+      st iMin = eMin
+      & x0 = x
       & beta to_power iMin <= |.x0.| by A2, Def8;
       then 0 < |.0.| by A1, Def1;
-      hence contradiction by COMPLEX1:44;
-    end;
-    suppose eMin <> -infty & eMax <> +infty;
-      then ex iMin being negative Integer st iMin = eMin
-      & ex iMax being positive Integer st iMax = eMax
-      & ex x0 being Real st x0 = x
-      & beta to_power iMin <= |.x0.|
-      & |.x0.| <= (beta to_power iMax)*(beta - (beta to_power (1 - p)))
-      by A2, Def8;
-      then 0 < |.0.| by A1;
       hence contradiction by COMPLEX1:44;
     end;
   end;
@@ -3625,6 +3579,18 @@ proof
     then 0 < |.0.| by A1;
     hence contradiction by COMPLEX1:44;
   end;
+end;
+
+registration
+  let beta, p, eMin, eMax;
+  cluster zero -> non normal for Float of beta, p, eMin, eMax;
+  coherence by ThZeroIsNotNormal;
+  cluster zero -> non subnormal for Float of beta, p, eMin, eMax;
+  coherence by ThZeroIsNotNormal;
+  cluster normal -> non zero for Float of beta, p, eMin, eMax;
+  coherence by ThZeroIsNotNormal;
+  cluster subnormal -> non zero for Float of beta, p, eMin, eMax;
+  coherence by ThZeroIsNotNormal;
 end;
 
 theorem ThBabyExistenceSubnormalFloat:
@@ -3695,6 +3661,14 @@ proof
   & v is subnormal
   by A1, ThBabyExistenceSubnormalFloat;
   hence thesis;
+end;
+
+registration
+  let b, p be valid_radix Nat;
+  let eMin be negative Integer;
+  let eMax;
+  cluster subnormal for Float of b, p, eMin, eMax;
+  existence by Def1, ThExistenceSubnormalFloat;
 end;
 
 definition

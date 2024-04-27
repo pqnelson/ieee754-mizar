@@ -1,4 +1,23 @@
 <!--- -*- mode: Markdown; var: -*- -->
+# 2024-04-26T13:48:09
+
+My current issues:
+
+- [X] Fix `ThNormalFloatCriteriaFiniteExp`
+- [X] Define the `normal` floating-point numbers for arbitrary `beta`
+      being real are appropriate, so it respects the subclasses of
+      floating-point numbers (namely, that infinity is not a normal
+      number, nor is zero a normal number)
+      - `beta to_power eMin <= |.IT.| & IT is real` if `eMin <> -infty`
+      - `0 < |.IT.| & IT is real` if `eMin = -infty`
+- [X] Redefine the normal floating-point numbers 
+      (`redefinition attr IT is normal means...`)  when `beta` is a
+      natural number, to be what we expect
+      - **NOT NECESSARY!** This is because the definition merely
+        requires the floating-point number being greater than some
+        lower-bound. 
+- [ ] Prove `c.e = beta to_power (- e)` converges to zero?
+
 # 2024-04-25T10:39:09
 
 I am pushing in my scratchwork, I need to revise it to make it better.
@@ -19,9 +38,9 @@ My current issues:
       (`redefinition attr IT is normal means...`)  when `beta` is a
       natural number, to be what we expect
 - [ ] Prove `c.e = beta to_power (- e)` converges to zero
-- [ ] Prove every floating-point number is a `beta-radix_INT` multiple
+- [X] Prove every floating-point number is a `beta-radix_INT` multiple
       of the smallest subnormal floating-point number when `eMin <> -infty`
-- [ ] Corollary: every floating-point number of format `b`, ..., is an
+- [X] Corollary: every floating-point number of format `b`, ..., is an
       integer multiple of the smallest subnormal floating-point number
       when `eMin <> -infty`
 

@@ -84,9 +84,7 @@ begin :: 3. Floating-point formats
 
 <<Definition: normal floating-point number>>
 
-<<Theorem: All normal elements of a floating-point format are floating-point numbers>>
-
-<<Register: All normal floating-point data are extended reals>>
+<<Register: normal implies real for floating-point numbers>>
 
 <<Theorem: criterion for normal floating-point numbers with $e_{\text{min}}\in\ZZ$ and $e_{\text{max}}\in\ZZ$>>
 
@@ -116,9 +114,13 @@ begin :: 3. Floating-point formats
 
 <<Theorem: 0 is neither normal nor subnormal>>
 
+<<Register: zero, normal, subnormal floats are disjoint>>
+
 <<Theorem: if $p>1$, then $b^{e_{\text{min}}+1-p}$ is subnormal>>
 
 <<Theorem: Existence of subnormal float for $b\in\NN$, $e_{\text{min}}\in\ZZ$, and $p>1$>>
+
+<<Register: existence of subnormal floating-point numbers>>
 
 <<Definition: basic floating-point formats>>
 @ 
@@ -1563,18 +1565,18 @@ end;
 Let $x$ be a floating-point datum belonging to the format $\FF(\beta,p,e_{\text{min}},e_{\text{max}})$.
 We say $x$ is \define{Normal} if
 \begin{enumerate}
-\item when $e_{\text{min}}=-\infty$, $x\neq0$ is a floating-point number;
-\item when $e_{\text{min}}\neq-\infty$ but $e_{\text{max}}=+\infty$,
-  the magnitude of $x$ is not less than $\beta^{e_{\text{min}}}\leq|x|$;
-\item otherwise, its magnitude lies between
-  $\beta^{e_{\text{min}}}\leq|x|\leq\beta^{e_{\text{max}}}\cdot(\beta-\beta^{1-p})$.
+\item when $e_{\text{min}}=-\infty$, $x\neq0$ is a finite floating-point number;
+\item otherwise, $x\in\RR$ and its magnitude is not less than
+  $\beta^{e_{\text{min}}}\leq|x|$.
 \end{enumerate}
 \end{definition}
 
 \begin{def-remark}
-The Standard really specifies only case (3), since they have exponents
-be integers. We generalize to cases (1) and (2) in a manner to make sure
-non-normal numbers [zero] remain non-normal.
+We want to preserve the classes of floating-point numbers (i.e., we want
+a floating-point datum to be: zero, subnormal, normal, infinite, or NaN,
+but exactly one of these). This generalizes the definition for the
+$e_{\text{min}}=-\infty$ case, and preventing infinity from being a
+normal floating-point number is satisfied by the $x\in\RR$ demand.
 \end{def-remark}
 
 This definition gives us a peculiar situation: zero is not a normal
@@ -1587,110 +1589,72 @@ definition
   let beta, p, eMin, eMax;
   let IT be Float of beta, p, eMin, eMax;
   attr IT is normal means :Def8:
-  IT <> 0 & IT in FLOAT_NUMBER(beta,p,eMin,eMax) if eMin =-infty,
-  ex iMin being negative Integer st iMin = eMin
-  & ex x being Real st x = IT
-  & beta to_power iMin <= |.x.| if eMin <> -infty & eMax = +infty
-  otherwise ex iMin being negative Integer st iMin = eMin
-  & ex iMax being positive Integer st iMax = eMax
-  & ex x being Real st x = IT
-  & beta to_power iMin <= |.x.|
-  & |.x.| <= (beta to_power iMax)*(beta - (beta to_power (1 - p)));
+  IT is real & IT <> 0 if eMin = -infty
+  otherwise IT is real & ex x being Real, iMin being negative Integer
+  st iMin = eMin & x = IT & beta to_power iMin <= |.x.|;
   consistency;
 end;
 @ %def normal Def8
 
-\begin{theorem}
-All normal elements of a floating-point format are floating-point numbers.
-\end{theorem}
-
-<<Theorem: All normal elements of a floating-point format are floating-point numbers>>=
-theorem ThNormalInFloatNumber:
-  for v being Float of beta, p, eMin, eMax
-  st v is normal
-  holds v in FLOAT_NUMBER(beta, p, eMin, eMax)
-proof
-  let v be Float of beta, p, eMin, eMax;
-  assume A1: v is normal;
-  then per cases;
-  suppose eMin = -infty;
-    hence v in FLOAT_NUMBER(beta, p, eMin, eMax) by A1, Def8;
-  end;
-  suppose eMin <> -infty & eMax = +infty;
-    then ex iMin being negative Integer st iMin = eMin
-    & ex x being Real st x = v
-    & beta to_power iMin <= |.x.| by A1, Def8;
-    then v is real;
-    hence v in FLOAT_NUMBER(beta,p,eMin,eMax) by ThRealFloatsAreInFLOATNUMBER;
-  end;
-  suppose eMin <> -infty & eMax <> +infty;
-    then ex iMin being negative Integer st iMin = eMin
-    & ex iMax being positive Integer st iMax = eMax
-    & ex x being Real st x = v
-    & beta to_power iMin <= |.x.|
-    & |.x.| <= (beta to_power iMax)*(beta - (beta to_power (1 - p))) by A1,Def8;
-    then v is real;
-    hence v in FLOAT_NUMBER(beta,p,eMin,eMax) by ThRealFloatsAreInFLOATNUMBER;
-  end;
-end;
-@ %def ThNormalInFloatNumber
-
 \begin{registration}
-All normal floating-point data are extended reals.
+If a floating-point number is normal, then it is also a real number.
 \end{registration}
 
-<<Register: All normal floating-point data are extended reals>>=
+This literally follows from the definition of ``normal'', but Mizar
+needs our help to break it up into the cases when $e_{\text{min}}=-\infty$
+and when $e_{\text{min}}\neq\infty$.
+
+<<Register: normal implies real for floating-point numbers>>=
 registration
   let beta, p, eMin, eMax;
-  cluster normal -> ext-real for Float of beta, p, eMin, eMax;
+  cluster normal -> real for Float of beta, p, eMin, eMax;
   coherence
   proof
-    let x be Float of beta, p, eMin, eMax;
-    assume x is normal;
-    then x in FLOAT_NUMBER(beta, p, eMin, eMax) by ThNormalInFloatNumber;
-    hence thesis;
+    let v be Float of beta, p, eMin, eMax;
+    assume A1: v is normal;
+    per cases;
+    suppose eMin = -infty;
+      hence thesis by A1, Def8;
+    end;
+    suppose eMin <> -infty;
+      hence thesis by A1, Def8;
+    end;
   end;
 end;
 @ 
 
 \begin{theorem}
-If $e_{\text{min}}\in\ZZ$ and $e_{\text{max}}\in\ZZ$,
+If $e_{\text{min}}\in\ZZ$,
 then $v\in\FF(\beta,p,e_{\text{min}},e_{\text{max}})$ is normal if and only if
-there exists a $x\in\RR$ such that $x=v$ and $\beta^{e_{\text{min}}}\leq x\leq\beta^{e_{\text{max}}}(\beta - \beta^{1-p})$.
+there exists a $x\in\RR$ such that $x=v$ and $\beta^{e_{\text{min}}}\leq x$.
 \end{theorem}
 
 \begin{proof}[Proof sketch]
 This simply ``unrolls'' the definition of ``normal'' floating-point
 numbers to match the case specified by the hypotheses that
-$e_{\text{min}}\in\ZZ$ and $e_{\text{max}}\in\ZZ$.
+$e_{\text{min}}\in\ZZ$.
 \end{proof}
 
 <<Theorem: criterion for normal floating-point numbers with $e_{\text{min}}\in\ZZ$ and $e_{\text{max}}\in\ZZ$>>=
 theorem ThNormalFloatCriteriaFiniteExp:
   for eMin being negative Integer
-  for eMax being positive Integer
   for v being Float of beta, p, eMin, eMax
   holds v is normal iff ex x being Real st x = v
   & beta to_power eMin <= |.x.|
-  & |.x.| <= (beta to_power eMax)*(beta - (beta to_power (1 - p)))
 proof
   let eMin be negative Integer;
-  let eMax be positive Integer;
   let v be Float of beta, p, eMin, eMax;
   thus v is normal implies ex x being Real st x = v
   & beta to_power eMin <= |.x.|
-  & |.x.| <= (beta to_power eMax)*(beta - (beta to_power (1 - p)))
   proof
     assume v is normal;
-    then ex iMin being negative Integer st iMin = eMin
-    & ex iMax being positive Integer st iMax = eMax
-    & ex x being Real st x = v
-    & beta to_power iMin <= |.x.|
-    & |.x.| <= (beta to_power iMax)*(beta - (beta to_power (1 - p))) by Def8;
+    then ex x being Real, iMin being negative Integer st iMin = eMin
+    & x = v
+    & beta to_power iMin <= |.x.| by Def8;
     hence thesis;
   end;
   given x being Real such that 
-  A1: x = v & beta to_power eMin <= |.x.| & |.x.| <= (beta to_power eMax)*(beta - (beta to_power (1 - p)));
+  A1: x = v & beta to_power eMin <= |.x.|;
   thus v is normal by A1, Def8;
 end;
 @ %def ThNormalFloatCriteriaFiniteExp
@@ -2089,7 +2053,7 @@ impossible.
 \end{proof}
 
 <<Theorem: 0 is neither normal nor subnormal>>=
-theorem
+theorem ThZeroIsNotNormal:
   for x being Float of beta, p, eMin, eMax
   st x = 0
   holds not x is normal & not x is subnormal
@@ -2108,7 +2072,7 @@ proof
     hence contradiction by COMPLEX1:44;
   end;
 end;
-@
+@ %def ThZeroIsNotNormal
 
 \begin{proof}[Subproof (0 is not normal)]
 This boils down to a proof by cases, then looking at the definition. In
@@ -2123,26 +2087,36 @@ proof
     then x <> 0 by A2, Def8;
     hence contradiction by A1;
   end;
-  suppose eMin <> -infty & eMax = +infty;
-    then ex iMin being negative Integer st
-    iMin = eMin
-    & ex x0 being Real st x0 = x
+  suppose eMin <> -infty;
+    then ex x0 being Real, iMin being negative Integer
+    st iMin = eMin
+    & x0 = x
     & beta to_power iMin <= |.x0.| by A2, Def8;
     then 0 < |.0.| by A1, Def1;
     hence contradiction by COMPLEX1:44;
   end;
-  suppose eMin <> -infty & eMax <> +infty;
-    then ex iMin being negative Integer st iMin = eMin
-    & ex iMax being positive Integer st iMax = eMax
-    & ex x0 being Real st x0 = x
-    & beta to_power iMin <= |.x0.|
-    & |.x0.| <= (beta to_power iMax)*(beta - (beta to_power (1 - p)))
-    by A2, Def8;
-    then 0 < |.0.| by A1;
-    hence contradiction by COMPLEX1:44;
-  end;
 end;
 @
+
+\begin{registration}
+We now register the fact that zero floats are non-normal and non-subnormal,
+normal floats are nonzero, and subnormal floats are nonzero.
+\end{registration}
+
+<<Register: zero, normal, subnormal floats are disjoint>>=
+registration
+  let beta, p, eMin, eMax;
+  cluster zero -> non normal for Float of beta, p, eMin, eMax;
+  coherence by ThZeroIsNotNormal;
+  cluster zero -> non subnormal for Float of beta, p, eMin, eMax;
+  coherence by ThZeroIsNotNormal;
+  cluster normal -> non zero for Float of beta, p, eMin, eMax;
+  coherence by ThZeroIsNotNormal;
+  cluster subnormal -> non zero for Float of beta, p, eMin, eMax;
+  coherence by ThZeroIsNotNormal;
+end;
+@ 
+
 
 \begin{theorem}
 Let $b\in\NN$ be a valid radix number, $e_{\text{min}}\in\ZZ$ be negative.
@@ -2227,6 +2201,21 @@ proof
   hence thesis;
 end;
 @ %def ThExistenceSubnormalFloat
+
+\begin{registration}
+When $b$, $p$ are natural numbers greater than one, $e_{\text{min}}\in\ZZ$,
+there exists subnormal floating-point numbers.
+\end{registration}
+
+<<Register: existence of subnormal floating-point numbers>>=
+registration
+  let b, p be valid_radix Nat;
+  let eMin be negative Integer;
+  let eMax;
+  cluster subnormal for Float of b, p, eMin, eMax;
+  existence by Def1, ThExistenceSubnormalFloat;
+end;
+@ 
 
 \begin{definition*}
 The Standard explicitly gives us five ``basic'' floating-point formats:
