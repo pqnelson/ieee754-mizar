@@ -2515,7 +2515,7 @@ definition
   end;
 end;
 
-LmSigh:
+theorem LmSigh:
   for b being valid_radix Nat
   holds (([/b\] -1)/(b - 1)) * ((b to_power p) - 1) = (b to_power p) - 1
 proof
@@ -2523,9 +2523,8 @@ proof
   b > 1 by Def1;
   then b + (-1) > 1 + (-1) by XREAL_1:8;
   then b - 1 > 1 - 1;
-  then
-  A1: b - 1 > 0;
-  ([/b\] - 1)/(b - 1) = 1 by A1, XCMPLX_1:60;
+  then b - 1 > 0;
+  then ([/b\] - 1)/(b - 1) = 1 by XCMPLX_1:60;
   hence (([/b\] - 1)/(b - 1)) * ((b to_power p) - 1) = 1 * ((b to_power p) - 1)
                                                     .= ((b to_power p) - 1);
 end;
@@ -3050,36 +3049,36 @@ end;
 
 registration
   let beta, p, eMin, eMax;
-  cluster positive -> ext-real for Float of beta,p,eMin,eMax;
+  cluster positive -> non zero ext-real for Float of beta,p,eMin,eMax;
   coherence by Def9a;
-  cluster negative -> ext-real for Float of beta,p,eMin,eMax;
+  cluster negative -> non zero ext-real for Float of beta,p,eMin,eMax;
   coherence by Def9b;
 end;
 
 registration
   let beta, p, eMin, eMax;
-  cluster positive for Float of beta,p,eMin,eMax;
+  cluster positive ext-real for Float of beta,p,eMin,eMax;
   existence
   proof
     reconsider v=+infty as Float of beta,p,eMin,eMax by St3201;
     take v;
     thus thesis by Def9a;
   end;
-  cluster negative for Float of beta,p,eMin,eMax;
+  cluster negative ext-real for Float of beta,p,eMin,eMax;
   existence
   proof
     reconsider v=-infty as Float of beta,p,eMin,eMax by St3201;
     take v;
     thus thesis by Def9b;
   end;
-  cluster non positive for Float of beta,p,eMin,eMax;
+  cluster non positive ext-real for Float of beta,p,eMin,eMax;
   existence
   proof
     reconsider v=-infty as Float of beta,p,eMin,eMax by St3201;
     take v;
     thus thesis by Def9b;
   end;
-  cluster non negative for Float of beta,p,eMin,eMax;
+  cluster non negative ext-real for Float of beta,p,eMin,eMax;
   existence
   proof
     reconsider v=+infty as Float of beta,p,eMin,eMax by St3201;

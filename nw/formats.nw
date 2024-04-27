@@ -161,14 +161,9 @@ of ourselves.
 We will reserve $\beta$ for some positive real number [to work in
 as maximal generality as convenient],
 $p$ for some positive natural number,
-$e_{\text{min}}$ for a negative integer smaller than $-1$ (possibly equal to $-\infty$),
+$e_{\text{min}}$ for a negative integer (possibly equal to $-\infty$),
 $e_{\text{max}}$ for a positive integer or $+\infty$.
 \end{reserve}
-
-The rationale for $e_{\text{min}}<-1$ is that subnormal floating-point
-numbers don't exist for $e_{\text{min}}=-1$ or
-$e_{\text{min}}=0$. Actually, this isn't true, it works fine even if we
-take $e_{\text{min}}=0$.
 
 <<Reserve: parameters for floating-point format>>=
 reserve beta for positive Real;
@@ -293,19 +288,17 @@ $e_{\text{max}}\in\NN\cup\{+\infty\}$ be negative and positive integers
 or infinities.
 We define the set of \define{Floating-Point Numbers} to be the subset
 $\FF_{n}(\beta,p,e_{\text{min}},e_{\text{max}})$ of $\ExtRR$ equal to
-$\{x\in\RR \mid \exists M,e\in\ZZ, x=M\cdot \beta^{e-p+1}\land
-|M|\leq \beta^{p}-1\land e_{\text{min}}-1<e\leq e_{\text{max}}\}\cup\{\pm\infty\}$.
+$\{x\in\RR \mid \exists M\in\ZZ_{\beta}\,\exists e\in\ZZ, x=M\cdot \beta^{e-p+1}\land
+|M|\leq \frac{\lceil\beta\rceil-1}{\beta-1}(\beta^{p}-1)\land e_{\text{min}}-1<e\leq e_{\text{max}}\}\cup\{\pm\infty\}$.
 \end{definition}
 
 \begin{def-remark}
 We should really have the set be
 $\{x\in\RR \mid \exists M,e\in\ZZ, x=M\cdot \beta^{e-p+1}\land
-|M|\leq(\lceil\beta\rceil-1)(\beta^{p}-1)/(\beta-1)\land e_{\text{min}}\leq e\leq e_{\text{max}}\}\cup\{\pm\infty\}$
-if we were trying to \emph{literally} formalize the Standard, but this
-is logically equivalent to the definition offered. The reason why we use
-$e_{\text{min}}-1<e\leq e_{\text{max}}$ instead of
-$e_{\text{min}}\leq e\leq e_{\text{max}}$ is for the case when
-$e_{\text{min}}=-\infty$ we run into difficulties.
+|M|\leq\beta^{p}-1\land e_{\text{min}}\leq e\leq e_{\text{max}}\}\cup\{\pm\infty\}$
+if we were trying to \emph{literally} formalize the Standard, but we are
+trying to be suitably general here. We will show that this is equivalent
+to the definition we offer when $\beta\in\NN$ is a valid-radix.
 \end{def-remark}
 
 We're allowing the exponents to possible be infinite because other users
@@ -363,8 +356,14 @@ end;
 When $b\in\NN$, we see $(\lceil b\rceil-1))(b^{p}-1)/(b-1)=(b^{p}-1)$.
 \end{theorem}
 
+\begin{proof}[Proof sketch]
+Since $b$ is a valid-radix, we have $b>1$ which means $b-1>0$. We know
+$\lceil b\rceil=b$, therefore $(\lceil b\rceil-1)/(b-1)=1$ since $b-1\neq0$.
+The result follows immediately.
+\end{proof}
+
 <<Theorem: if $b\in\NN$, then $(\lceil b\rceil-1))(b^{p}-1)/(b-1)=(b^{p}-1)$>>=
-LmSigh:
+theorem LmSigh:
   for b being valid_radix Nat
   holds (([/b\] -1)/(b - 1)) * ((b to_power p) - 1) = (b to_power p) - 1
 proof
@@ -372,24 +371,26 @@ proof
   b > 1 by Def1;
   then b + (-1) > 1 + (-1) by XREAL_1:8;
   then b - 1 > 1 - 1;
-  then
-  A1: b - 1 > 0;
-  ([/b\] - 1)/(b - 1) = 1 by A1, XCMPLX_1:60;
+  then b - 1 > 0;
+  then ([/b\] - 1)/(b - 1) = 1 by XCMPLX_1:60;
   hence (([/b\] - 1)/(b - 1)) * ((b to_power p) - 1) = 1 * ((b to_power p) - 1)
                                                     .= ((b to_power p) - 1);
 end;
 @ %def LmSigh
 
-\begin{definition}
+\begin{redefinition}
 When $b\in\NN$ is a valid radix, the set of floating-point numbers may
-be defined by the criteria $x\in\RR$ is a floating-point number iff
+be redefined by the criteria $x\in\RR$ is a floating-point number iff
 there exists integers $M$ and $e$ such that $x=Mb^{e-p+1}$ and $|M|\leq b^{p}-1$
 and $e_{\text{min}}\leq e\leq e_{\text{max}}$, or if $x=\pm\infty$.
-\end{definition}
+\end{redefinition}
 
+\begin{proof}[Proof sketch (compatibility)]
 We need to prove this new redefinition is compatible with the old
 definition, $\mathbb{F}_{\text{new}}\subset\mathbb{F}_{\text{old}}$ and
-$\mathbb{F}_{\text{new}}\supset\mathbb{F}_{\text{old}}$.
+$\mathbb{F}_{\text{new}}\supset\mathbb{F}_{\text{old}}$. The heavy
+lifting is provided by the previous theorem.
+\end{proof}
 
 <<Definition: [[FLOAT_NUMBER]] over integer radix>>=
 definition
@@ -536,7 +537,7 @@ end;
 @ %def LmZeroBound
 
 \begin{theorem}
-Zero is a floating-point number in any real base $\beta>1$.
+Zero is a floating-point number in any real base $\beta>0$.
 \end{theorem}
 
 \begin{proof}[Proof sketch]
@@ -1200,9 +1201,9 @@ are automatically extended real numbers.
 <<Register: positive and negative Floats are extended-reals>>=
 registration
   let beta, p, eMin, eMax;
-  cluster positive -> ext-real for Float of beta,p,eMin,eMax;
+  cluster positive -> non zero ext-real for Float of beta,p,eMin,eMax;
   coherence by Def9a;
-  cluster negative -> ext-real for Float of beta,p,eMin,eMax;
+  cluster negative -> non zero ext-real for Float of beta,p,eMin,eMax;
   coherence by Def9b;
 end;
 @ 
@@ -1215,28 +1216,28 @@ Floats of format $\beta$, $p$, $e_{\text{min}}$, $e_{\text{max}}$.
 <<Register: positive, negative, non-positive, non-negative Floats>>=
 registration
   let beta, p, eMin, eMax;
-  cluster positive for Float of beta,p,eMin,eMax;
+  cluster positive ext-real for Float of beta,p,eMin,eMax;
   existence
   proof
     reconsider v=+infty as Float of beta,p,eMin,eMax by St3201;
     take v;
     thus thesis by Def9a;
   end;
-  cluster negative for Float of beta,p,eMin,eMax;
+  cluster negative ext-real for Float of beta,p,eMin,eMax;
   existence
   proof
     reconsider v=-infty as Float of beta,p,eMin,eMax by St3201;
     take v;
     thus thesis by Def9b;
   end;
-  cluster non positive for Float of beta,p,eMin,eMax;
+  cluster non positive ext-real for Float of beta,p,eMin,eMax;
   existence
   proof
     reconsider v=-infty as Float of beta,p,eMin,eMax by St3201;
     take v;
     thus thesis by Def9b;
   end;
-  cluster non negative for Float of beta,p,eMin,eMax;
+  cluster non negative ext-real for Float of beta,p,eMin,eMax;
   existence
   proof
     reconsider v=+infty as Float of beta,p,eMin,eMax by St3201;
