@@ -480,14 +480,9 @@ definition
         j < k by A5, XREAL_1:145;
         then A6: b*(r1.j) = b*(r2.j) by A4;
         then A7: d1.(j+1) = [\b*(r2.j)/] by A1
-                         .= d2.(j+1) by A2
-                         .= d2.k by A5;
-        r1.k = r1.(j + 1) by A5
-            .= b*(r1.j) - [\ b*(r1.j) /] by A1
-            .= b*(r1.j) - [\ b*(r2.j) /] by A6
-            .= b*(r2.j) - [\ b*(r2.j) /] by A6
-            .= r2.(j + 1) by A2
-            .= r2.k by A5;
+                         .= d2.k by A2, A5;
+        r1.k = b*(r2.j) - [\ b*(r2.j) /] by A1, A5, A6
+            .= r2.k by A2, A5;
         hence P[k] by A5, A7;
       end;
     end;
@@ -525,8 +520,7 @@ proof
     suppose j > 0;
       then consider k being Nat such that
       B1: j = k + 1 by NAT_1:6;
-      r.j = r.(k + 1) by B1
-         .= b*(r.k) - [\ b*(r.k) /] by A1
+      r.j = b*(r.k) - [\ b*(r.k) /] by A1, B1
          .= frac (b * (r.k)) by INT_1:def 8;
       hence thesis by INT_1:43;
     end;
@@ -678,7 +672,6 @@ proof
   b > 0 & b <> 1 by Def1; then
   A2: (b to_power n) * (b to_power (-[\log(b,b to_power n)/]))
    = (b to_power n) * (b to_power (-[\ n /])) by POWER:def 3
-  .= (b to_power n)*(b to_power -n)
   .= b to_power (n + (-n)) by POWER:27
   .= 1 by POWER:24;
   hence (b-expansion (b to_power n)).0 = 1 by A1;
@@ -2402,8 +2395,7 @@ proof
     consider n being Nat such that
     B1: p = n+1
     by NAT_1:6;
-    B2: n = (n + 1) - 1
-         .= p - 1 by B1;
+    B2: n = p - 1 by B1;
     1" = 1; then
     B3: beta" <> 1 by A3;
     thus Sum c
@@ -2411,10 +2403,8 @@ proof
     .= (k0 (#) (Partial_Sums ((beta ") GeoSeq))).n by SERIES_1:9
     .= k0 * ((Partial_Sums ((beta ") GeoSeq)).n) by SEQ_1:9
     .= k0 * ((1 - ((beta ") to_power (n + 1)))/(1 - (beta "))) by B3,SERIES_1:22
-    .= k0 * ((1 - ((1 * (beta ")) to_power p))/(1 - (1 * (beta ")))) by B1
-    .= k0 * ((1 - ((1 * (beta ")) to_power p))/(1 - (1 / beta))) by XCMPLX_1:215
-    .= k0 * ((1 - ((1/beta) to_power p))/(1 - (1 / beta))) by XCMPLX_1:215
-    .= k0 * (1 * ((1 - ((1/beta) to_power p))/(1 - (1 / beta))))
+    .= k0 * ((1 - ((1 * (beta ")) to_power p))/(1 - (1 / beta))) by B1,XCMPLX_1:215
+    .= k0 * (1 * ((1 - ((1/beta) to_power p))/(1 - (1 / beta)))) by XCMPLX_1:215
     .= k0 * ((beta/beta) * ((1 - ((1/beta) to_power p))/(1 - (1 / beta))))
     by XCMPLX_1:60
     .= k0 * ((beta * (1 - ((1/beta) to_power p)))/(beta * (1 - (1 / beta))))
@@ -2422,12 +2412,10 @@ proof
     .= k0 * (((beta * 1) - (beta * ((1/beta) to_power p)))/(beta * 1 - beta*(1/beta)))
     .= k0 * ((beta - (beta * ((1/beta) to_power p)))/(beta - 1))
     by XCMPLX_1:106
-    .= k0 * ((beta - (beta * (beta to_power -p)))/(beta - 1)) by POWER:32
     .= k0 * ((beta - ((beta to_power 1) * (beta to_power -p)))/(beta - 1))
+    by POWER:32
     .= k0 * ((beta - (beta to_power (1 + (-p))))/(beta - 1)) by POWER:27
-    .= ((beta - (beta to_power (1 + (-p))))/(beta - 1)) * k0
-    .= (k0/(beta - 1)) * (beta - (beta to_power (1 + (-p)))) by XCMPLX_1:75
-    .= (k0/(beta - 1)) * (beta - (beta to_power (1 - p)));
+    .= (k0/(beta - 1)) * (beta - (beta to_power (1 - p))) by XCMPLX_1:75;
   end;
 
   A6: len c = len d by A1,A4;
@@ -2436,12 +2424,10 @@ proof
     let i be Nat;
     assume B1: i in dom d;
     B2: i in dom c by A6,B1;
-    then B3: i in p by A4;
-    c.i = ((k0 (#) ((beta ") GeoSeq))|p).i
-       .= (k0 (#) ((beta ") GeoSeq)).i by B3, FUNCT_1:49
+    then i in p by A4; then
+    c.i = (k0 (#) ((beta ") GeoSeq)).i by FUNCT_1:49
        .= k0 * (((beta ") GeoSeq).i) by SEQ_1:9
        .= k0 * ((beta ") to_power i) by PREPOWER:def 1
-       .= k0 * ((1 * (beta ")) to_power i)
        .= k0 * ((1 / beta) to_power i) by XCMPLX_1:215
        .= k0 * (beta to_power -i) by POWER:32;
     hence d.i <= c.i by A2, B1;
@@ -2497,8 +2483,7 @@ proof
   then b - 1 > 1 - 1;
   then b - 1 > 0;
   then ([/b\] - 1)/(b - 1) = 1 by XCMPLX_1:60;
-  hence (([/b\] - 1)/(b - 1)) * ((b to_power p) - 1) = 1 * ((b to_power p) - 1)
-                                                    .= ((b to_power p) - 1);
+  hence (([/b\] - 1)/(b - 1)) * ((b to_power p) - 1) = ((b to_power p) - 1);
 end;
 
 definition
@@ -3021,9 +3006,9 @@ end;
 registration
   let beta, p, eMin, eMax;
   cluster positive -> non zero ext-real for Float of beta,p,eMin,eMax;
-  coherence by Def9a;
+  coherence;
   cluster negative -> non zero ext-real for Float of beta,p,eMin,eMax;
-  coherence by Def9b;
+  coherence;
 end;
 
 registration
@@ -3033,28 +3018,28 @@ registration
   proof
     reconsider v=+infty as Float of beta,p,eMin,eMax by St3201;
     take v;
-    thus thesis by Def9a;
+    thus thesis;
   end;
   cluster negative ext-real for Float of beta,p,eMin,eMax;
   existence
   proof
     reconsider v=-infty as Float of beta,p,eMin,eMax by St3201;
     take v;
-    thus thesis by Def9b;
+    thus thesis;
   end;
   cluster non positive ext-real for Float of beta,p,eMin,eMax;
   existence
   proof
     reconsider v=-infty as Float of beta,p,eMin,eMax by St3201;
     take v;
-    thus thesis by Def9b;
+    thus thesis;
   end;
   cluster non negative ext-real for Float of beta,p,eMin,eMax;
   existence
   proof
     reconsider v=+infty as Float of beta,p,eMin,eMax by St3201;
     take v;
-    thus thesis by Def9a;
+    thus thesis;
   end;
 end;
 
@@ -3109,8 +3094,7 @@ proof
   then per cases by TARSKI:def 2;
   suppose A1: x in REAL;
     then reconsider X=x as positive Real by ThPositiveFloat;
-    x in FLOAT(b, p, eMin, eMax) by Def8a;
-    then x in FLOAT_NUMBER(b, p, eMin, eMax) by A1, ThRealFloatsAreInFLOATNUMBER;
+    x in FLOAT_NUMBER(b, p, eMin, eMax) by ThRealFloatsAreInFLOATNUMBER;
     then consider M being Element of b-radix_INT, e being Integer such that
     A3: X = M * (b to_power (e - p + 1)) & 0 < M
     & M <= (([/b\] - 1)/(b - 1)) * ((b to_power p) - 1)
@@ -3175,10 +3159,8 @@ proof
   by ThLeftShiftBetaRadixINT;
   take n;
   thus n*(beta to_power (eMin - p + 1))
-   = (M * (beta to_power (e - eMin))) * (beta to_power (eMin - p + 1))
-  .= M * ((beta to_power (e - eMin)) * (beta to_power (eMin - p + 1)))
+   = M * ((beta to_power (e - eMin)) * (beta to_power (eMin - p + 1)))
   .= M * (beta to_power ((e - eMin) + (eMin - p + 1))) by POWER:27
-  .= M * (beta to_power (e - p + 1))
   .= x by A1;
 end;
 
@@ -3193,11 +3175,10 @@ proof
   then A1: b in NAT by INT_1:3;
   let eMin be negative Integer;
   let x be real Float of b, p, eMin, eMax;
-  b is Nat by A1, ORDINAL1:def 12;
-  then b-radix_INT = INT by Def1, A1, ThBRadixINTCompatibility;
+  b-radix_INT = INT by Def1, A1, ThBRadixINTCompatibility;
   then ex n being Element of INT
   st n*(b to_power (eMin - p + 1)) = x by St3301;
-  hence thesis by INT_1:def 2;
+  hence thesis;
 end;
 
 theorem ThSmallestPositiveFloat:
@@ -3238,7 +3219,6 @@ proof
   let eMin be negative Integer;
   let b be valid_radix Nat;
   let x be negative Float of b, p, eMin, eMax;
-  x in FLOAT_NUMBER(b, p, eMin, eMax) by ThRealFloatsAreInFLOATNUMBER;
   per cases by ThNegativeFloatIsRealOrInfinity;
   suppose A1: x is real;
     b in NAT by ORDINAL1:def 12;
@@ -3326,7 +3306,7 @@ proof
   let eMax be positive Integer;
   0 + 1 <= eMax by INT_1:7;
   then b to_power 1 <= b to_power eMax by Def1,Th1;
-  hence b <= b to_power eMax by POWER:25;
+  hence b <= b to_power eMax;
 end;
 
 Lm21:
@@ -3350,16 +3330,7 @@ end;
 theorem ThNormalFloatInNegInfty:
   for x being Float of beta, p, eMin, eMax
   st x=1 & eMin=-infty
-  holds x is normal
-proof
-  let x be Float of beta, p, eMin, eMax;
-  assume A1: x=1;
-  assume A2: eMin=-infty;
-  1 in NAT;
-  then x is real by A1, NUMBERS:19;
-  then x in FLOAT_NUMBER(beta, p, eMin, eMax) by ThRealFloatsAreInFLOATNUMBER;
-  hence x is normal by A1,A2,Def8;
-end;
+  holds x is normal by Def8;
 
 theorem ThNormalFloatInPosInfty:
   for x being Float of b, p, eMin, eMax
@@ -3378,7 +3349,7 @@ proof
     reconsider x1=x as Real by A1;
     b > 1 by Def1;
     then b to_power iMin < |.x1.| by A1,COMPLEX1:48,POWER:36;
-    hence x is normal by A2,Def8;
+    hence x is normal by Def8;
   end;
 end;
 
@@ -3457,7 +3428,7 @@ proof
   implies x in FLOAT_NUMBER(beta, p, eMin, eMax)
   proof
     assume A1: x in FLOAT(beta, p, eMin, eMax);
-    not -0 in ExtREAL & not NaN in ExtREAL by Th6;
+    not -0 in ExtREAL & not NaN in ExtREAL;
     then {-0, NaN} misses ExtREAL by ZFMISC_1:51;
     then A2: {-0, NaN} /\ REAL = {} by XBOOLE_1:63, NUMBERS:31, XBOOLE_0:def 7;
     x in REAL by XREAL_0:def 1;
@@ -3476,22 +3447,15 @@ proof
   assume A1: p = 1;
   let b be valid_radix Nat;
   let eMin be negative Integer;
-  set x = b to_power (eMin - p + 1);
-  b > 1 by Def1;
-  then x > 0 by POWER:34;
-  then reconsider x as positive Real;
+  reconsider x = b to_power (eMin - p + 1) as positive Real;
   A2: x = b to_power eMin by A1;
-  then for v being positive Float of b, p, eMin, eMax
-  holds x <= v by ThSmallestPositiveFloat;
-
   for v being Float of b, p, eMin, eMax
   holds not v is subnormal
   proof
     let v be Float of b, p, eMin, eMax;
     assume v is subnormal;
     then consider x0 being Real such that
-    A3: x0 = v & 0 < |.x0.| & |.x0.| < b to_power eMin
-    by Def9;
+    A3: x0 = v & 0 < |.x0.| & |.x0.| < b to_power eMin;
     A4: |.x0.| < x by A2,A3;
     A5: x0 in FLOAT_NUMBER(b, p, eMin, eMax)
     & x0 is Float of b, p, eMin, eMax
@@ -3505,7 +3469,7 @@ proof
     end;
     suppose A6: x0 is negative;
       then x0 is negative Float of b, p, eMin, eMax by A5, Def9b;
-      then -(- x) <= -x0 by A5, ThSmallestNegativeFloat, XREAL_1:24;
+      then -(- x) <= -x0 by ThSmallestNegativeFloat, XREAL_1:24;
       hence contradiction by A4, A6, COMPLEX1:70;
     end;
   end;
@@ -3514,7 +3478,7 @@ end;
 
 theorem
   eMin = -infty implies not ex v being Float of beta, p, eMin, eMax
-  st v is subnormal by Def9;
+  st v is subnormal;
 
 theorem ThZeroIsNotNormal:
   for x being Float of beta, p, eMin, eMax
@@ -3536,19 +3500,11 @@ proof
       st iMin = eMin
       & x0 = x
       & beta to_power iMin <= |.x0.| by A2, Def8;
-      then 0 < |.0.| by A1, Def1;
+      then 0 < |.0.| by A1;
       hence contradiction by COMPLEX1:44;
     end;
   end;
-  thus not x is subnormal
-  proof
-    assume x is subnormal;
-    then ex x0 being Real st x0 = x &
-    ex iMin being negative Integer st iMin = eMin
-    & 0 < |.x0.| & |.x0.| < beta to_power iMin by Def9;
-    then 0 < |.0.| by A1;
-    hence contradiction by COMPLEX1:44;
-  end;
+  thus not x is subnormal by A1, COMPLEX1:44;
 end;
 
 registration
@@ -3558,9 +3514,9 @@ registration
   cluster zero -> non subnormal for Float of beta, p, eMin, eMax;
   coherence by ThZeroIsNotNormal;
   cluster normal -> non zero for Float of beta, p, eMin, eMax;
-  coherence by ThZeroIsNotNormal;
+  coherence;
   cluster subnormal -> non zero for Float of beta, p, eMin, eMax;
-  coherence by ThZeroIsNotNormal;
+  coherence;
 end;
 
 theorem ThBabyExistenceSubnormalFloat:
@@ -3602,7 +3558,7 @@ proof
   proof
     reconsider x = (b to_power (1 - p))*(b to_power eMin) as Real;
     take x;
-    thus x = v by A2, Def8a;
+    thus x = v by A2;
     B1: b > 1 by Def1;
     B2: x = b to_power (1 - p + eMin) by POWER:27;
     thus 0 < |.x.|;

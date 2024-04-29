@@ -55,8 +55,18 @@ a number of observations, thoughts, and comments.
   finite number has three components: a sign, an exponent, and a
   significand; its numerical value is the signed product of its
   significand and its radix raised to the power of its exponent.''
-  Well, this is ambiguous (``its radix'' presumably means ``the radix of
-  its format'').
+  \begin{itemize}
+  \item This is frustrating, because later on (\S3.3) a floating-point
+    representation is defined to be a subset of $(\{0,1\}\times\ZZ\times\NN)\cup\{\pm\infty,\qNaN,\sNaN\}$.
+    It would be far more natural to work with just the product
+    $\mathcal{R}=\{(s,e,m)\in\{0,1\}\times\ZZ\times\NN\mid e_{\text{min}}\leq e\leq e_{\text{max}}, m<\beta^{p}\}$
+    and represent $\pm\infty$ (and $\NaN$) as we do with the interchange
+    format. 
+  \item But this is ambiguous [i.e., the term ``representation'' is
+    overloaded], because we may speak of ``a representation for a
+    floating-point number'' (which is a triple $(s,e,m)$) 
+    as well as ``the set of floating-point representations for a given format''.
+  \end{itemize}
 \item Format: ``a set of representations of numerical values and symbols,
   perhaps accompanied by an encoding.'' But an ``encoding'' is not
   really defined thus far (it will be defined later in \S3.2 as ``An \emph{encoding} maps a representation of a floating-point datum to a bit string.'').

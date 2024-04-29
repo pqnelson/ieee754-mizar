@@ -910,14 +910,9 @@ proof
       j < k by A5, XREAL_1:145;
       then A6: b*(r1.j) = b*(r2.j) by A4;
       then A7: d1.(j+1) = [\b*(r2.j)/] by A1
-                       .= d2.(j+1) by A2
-                       .= d2.k by A5;
-      r1.k = r1.(j + 1) by A5
-          .= b*(r1.j) - [\ b*(r1.j) /] by A1
-          .= b*(r1.j) - [\ b*(r2.j) /] by A6
-          .= b*(r2.j) - [\ b*(r2.j) /] by A6
-          .= r2.(j + 1) by A2
-          .= r2.k by A5;
+                       .= d2.k by A2, A5;
+      r1.k = b*(r2.j) - [\ b*(r2.j) /] by A1, A5, A6
+          .= r2.k by A2, A5;
       hence P[k] by A5, A7;
     end;
   end;
@@ -980,8 +975,7 @@ proof
     suppose j > 0;
       then consider k being Nat such that
       B1: j = k + 1 by NAT_1:6;
-      r.j = r.(k + 1) by B1
-         .= b*(r.k) - [\ b*(r.k) /] by A1
+      r.j = b*(r.k) - [\ b*(r.k) /] by A1, B1
          .= frac (b * (r.k)) by INT_1:def 8;
       hence thesis by INT_1:43;
     end;
@@ -1198,7 +1192,6 @@ proof
   b > 0 & b <> 1 by Def1; then
   A2: (b to_power n) * (b to_power (-[\log(b,b to_power n)/]))
    = (b to_power n) * (b to_power (-[\ n /])) by POWER:def 3
-  .= (b to_power n)*(b to_power -n)
   .= b to_power (n + (-n)) by POWER:27
   .= 1 by POWER:24;
   hence (b-expansion (b to_power n)).0 = 1 by A1;
