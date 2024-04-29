@@ -154,8 +154,9 @@ theorems AFINSQ_1, AFINSQ_2, ARYTM_2, ARYTM_3, CARD_1, COMPLEX1,
 \subsection{Schemes}
 Schemes are theorems with free second-order variables (i.e.,
 parametrized by terms and/or predicates). They're useful when we want,
-e.g., to construct a sequence using a formula.
+e.g., to construct a sequence using a formula. We also need to rely on a
+few schemes from [[FUNCT_1]] for constructing functions and sequences.
 
 <<[[float_1.miz]] schemes>>=
-schemes AFINSQ_1, NAT_1, SEQ_1;
+schemes AFINSQ_1, FUNCT_1, NAT_1, SEQ_1;
 @ 

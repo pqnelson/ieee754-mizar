@@ -39,7 +39,7 @@ environ
    PREPOWER, RELAT_1, SEQ_1, SEQ_2, SERIES_1, SUBSET_1, TARSKI,
    VALUED_1, XBOOLE_0, XBOOLE_1, XCMPLX_0, XCMPLX_1, XREAL_0, XREAL_1,
    XXREAL_0, XXREAL_3, XTUPLE_0, ZFMISC_1;
- schemes AFINSQ_1, NAT_1, SEQ_1;
+ schemes AFINSQ_1, FUNCT_1, NAT_1, SEQ_1;
 
 begin :: Preliminaries
 
@@ -1185,6 +1185,103 @@ proof
   then (Partial_Sums d1).n + Sum (d1 ^\ (n + 1))
   <= (Partial_Sums d1).n + (([/b\] - 1)/(b - 1))*(b to_power -n) by XREAL_1:6;
   hence thesis by A7;
+end;
+
+theorem Th18:
+  for x being positive Real
+  for n being Nat
+  for d1 being Real_Sequence
+  st (for j being Nat holds d1.j = ((b-expansion x).j)*(b to_power -j))
+  holds x * (b to_power(-[\log(b, x)/])) <= (b to_power -n)+(Partial_Sums d1).n
+proof
+  let x be positive Real;
+  let n be Nat;
+  let d1 be Real_Sequence;
+  assume A1: for j being Nat holds d1.j = ((b-expansion x).j)*(b to_power -j);
+
+  consider r being Real_Sequence such that
+  A2: (b-expansion x).0 = [\ x * (b to_power (-[\ log(b, x) /])) /]
+  & r.0 = (x * (b to_power (-[\ log(b, x) /]))) - [\ (x * (b to_power (-[\ log(b, x) /])))/]
+  and
+  A3: for j being Nat
+  holds (b-expansion x).(j+1) = [\ b*(r.j) /]
+  & r.(j+1) = b*(r.j) - [\ b*(r.j) /]
+  by Def2b;
+
+  deffunc R(Element of NAT) = ((r.$1) * (b to_power - $1));
+  consider r9 being Function such that
+  A4: dom r9 = NAT & for j being Element of NAT holds r9.j = R(j)
+  from FUNCT_1:sch 4;
+  for j being Nat holds r9.j is real
+  proof
+    let j be Nat;
+    reconsider k=j as Element of NAT by ORDINAL1:def 12;
+    r9.j = R(k) by A4;
+    hence r9.j is real;
+  end;
+  then reconsider r9 as Real_Sequence by A4, SEQ_1:2;
+  A5: for j being Nat holds r9.j = (r.j) * (b to_power -j)
+  proof
+    let j be Nat;
+    reconsider k=j as Element of NAT by ORDINAL1:def 12;
+    thus r9.j = R(k) by A4
+             .= ((r.j) * (b to_power -j));
+  end;
+
+  A6: r9.n < b to_power - n
+  proof
+    per cases;
+    suppose B1: n = 0;
+      then r.n = frac (x * (b to_power (-[\ log(b, x) /]))) by A2, INT_1:def 8;
+      then (r.n) * (b to_power - n) < 1 * (b to_power - n) by INT_1:43, XREAL_1:68;
+      hence thesis by A5;
+    end;
+    suppose n > 0;
+      then consider m being Nat such that
+      B2: n = m + 1 by NAT_1:6;
+      r.n = b*(r.m) - [\ b*(r.m) /] by A3, B2
+         .= frac (b*(r.m)) by INT_1:def 8;
+      then (r.n) * (b to_power -n) < 1 * (b to_power -n) by INT_1:43, XREAL_1:68;
+      hence thesis by A5;
+    end;
+  end;
+
+  defpred P[Nat] means
+  (Partial_Sums d1).$1 + r9.$1 = x * (b to_power(-[\log(b, x)/]));
+  A7: P[0]
+  proof
+    thus (Partial_Sums d1).0 + r9.0 = d1.0 + r9.0 by SERIES_1:def 1
+    .= (((b-expansion x).0)*(b to_power - 0)) + r9.0 by A1
+    .= ((b-expansion x).0)*1 + (r9.0) by POWER:24
+    .= ((b-expansion x).0) + ((r.0) * (b to_power - 0)) by A5
+    .= (b-expansion x).0 + (r.0)*1 by POWER:24
+    .= x * (b to_power(-[\log(b, x)/])) by A2;
+  end;
+  A8: for k being Nat st P[k] holds P[k+1]
+  proof
+    let k be Nat;
+    assume B1: P[k];
+    B2: d1.(k + 1) + r9.(k + 1)
+     = ((b-expansion x).(k + 1))*(b to_power -(k + 1)) + r9.(k + 1) by A1
+    .= ((b-expansion x).(k + 1))*(b to_power -(k + 1))
+       + (r.(k + 1)) * (b to_power -(k + 1)) by A5
+    .= (((b-expansion x).(k + 1)) + r.(k + 1)) * (b to_power -(k + 1))
+    .= ([\ b*(r.k) /] + r.(k + 1)) * (b to_power -(k + 1)) by A3
+    .= ([\ b*(r.k) /] + (b * (r.k) - [\ b*(r.k) /])) * (b to_power -(k + 1)) by A3
+    .= (r.k) * ((b to_power 1) * (b to_power -(k + 1)))
+    .= (r.k) * (b to_power (1 + -(k + 1))) by POWER:27
+    .= (r.k) * (b to_power - k)
+    .= r9.k by A5;
+    (Partial_Sums d1).(k + 1) + r9.(k + 1)
+     = (Partial_Sums d1).k + d1.(k + 1) + r9.(k + 1) by SERIES_1:def 1
+    .= x * (b to_power(-[\log(b, x)/])) by B1, B2;
+    hence P[k+1];
+  end;
+
+  for k being Nat holds P[k] from NAT_1:sch 2(A7, A8);
+  then (Partial_Sums d1).n + r9.n = x * (b to_power(-[\log(b, x)/]));
+  hence x * (b to_power(-[\log(b, x)/])) <= (b to_power -n)+(Partial_Sums d1).n
+  by A6, XREAL_1:7;
 end;
 
 definition
