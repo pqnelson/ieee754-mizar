@@ -6,6 +6,47 @@ begin :: 3. Floating-point formats
 
 <<Reserve: parameters for floating-point format>>
 
+<<3.2. Specification Levels>>
+
+<<3.3. Sets of floating-point data>>
+@ 
+
+\subsection{Overview}
+The basic idea is that we have a ``floating-point format'', which
+``represent'' a finite subset of the extended reals adjoined with a
+special [[NaN]] symbol. The standard explicitly states that ``Formats
+are characterized by their radix, precision, and exponent range'' and
+each format can represent a unique set of ``floating-point data''.
+
+Do not be confused: a floating-point format is uniquely identified by
+its tuple of parameters $(\beta,p,e_{\text{min}}, e_{\text{max}})$
+\emph{but} it refers a set of ``floating-point data'' [i.e., a finite
+subset of the extended reals $\ExtRR$ equipped with the symbol
+\texttt{NaN} and adjoined with a ``signed zero'' $-0$ treated as a
+numeric].
+
+This is then in contrast to a ``representation'' of floating-point data,
+which is the set of triples $(s,e,m)\in\{0,1\}\times\ZZ\times\NN$ within
+the specified range, unioned with the signed infinities and both the
+quiet and signaling NaN constants.
+
+When we have some floating-point format $F(\beta,p,e_{\text{min}}, e_{\text{max}})$ given, we use a
+\emph{rounding function} $R\colon\ExtRR\to F(\beta,p,e_{\text{min}}, e_{\text{max}})$ to map extended real
+numbers to floating-point numbers. This $R$ is surjective on
+$F(\beta,p,e_{\text{min}}, e_{\text{max}})\setminus\{\mathtt{NaN},-0\}$, $R$ must be monotonic, and preserves
+zero $R(0)=+0$ and infinities. There are multiple possible rounding
+functions, the IEEE-754 standard gives us 5 possibilities. These
+rounding functions parametrize the elementary arithmetic operators
+$\star_{R}\colon F\times F\to F$ where
+$\star\in\{+,-,\times,\div,\sqrt{\enspace}\}$. But we are getting ahead
+of ourselves.
+
+\subsection{Specification Levels} The Standard defines a floating-point
+format as a set of floating-point numbers adjoined with $-0$ and
+$\NaN$. We will also define a [[Float]] type to shorten the process of
+referring to floating-point data (plus it's idiomatic Mizar).
+
+<<3.2. Specification Levels>>=
 <<Theorem: value of maximum mantissa>>
 
 <<Definition: subset of floating-point numbers for a format>>
@@ -81,81 +122,7 @@ begin :: 3. Floating-point formats
 <<Corollary: the smallest positive floating-point number is $b^{e_{\text{min}}-p+1}$>>
 
 <<Corollary: Smallest negative floating-point number>>
-
-<<Definition: normal floating-point number>>
-
-<<Register: normal implies real for floating-point numbers>>
-
-<<Theorem: criterion for normal floating-point numbers with $e_{\text{min}}\in\ZZ$ and $e_{\text{max}}\in\ZZ$>>
-
-<<Lemma: $b^{1-p}\leq1$ and $1\leq b^{p-1}$>>
-
-<<Lemma: $b\leq b^{e_{\text{max}}}$>>
-
-<<Lemma: $b(b-1)\leq b^{e_{\text{max}}}(b-b^{1-p})$>>
-
-<<Theorem: If $1\in\FF(\beta,p,-\infty,e_{\text{max}})$, then 1 is normal>>
-
-<<Theorem: If $1\in\FF(\beta,p,e_{\text{min}},+\infty)$, then 1 is normal>>
-
-<<Theorem: If $b\in\NN$, then there exists a normal floating-point number>>
-
-<<Register: normal floating-point datum>>
-
-<<Definition: subnormal floating-point datum>>
-
-<<Register: every subnormal floating-point number is real>>
-
-<<Theorem: floating-point numbers are real floating-point format data>>
-
-<<Theorem: $e_{\text{min}}\in\ZZ$, $b\in\NN$, $p=1$ implies there is no subnormal floating-point numbers>>
-
-<<Theorem: there is no subnormal element of $\FF(\beta,p,-\infty,e_{\text{max}})$>>
-
-<<Theorem: 0 is neither normal nor subnormal>>
-
-<<Register: zero, normal, subnormal floats are disjoint>>
-
-<<Theorem: if $p>1$, then $b^{e_{\text{min}}+1-p}$ is subnormal>>
-
-<<Theorem: Existence of subnormal float for $b\in\NN$, $e_{\text{min}}\in\ZZ$, and $p>1$>>
-
-<<Register: existence of subnormal floating-point numbers>>
-
-<<Definition: basic floating-point formats>>
 @ 
-
-\subsection{Overview}
-The basic idea is that we have a ``floating-point format'', which
-``represent'' a finite subset of the extended reals adjoined with a
-special [[NaN]] symbol. The standard explicitly states that ``Formats
-are characterized by their radix, precision, and exponent range'' and
-each format can represent a unique set of ``floating-point data''.
-
-Do not be confused: a floating-point format is uniquely identified by
-its tuple of parameters $(\beta,p,e_{\text{min}}, e_{\text{max}})$
-\emph{but} it refers a set of ``floating-point data'' [i.e., a finite
-subset of the extended reals $\ExtRR$ equipped with the symbol
-\texttt{NaN} and adjoined with a ``signed zero'' $-0$ treated as a
-numeric].
-
-This is then in contrast to a ``representation'' of floating-point data,
-which is the set of triples $(s,e,m)\in\{0,1\}\times\ZZ\times\NN$ within
-the specified range, unioned with the signed infinities and both the
-quiet and signaling NaN constants.
-
-When we have some floating-point format $F(\beta,p,e_{\text{min}}, e_{\text{max}})$ given, we use a
-\emph{rounding function} $R\colon\ExtRR\to F(\beta,p,e_{\text{min}}, e_{\text{max}})$ to map extended real
-numbers to floating-point numbers. This $R$ is surjective on
-$F(\beta,p,e_{\text{min}}, e_{\text{max}})\setminus\{\mathtt{NaN},-0\}$, $R$ must be monotonic, and preserves
-zero $R(0)=+0$ and infinities. There are multiple possible rounding
-functions, the IEEE-754 standard gives us 5 possibilities. These
-rounding functions parametrize the elementary arithmetic operators
-$\star_{R}\colon F\times F\to F$ where
-$\star\in\{+,-,\times,\div,\sqrt{\enspace}\}$. But we are getting ahead
-of ourselves.
-
-\subsection{Specification Levels}
 
 \begin{reserve}
 We will reserve $\beta$ for some positive real number [to work in
@@ -172,7 +139,7 @@ reserve eMin for negative ExtInt;
 reserve eMax for positive ExtNat;
 @
 
-\begin{theorem}
+\begin{theorem}[Maximum mantissa value]
 Let $d$ be a finite sequence of natural numbers.
 Suppose the length of $d$ is equal to $p$.
 If for each $i=0,1,\dots,p-1$ we have $0\leq d_{i}<(\lceil\beta\rceil-1)\beta^{-i}$,
@@ -1545,6 +1512,65 @@ end;
 @ %def ThSmallestNegativeFloat
 
 \subsection{Sets of floating-point data}
+The Standard specifies the subset of ``normal'' numbers, ``subnormal''
+numbers, and so on. This allows us to partition a floating-point format
+into the following disjoint subsets:
+\begin{itemize}
+\item positive normal numbers
+\item negative normal numbers
+\item positive subnormal numbers
+\item negative subnormal numbers
+\item zero
+\item infinities
+\item $\NaN$
+\end{itemize}
+If we allow, e.g., $e_{\text{min}}=-\infty$ or $e_{\text{max}}=+\infty$,
+we want to preserve the disjointness of these classes, which forces us
+to generalize the definitions slightly.
+
+<<3.3. Sets of floating-point data>>=
+<<Definition: normal floating-point number>>
+
+<<Register: normal implies real for floating-point numbers>>
+
+<<Theorem: criterion for normal floating-point numbers with $e_{\text{min}}\in\ZZ$ and $e_{\text{max}}\in\ZZ$>>
+
+<<Lemma: $b^{1-p}\leq1$ and $1\leq b^{p-1}$>>
+
+<<Lemma: $b\leq b^{e_{\text{max}}}$>>
+
+<<Lemma: $b(b-1)\leq b^{e_{\text{max}}}(b-b^{1-p})$>>
+
+<<Theorem: If $1\in\FF(\beta,p,-\infty,e_{\text{max}})$, then 1 is normal>>
+
+<<Theorem: If $1\in\FF(\beta,p,e_{\text{min}},+\infty)$, then 1 is normal>>
+
+<<Theorem: If $b\in\NN$, then there exists a normal floating-point number>>
+
+<<Register: normal floating-point datum>>
+
+<<Definition: subnormal floating-point datum>>
+
+<<Register: every subnormal floating-point number is real>>
+
+<<Theorem: floating-point numbers are real floating-point format data>>
+
+<<Theorem: $e_{\text{min}}\in\ZZ$, $b\in\NN$, $p=1$ implies there is no subnormal floating-point numbers>>
+
+<<Theorem: there is no subnormal element of $\FF(\beta,p,-\infty,e_{\text{max}})$>>
+
+<<Theorem: 0 is neither normal nor subnormal>>
+
+<<Register: zero, normal, subnormal floats are disjoint>>
+
+<<Theorem: if $p>1$, then $b^{e_{\text{min}}+1-p}$ is subnormal>>
+
+<<Theorem: Existence of subnormal float for $b\in\NN$, $e_{\text{min}}\in\ZZ$, and $p>1$>>
+
+<<Register: existence of subnormal floating-point numbers>>
+
+<<Definition: basic floating-point formats>>
+@ 
 
 \begin{definition}
 Let $x$ be a floating-point datum belonging to the format $\FF(\beta,p,e_{\text{min}},e_{\text{max}})$.
