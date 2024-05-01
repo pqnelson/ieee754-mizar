@@ -20,7 +20,8 @@ Mizar doesn't actually know what to tokenize: we need to tell it what
 the terms are, to distinguish them from identifiers of variables. The
 [[vocabularies]] directive adds new reserved words for the lexer to discover.
 We begin by importing the vocabularies for the
-extended real number system.
+extended real number system. We use [[FVALUAT1]] since the notions of
+[[ExtInt]] and [[ext-integer]] are defined there.
 
 The token ``$-$'' used for subtraction is defined in [[RELAT_1]].
 
@@ -62,10 +63,10 @@ defines [[^]] (the concatenation of sequences). We need
 <<[[float_1.miz]] vocabularies>>=
 vocabularies NUMBERS, ORDINAL1, CARD_1, CARD_3, SUBSET_1, XBOOLE_0,
   ARYTM_2, ARYTM_3, ZFMISC_1, XCMPLX_0, XREAL_0, XXREAL_0, TARSKI,
-  FUNCT_1, FUNCT_7, RELAT_1, REAL_1, INT_1, PREPOWER, POWER, ARYTM_1,
-  NAT_1, COUNTERS, COMPLEX1, FINSEQ_1, FINSET_1, FUNCOP_1, RFINSEQ,
-  NEWTON, PARTFUN3, PRE_TOPC, FUZNUM_1, SEQ_1, ORDINAL2, SEQ_2, SERIES_1,
-  NUMERAL1, AFINSQ_1, ORDINAL4, VALUED_0, VALUED_1, FLOAT_1;
+  FUNCT_1, FUNCT_7, FVALUAT1, RELAT_1, REAL_1, INT_1, PREPOWER, POWER,
+  ARYTM_1, NAT_1, COUNTERS, COMPLEX1, FINSEQ_1, FINSET_1, FUNCOP_1,
+  RFINSEQ, NEWTON, PARTFUN3, PRE_TOPC, FUZNUM_1, SEQ_1, ORDINAL2, SEQ_2,
+  SERIES_1, NUMERAL1, AFINSQ_1, ORDINAL4, VALUED_0, VALUED_1, FLOAT_1;
 @
 
 \subsection{Notations}

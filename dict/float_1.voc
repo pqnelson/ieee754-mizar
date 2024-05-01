@@ -4,8 +4,6 @@ Obeta_integer_value
 O-radix_NAT
 O-radix_INT
 OExtINT
-Vext-integer
-MExtInt
 O-0
 ONaN
 OFLOAT_NUMBER

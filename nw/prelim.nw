@@ -3494,13 +3494,10 @@ end;
 @ %def ext-integer Def2
 
 \begin{voc}
-We will tell Mizar to add [[ext-integer]] as a new attribute for its lexer to
-recognize.
+We will not tell Mizar to add [[ext-integer]] as a new attribute for its
+lexer to recognize, because the term was used for a similar notation in
+the article [[FVALUAT1]].
 \end{voc}
-
-<<DICT/float-1.voc>>=
-Vext-integer
-@
 
 \begin{registration}
 We note that $\pm\infty$ is an extended-integer; extended integers are
@@ -3582,12 +3579,9 @@ end;
 @ %def ExtInt
 
 \begin{voc}
-We tell Mizar about this new type [[ExtInt]].
+We can have Mizar recall the mode [[ExtInt]] was defined in another
+article [[FVALUAT1]], so we reuse it.
 \end{voc}
-
-<<DICT/float-1.voc>>=
-MExtInt
-@
 
 \begin{registration}
 We note that the type [[ExtInt]] can be used interchangeably as
