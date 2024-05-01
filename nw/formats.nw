@@ -2264,10 +2264,34 @@ let $e_{\text{min}}\in\ZZ\cup\{-\infty\}$ and
 $e_{\text{max}}\in\NN\cup\{+\infty\}$ be negative and positive integers
 or infinities.
 We define the set of \define{Floating-Point Representations} to be the
-set $\FF_{r}(\b,p,e_{\text{min}},e_{\text{max}})$ equal to
+set $\FF_{r}(\beta,p,e_{\text{min}},e_{\text{max}})$ equal to
 $\{(s,e,m)\in\{0,1\}\times\ZZ\times\NN\mid (-1)^{s}m\times\beta^{e}\in\FF(\beta,p,e_{\text{min}},e_{\text{max}})\lor(s=1,e=m=0)\}\cup\{+\infty,-\infty,\qNaN,\sNaN\}$.
 \end{definition}
 
+\begin{def-remark}
+The binary format for $\beta=2$ IEEE compliant floating-point
+interchange representations would be more desirable than this
+definition; i.e., the set of floating-point representations is a subset
+of $(s,e,m)\in\{0,1\}\times\ExtZZ\times\NN$ where $e_{\text{min}}\leq e\leq e_{\text{max}}$
+and $m<\beta^{p}$, with:
+\begin{enumerate}
+\item \NaN's are represented by $e=e_{\text{max}}$ and $m\neq0$. If
+  $m\geq\beta^{p-1}$, then we have a representation of a \qNaN;
+  otherwise, when $m<\beta^{p-1}$, we have a representation of a \sNaN.
+  (See \S6.2.1 of the Standard for the leading bit being the flag for a
+  quiet \NaN.)
+\item If $e=e_{\text{max}}$ and $m=0$, then we have a representation of $(-1)^{s}\times(+\infty)$
+\item If $e=e_{\text{min}}$ and $m\neq0$, then $(s,e_{\text{min}}, m)$
+  is a subnormal number corresponding to the value $(-1)^{s}\beta^{e_{\text{min}}}(\beta^{1-p}m)$.
+\item If $e=e_{\text{min}}$ and $m=0$, then $(s,e_{\text{min}},0)$
+  represents signed zero for $s=1$ and positive zero for $s=0$.
+\end{enumerate}
+Uniqueness could be enforced by demanding $\beta^{p-1}\leq m<\beta^{p}$
+for normal floating-point numbers.
+This would be far more preferable to what the standard gives us, but alas\dots
+\end{def-remark}
+
+\begin{def-remark}
 This is a little too clever: signed zeros are now treated ``as if'' they
 were a distinct real number (not equal to zero), but infinities as well
 as \qNaN\ and \sNaN\ are treated as formal symbols. It is not until the
@@ -2282,6 +2306,8 @@ $e_{\text{min}}=-\infty$ and $e_{\text{max}}=+\infty$. If we used
 triples exclusively as the definition of a representation, then we'd
 have to allow $e\in\ZZ\cup\{+\infty\}$ and insist $e=+\infty$ be
 reserved for \NaN\ and $\pm\infty$. I'm not sure that's much better.
+\end{def-remark}
+
 
 <<Definition: Floating-point representation>>=
 definition
